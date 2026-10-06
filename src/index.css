@@ -1,0 +1,1378 @@
+/* ==========================================================================
+   ASTRION - INTERSTELLAR THEMED FESTIVAL
+   Clean, Robust, High-Contrast Design System
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-deep: #020409;
+  --bg-card: rgba(8, 14, 30, 0.85);
+  --bg-glass: rgba(4, 9, 24, 0.75);
+  --border-cyan: rgba(56, 189, 248, 0.25);
+  --border-cyan-glow: rgba(56, 189, 248, 0.6);
+  --cyan-primary: #38bdf8;
+  --cyan-glow: rgba(56, 189, 248, 0.4);
+  --amber-primary: #fbbf24;
+  --amber-glow: rgba(251, 191, 36, 0.35);
+  --text-white: #ffffff;
+  --text-slate: #94a3b8;
+  --text-muted: #64748b;
+  --font-orbitron: 'Orbitron', -apple-system, sans-serif;
+  --font-space: 'Space Grotesk', -apple-system, sans-serif;
+  --font-inter: 'Inter', -apple-system, sans-serif;
+}
+
+/* Base CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-deep);
+  color: var(--text-white);
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-white);
+  overflow-x: hidden;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Typography Helpers */
+.font-orbitron {
+  font-family: var(--font-orbitron);
+}
+
+.font-space {
+  font-family: var(--font-space);
+}
+
+.font-inter {
+  font-family: var(--font-inter);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Standard Section Container */
+.ast-section {
+  position: relative;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+  z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .ast-section {
+    padding: 6rem 2rem;
+  }
+
+  .md-flex-nav {
+    display: flex !important;
+  }
+
+  .md-hide-btn {
+    display: none !important;
+  }
+}
+
+/* Section Header (Index + Heading + Subtitle) */
+.section-index {
+  font-family: var(--font-space);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--cyan-primary);
+  margin-bottom: 0.35rem;
+  display: inline-block;
+  text-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.ast-heading {
+  font-family: var(--font-orbitron);
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+@media (min-width: 768px) {
+  .ast-heading {
+    font-size: 3rem;
+  }
+}
+
+.ast-subheading {
+  font-family: var(--font-space);
+  font-size: 0.95rem;
+  color: var(--text-slate);
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+
+/* Pill Buttons matching Reference Image */
+.btn-pill-cyan {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: linear-gradient(135deg, #06b6d4 0%, #38bdf8 50%, #0284c7 100%);
+  color: #020617;
+  font-family: var(--font-space);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.4rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-pill-cyan:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
+  color: #000000;
+}
+
+.btn-pill-cyan:active {
+  transform: translateY(0);
+}
+
+.btn-pill-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #e2e8f0;
+  font-family: var(--font-space);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.4rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-cyan);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-pill-ghost:hover {
+  border-color: var(--cyan-primary);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--cyan-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px var(--cyan-glow);
+}
+
+.btn-pill-ghost:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   HERO SECTION LAYOUT
+   ========================================================================== */
+.hero-wrapper {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 7rem 2rem 2rem 2rem;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .hero-wrapper {
+    padding: 8rem 4rem 3rem 4rem;
+  }
+}
+
+.hero-date-widget {
+  position: absolute;
+  top: 6.5rem;
+  right: 2rem;
+  text-align: right;
+  z-index: 20;
+  font-family: var(--font-space);
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+@media (min-width: 1024px) {
+  .hero-date-widget {
+    top: 7rem;
+    right: 4rem;
+  }
+}
+
+.hero-date-widget .month {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--text-slate);
+  text-transform: uppercase;
+}
+
+.hero-date-widget .days {
+  font-family: var(--font-orbitron);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  text-shadow: 0 0 15px var(--cyan-glow);
+}
+
+.hero-date-widget .year {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: var(--text-slate);
+}
+
+.hero-vertical-tags {
+  display: none;
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: var(--font-space);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: rgba(148, 163, 184, 0.6);
+  text-transform: uppercase;
+  z-index: 20;
+}
+
+@media (min-width: 1100px) {
+  .hero-vertical-tags {
+    display: flex;
+  }
+}
+
+.hero-center-content {
+  position: relative;
+  z-index: 20;
+  text-align: center;
+  max-width: 860px;
+  margin: auto auto;
+  padding: 2rem 0;
+}
+
+.hero-title {
+  font-family: var(--font-orbitron);
+  font-weight: 500;
+  font-size: 3.25rem;
+  letter-spacing: 0.3em;
+  color: #ffffff;
+  text-shadow: 0 4px 25px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 255, 255, 0.2);
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+  user-select: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: letter-spacing 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
+  cursor: default;
+}
+
+.hero-title:hover {
+  letter-spacing: 0.35em;
+  transform: translateY(-2px);
+}
+
+.hero-title-letter {
+  display: inline-block;
+  animation: letterCinematicFloat 4.4s ease-in-out infinite;
+  transition: transform 0.25s ease, text-shadow 0.25s ease;
+}
+
+.hero-title-letter:hover {
+  transform: translateY(-5px) scale(1.08);
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes letterCinematicFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (min-width: 640px) {
+  .hero-title {
+    font-size: 5rem;
+    letter-spacing: 0.35em;
+  }
+
+  .hero-title:hover {
+    letter-spacing: 0.4em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: 6.8rem;
+    letter-spacing: 0.38em;
+  }
+
+  .hero-title:hover {
+    letter-spacing: 0.43em;
+  }
+}
+
+
+.hero-subtitle {
+  font-family: var(--font-space);
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  color: #e2e8f0;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+}
+
+.hero-fest-type {
+  font-family: var(--font-space);
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: var(--text-slate);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.hero-tagline {
+  font-family: var(--font-inter);
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  font-weight: 300;
+  margin-bottom: 2rem;
+}
+
+.hero-scroll-indicator {
+  position: relative;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: auto;
+  font-family: var(--font-space);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--text-slate);
+  text-transform: uppercase;
+}
+
+@keyframes letterShockwavePulse {
+  0% {
+    transform: translateY(0) scale(1);
+    text-shadow: 0 4px 25px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 255, 255, 0.2);
+  }
+
+  45% {
+    transform: translateY(-9px) scale(1.08);
+    text-shadow: 0 0 35px rgba(56, 189, 248, 0.95), 0 0 70px rgba(56, 189, 248, 0.6);
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+    text-shadow: 0 4px 25px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.hero-letter-warp {
+  animation: letterShockwavePulse 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 24px;
+  background: linear-gradient(to bottom, var(--cyan-primary), transparent);
+  margin-top: 0.5rem;
+  animation: floatSlow 2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   01 — THE MISSION SECTION
+   ========================================================================== */
+.mission-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .mission-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+.mission-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mission-body-text {
+  font-family: var(--font-inter);
+  font-size: 0.95rem;
+  color: var(--text-slate);
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+.mission-stats-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  padding-top: 2rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(56, 189, 248, 0.15);
+}
+
+@media (min-width: 540px) {
+  .mission-stats-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat-item .stat-value {
+  font-family: var(--font-orbitron);
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+  text-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+.stat-item .stat-label {
+  font-family: var(--font-space);
+  font-size: 0.75rem;
+  color: var(--text-slate);
+  margin-top: 0.35rem;
+  letter-spacing: 0.05em;
+}
+
+.mission-visual-box {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--border-cyan);
+  box-shadow: 0 0 50px rgba(56, 189, 248, 0.15);
+  background: #020617;
+}
+
+.mission-visual-box img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.mission-visual-box:hover img {
+  transform: scale(1.04);
+}
+
+/* ==========================================================================
+   02 — MISSIONS (EVENT CARDS)
+   ========================================================================== */
+.missions-top-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .missions-top-bar {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.missions-filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.missions-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 600px) {
+  .missions-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .missions-cards-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.event-planet-card {
+  background: linear-gradient(180deg, rgba(8, 14, 30, 0.85) 0%, rgba(3, 7, 18, 0.95) 100%);
+  border: 1px solid var(--border-cyan);
+  border-radius: 1.5rem;
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px rgba(2, 4, 10, 0.6);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.event-planet-card:hover {
+  border-color: var(--cyan-primary);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(56, 189, 248, 0.25);
+}
+
+/* 3D Planet Sphere Graphic */
+.planet-sphere-glow {
+  width: 120px;
+  height: 120px;
+  margin: 0.5rem auto 1.5rem auto;
+  border-radius: 9999px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.4s ease;
+}
+
+.event-planet-card:hover .planet-sphere-glow {
+  transform: scale(1.08);
+}
+
+.planet-sphere-glow img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 9999px;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+.planet-sphere-glow::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 3D Orbital Planetary Ring */
+.planet-orbital-ring-3d {
+  position: absolute;
+  width: 155px;
+  height: 155px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(56, 189, 248, 0.55);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.4), inset 0 0 12px rgba(56, 189, 248, 0.25);
+  transform: rotateX(72deg) rotateY(15deg);
+  pointer-events: none;
+  animation: orbitRingSpin 14s linear infinite;
+  z-index: 2;
+}
+
+@keyframes orbitRingSpin {
+  0% {
+    transform: rotateX(72deg) rotateY(15deg) rotateZ(0deg);
+  }
+
+  100% {
+    transform: rotateX(72deg) rotateY(15deg) rotateZ(360deg);
+  }
+}
+
+.planet-shadow-crescent {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  box-shadow: inset -16px -16px 24px rgba(2, 6, 23, 0.95), inset 6px 6px 14px rgba(56, 189, 248, 0.45);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.event-card-title {
+  font-family: var(--font-orbitron);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.event-planet-card:hover .event-card-title {
+  color: var(--cyan-primary);
+}
+
+.badges-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.badge-tech-pill {
+  font-family: var(--font-space);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--cyan-primary);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  text-transform: uppercase;
+}
+
+.badge-prereg-pill {
+  font-family: var(--font-space);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--amber-primary);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  text-transform: uppercase;
+}
+
+.badge-spot-pill {
+  font-family: var(--font-space);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  text-transform: uppercase;
+}
+
+.event-card-desc {
+  font-size: 0.78rem;
+  color: var(--text-slate);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.event-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(56, 189, 248, 0.12);
+  margin-top: auto;
+}
+
+.event-venue-tag {
+  font-family: var(--font-space);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.event-arrow-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: #0f172a;
+  border: 1px solid var(--border-cyan);
+  color: var(--cyan-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.event-planet-card:hover .event-arrow-btn {
+  background: var(--cyan-primary);
+  color: #020617;
+  border-color: var(--cyan-primary);
+  transform: translateX(2px);
+}
+
+/* ==========================================================================
+   03 — JOIN THE CREW & MISSION ACCEPTED (DUAL PANEL)
+   ========================================================================== */
+.crew-dual-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+@media (min-width: 992px) {
+  .crew-dual-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.crew-panel-card {
+  position: relative;
+  border-radius: 1.5rem;
+  border: 1px solid var(--border-cyan);
+  padding: 2rem;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(2, 4, 10, 0.8);
+}
+
+@media (min-width: 640px) {
+  .crew-panel-card {
+    padding: 2.5rem;
+  }
+}
+
+.stepper-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.stepper-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stepper-item:hover {
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.stepper-circle {
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(100, 116, 139, 0.4);
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--text-slate);
+  font-family: var(--font-space);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.stepper-circle.active {
+  border-color: var(--cyan-primary);
+  background: var(--cyan-primary);
+  color: #020617;
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.stepper-circle.completed {
+  border-color: var(--cyan-primary);
+  background: rgba(56, 189, 248, 0.2);
+  color: var(--cyan-primary);
+}
+
+.stepper-label {
+  font-family: var(--font-space);
+  font-size: 0.75rem;
+  color: var(--text-slate);
+  letter-spacing: 0.05em;
+  transition: color 0.2s ease;
+}
+
+.stepper-item.active .stepper-label {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* Glass Form Box */
+.glass-form-box {
+  background: rgba(4, 9, 26, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-cyan);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.form-field-label {
+  display: block;
+  font-family: var(--font-space);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #cbd5e1;
+  margin-bottom: 0.35rem;
+}
+
+.reference-input {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background: rgba(2, 6, 23, 0.75);
+  border: 1px solid var(--border-cyan);
+  border-radius: 0.6rem;
+  color: #ffffff;
+  font-family: var(--font-space);
+  font-size: 0.8rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.reference-input:focus {
+  border-color: var(--cyan-primary);
+  box-shadow: 0 0 12px var(--cyan-glow);
+  background: rgba(2, 6, 23, 0.95);
+}
+
+.reference-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Cockpit Boarding Pass Ticket */
+.boarding-ticket-card {
+  background: rgba(3, 7, 18, 0.92);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.25);
+  margin: 1.5rem 0;
+}
+
+/* ==========================================================================
+   04 — ECHOES THROUGH TIME (MEMORIES)
+   ========================================================================== */
+.echoes-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 600px) {
+  .echoes-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .echoes-cards-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.echo-card-item {
+  position: relative;
+  height: 220px;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--border-cyan);
+  background: #020617;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.echo-card-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.echo-card-item:hover img {
+  transform: scale(1.08);
+}
+
+.echo-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(2, 4, 10, 0.9) 0%, rgba(2, 4, 10, 0.2) 60%, transparent 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 1rem;
+}
+
+.echo-card-title {
+  font-family: var(--font-space);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.year-slider-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+}
+
+.year-btn {
+  font-family: var(--font-space);
+  font-size: 0.9rem;
+  color: var(--text-slate);
+  position: relative;
+  padding-bottom: 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.year-btn.active {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.year-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--cyan-primary);
+  box-shadow: 0 0 10px var(--cyan-primary);
+}
+
+/* ==========================================================================
+   MISSION PARTNERS & THE CREW
+   ========================================================================== */
+.partners-logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.crew-avatars-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .crew-avatars-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.crew-avatar-circle {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-cyan);
+  padding: 0.25rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #020617;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+  transition: all 0.3s ease;
+}
+
+.crew-avatar-circle:hover {
+  transform: scale(1.1);
+  border-color: var(--cyan-primary);
+  box-shadow: 0 0 25px var(--cyan-glow);
+}
+
+.crew-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.crew-role-title {
+  font-family: var(--font-space);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  margin-top: 0.75rem;
+}
+
+/* ==========================================================================
+   KEYFRAME ANIMATIONS (Smooth, Calm, Cosmic)
+   ========================================================================== */
+@keyframes floatSlow {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+.animate-scaleUp {
+  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ==========================================================================
+   INTERSTELLAR FLIGHT TELEMETRY HUD & IIC VVITU BRANDING
+   ========================================================================== */
+.flight-telemetry-hud {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .flight-telemetry-hud {
+    transform: translateY(-50%) scale(0.85);
+    transform-origin: right center;
+  }
+}
+
+.hud-panel-box {
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.iic-organizer-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.iic-organizer-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.65);
+  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.9), 0 0 35px rgba(56, 189, 248, 0.2);
+}
+
+/* Relativistic depth effects on scroll */
+.hero-wrapper {
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .hero-wrapper {
+    background-attachment: scroll;
+  }
+}
+
+/* ==========================================================================
+   SPACE BREACH & HYPERSPACE CRASH ANIMATIONS
+   ========================================================================== */
+@keyframes spaceCockpitShake {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  10% {
+    transform: translate(-3px, 2px) rotate(-0.5deg);
+  }
+
+  20% {
+    transform: translate(4px, -3px) rotate(0.6deg);
+  }
+
+  30% {
+    transform: translate(-6px, 4px) rotate(-1deg);
+  }
+
+  40% {
+    transform: translate(7px, -5px) rotate(1deg);
+  }
+
+  50% {
+    transform: translate(-9px, 6px) rotate(-1.5deg);
+  }
+
+  60% {
+    transform: translate(11px, -7px) rotate(1.5deg);
+  }
+
+  70% {
+    transform: translate(-13px, 9px) rotate(-2deg);
+  }
+
+  80% {
+    transform: translate(14px, -8px) rotate(1.8deg);
+  }
+
+  90% {
+    transform: translate(-8px, 4px) rotate(-0.8deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes hyperspaceZoom {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+@keyframes quantumFlashBurst {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes warningStrobe {
+
+  0%,
+  100% {
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+  }
+
+  50% {
+    border-color: rgba(239, 68, 68, 0.95);
+    box-shadow: 0 0 45px rgba(239, 68, 68, 0.6);
+  }
+}
+
+.animate-cockpit-shake {
+  animation: spaceCockpitShake 0.12s linear infinite;
+}
+
+.animate-warning-strobe {
+  animation: warningStrobe 0.4s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   SPACESHIP HOVER & LAUNCH ANIMATIONS
+   ========================================================================== */
+@keyframes spaceshipHoverIdle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes spaceshipIgnitingVibe {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(-2px, 1.5px);
+  }
+
+  50% {
+    transform: translate(2px, -1.5px);
+  }
+
+  75% {
+    transform: translate(-1.5px, -1px);
+  }
+}
+
+@keyframes shockwaveBurst {
+  0% {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+@keyframes spaceshipIdleFlame {
+
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 0.85;
+  }
+
+  50% {
+    transform: scaleY(0.7);
+    opacity: 0.5;
+  }
+}
+
+.spaceship-hover-idle {
+  animation: spaceshipHoverIdle 2.6s ease-in-out infinite;
+}
+
+.spaceship-igniting-vibe {
+  animation: spaceshipIgnitingVibe 0.08s linear infinite;
+}
+
+.spaceship-idle-flame {
+  transform-origin: 60px 132px;
+  animation: spaceshipIdleFlame 0.35s ease-in-out infinite alternate;
+}
+
+/* ==========================================================================
+   INTERSTELLAR ASTRONAUT WEIGHTLESS & VISOR ANIMATIONS
+   ========================================================================== */
+@keyframes astronautWeightlessIdle {
+
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+@keyframes visorReflectionPulse {
+
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.95);
+  }
+
+  50% {
+    opacity: 0.95;
+    transform: scale(1.15);
+  }
+}
+
+.astronaut-weightless-idle {
+  animation: astronautWeightlessIdle 4.8s ease-in-out infinite;
+}
