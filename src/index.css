@@ -3,7 +3,7 @@
    Clean, Robust, High-Contrast Design System
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,800;0,6..96,900;1,6..96,400&family=Cinzel:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 :root {
   --bg-deep: #020409;
@@ -15,41 +15,30 @@
   --cyan-glow: rgba(56, 189, 248, 0.4);
   --amber-primary: #fbbf24;
   --amber-glow: rgba(251, 191, 36, 0.35);
-  --emerald-primary: #10b981;
   --text-white: #ffffff;
   --text-slate: #94a3b8;
   --text-muted: #64748b;
-
-  /* THE AUTHENTIC INTERSTELLAR REFERENCE TYPOGRAPHY SYSTEM */
-  --font-interstellar: 'Bodoni Moda', 'Cinzel', Didot, 'Playfair Display', serif;
-  --font-cinematic: 'Cinzel', 'Bodoni Moda', serif;
-  --font-sans: 'Plus Jakarta Sans', 'Outfit', -apple-system, sans-serif;
-  --font-space-grotesk: 'Space Grotesk', -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  /* Aliased for full backwards compatibility across codebase */
-  --font-orbitron: var(--font-interstellar);
-  --font-space: var(--font-space-grotesk);
-  --font-inter: var(--font-sans);
+  --font-orbitron: 'Orbitron', -apple-system, sans-serif;
+  --font-space: 'Space Grotesk', -apple-system, sans-serif;
+  --font-inter: 'Inter', -apple-system, sans-serif;
 }
 
-/* Base CSS Reset & Typography Smoothing */
+/* Base CSS Reset */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 html {
   scroll-behavior: smooth;
   background-color: var(--bg-deep);
   color: var(--text-white);
-  font-family: var(--font-sans);
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -57,8 +46,7 @@ body {
   color: var(--text-white);
   overflow-x: hidden;
   min-height: 100vh;
-  line-height: 1.6;
-  font-family: var(--font-sans);
+  line-height: 1.5;
 }
 
 #root {
@@ -68,17 +56,9 @@ body {
   overflow-x: hidden;
 }
 
-/* Typography Utility Classes */
-.font-interstellar {
-  font-family: var(--font-interstellar);
-}
-
-.font-cinematic {
-  font-family: var(--font-cinematic);
-}
-
+/* Typography Helpers */
 .font-orbitron {
-  font-family: var(--font-interstellar);
+  font-family: var(--font-orbitron);
 }
 
 .font-space {
@@ -89,14 +69,9 @@ body {
   font-family: var(--font-inter);
 }
 
-.font-mono {
-  font-family: var(--font-mono);
-}
-
 a {
   color: inherit;
   text-decoration: none;
-  transition: color 0.25s ease, opacity 0.25s ease;
 }
 
 button {
@@ -104,7 +79,6 @@ button {
   background: none;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Standard Section Container */
@@ -134,42 +108,37 @@ button {
 /* Section Header (Index + Heading + Subtitle) */
 .section-index {
   font-family: var(--font-space);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.25em;
   color: var(--cyan-primary);
   margin-bottom: 0.35rem;
   display: inline-block;
   text-shadow: 0 0 12px var(--cyan-glow);
-  text-transform: uppercase;
-  transition: all 0.3s ease;
 }
 
 .ast-heading {
-  font-family: var(--font-interstellar);
+  font-family: var(--font-orbitron);
   font-size: 2.25rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   color: #ffffff;
   text-transform: uppercase;
-  line-height: 1.18;
-  transition: letter-spacing 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+  line-height: 1.15;
 }
 
 @media (min-width: 768px) {
   .ast-heading {
-    font-size: 3.15rem;
-    letter-spacing: 0.2em;
+    font-size: 3rem;
   }
 }
 
 .ast-subheading {
   font-family: var(--font-space);
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   color: var(--text-slate);
-  margin-top: 0.5rem;
-  font-weight: 400;
-  letter-spacing: 0.08em;
+  margin-top: 0.4rem;
+  font-weight: 500;
 }
 
 /* Pill Buttons matching Reference Image */
@@ -239,29 +208,6 @@ button {
 /* ==========================================================================
    HERO SECTION LAYOUT
    ========================================================================== */
-#home,
-#home .hero-wrapper {
-  cursor: none !important;
-}
-
-#home button,
-#home a,
-#home .hero-title-letter,
-.hero-wrapper button,
-.hero-wrapper a {
-  cursor: none !important;
-}
-
-@keyframes spinSlow {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
 .hero-wrapper {
   position: relative;
   min-height: 100vh;
@@ -353,56 +299,37 @@ button {
   padding: 2rem 0;
 }
 
-/* Interstellar Top Billing Line matching reference image */
-.hero-billing-header {
-  font-family: var(--font-space);
-  font-size: clamp(0.68rem, 1.2vw, 0.8rem);
-  font-weight: 600;
-  letter-spacing: 0.32em;
-  color: rgba(226, 232, 240, 0.85);
-  text-transform: uppercase;
-  margin-bottom: 1.25rem;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
-  display: inline-block;
-  opacity: 0.95;
-  transition: letter-spacing 0.3s ease;
-}
-
 .hero-title {
-  font-family: var(--font-interstellar) !important;
-  font-weight: 700;
-  font-size: clamp(2.85rem, 8.5vw, 6.2rem);
-  letter-spacing: 0.38em;
+  font-family: var(--font-orbitron);
+  font-weight: 500;
+  font-size: 3.25rem;
+  letter-spacing: 0.3em;
   color: #ffffff;
-  text-transform: uppercase;
-  text-shadow: 0 4px 35px rgba(0, 0, 0, 0.95), 0 0 40px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 4px 25px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 255, 255, 0.2);
   line-height: 1.1;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   user-select: none;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  transition: letter-spacing 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease, text-shadow 0.4s ease;
+  transition: letter-spacing 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
   cursor: default;
 }
 
 .hero-title:hover {
-  letter-spacing: 0.44em;
+  letter-spacing: 0.35em;
   transform: translateY(-2px);
-  text-shadow: 0 4px 45px rgba(0, 0, 0, 0.95), 0 0 60px rgba(255, 255, 255, 0.7);
 }
 
 .hero-title-letter {
-  font-family: var(--font-interstellar) !important;
   display: inline-block;
   animation: letterCinematicFloat 4.4s ease-in-out infinite;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), text-shadow 0.3s ease, color 0.3s ease;
+  transition: transform 0.25s ease, text-shadow 0.25s ease;
 }
 
 .hero-title-letter:hover {
-  transform: translateY(-5px) scale(1.06);
-  color: #ffffff;
-  text-shadow: 0 0 35px rgba(255, 255, 255, 0.95), 0 0 50px rgba(56, 189, 248, 0.5);
+  transform: translateY(-5px) scale(1.08);
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
 }
 
 @keyframes letterCinematicFloat {
@@ -419,31 +346,32 @@ button {
 
 @media (min-width: 640px) {
   .hero-title {
-    font-size: clamp(4.2rem, 7.5vw, 5.8rem);
-    letter-spacing: 0.4em;
+    font-size: 5rem;
+    letter-spacing: 0.35em;
   }
 
   .hero-title:hover {
-    letter-spacing: 0.45em;
+    letter-spacing: 0.4em;
   }
 }
 
 @media (min-width: 1024px) {
   .hero-title {
-    font-size: clamp(5.2rem, 8.2vw, 7rem);
-    letter-spacing: 0.42em;
+    font-size: 6.8rem;
+    letter-spacing: 0.38em;
   }
 
   .hero-title:hover {
-    letter-spacing: 0.48em;
+    letter-spacing: 0.43em;
   }
 }
+
 
 .hero-subtitle {
   font-family: var(--font-space);
   font-weight: 600;
   font-size: 0.85rem;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.35em;
   color: #e2e8f0;
   text-transform: uppercase;
   margin-bottom: 1.25rem;
@@ -451,7 +379,7 @@ button {
 
 @media (min-width: 640px) {
   .hero-subtitle {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 }
 
@@ -562,19 +490,12 @@ button {
 }
 
 .stat-item .stat-value {
-  font-family: var(--font-interstellar);
-  font-size: 2.25rem;
+  font-family: var(--font-orbitron);
+  font-size: 2rem;
   font-weight: 700;
   color: #ffffff;
   line-height: 1.1;
-  letter-spacing: 0.05em;
-  text-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
-  transition: all 0.3s ease;
-}
-
-.stat-item:hover .stat-value {
-  color: var(--cyan-primary);
-  transform: translateY(-2px);
+  text-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
 }
 
 .stat-item .stat-label {
@@ -582,8 +503,7 @@ button {
   font-size: 0.75rem;
   color: var(--text-slate);
   margin-top: 0.35rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .mission-visual-box {
@@ -747,19 +667,18 @@ button {
 }
 
 .event-card-title {
-  font-family: var(--font-interstellar);
-  font-size: 1.22rem;
+  font-family: var(--font-orbitron);
+  font-size: 1.15rem;
   font-weight: 700;
   color: #ffffff;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-bottom: 0.5rem;
-  transition: color 0.25s ease, letter-spacing 0.25s ease;
+  transition: color 0.2s ease;
 }
 
 .event-planet-card:hover .event-card-title {
   color: var(--cyan-primary);
-  letter-spacing: 0.16em;
 }
 
 .badges-row {
@@ -1456,164 +1375,4 @@ button {
 
 .astronaut-weightless-idle {
   animation: astronautWeightlessIdle 4.8s ease-in-out infinite;
-}
-
-/* ==========================================================================
-   INTERSTELLAR VENUE SPOTS & TELEMETRY HUD DESIGN SYSTEM
-   ========================================================================== */
-@keyframes radarBeaconPulse {
-  0% {
-    transform: scale(0.85);
-    opacity: 0.9;
-  }
-  100% {
-    transform: scale(2.3);
-    opacity: 0;
-  }
-}
-
-@keyframes hudGridScan {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 0 40px;
-  }
-}
-
-.venue-hud-wrapper {
-  position: relative;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
-  will-change: transform;
-}
-
-.venue-hud-wrapper:hover {
-  transform: translateY(-6px);
-}
-
-/* Unique Interstellar Chamfered Cut-Corner Silhouette */
-.venue-hud-outer {
-  position: relative;
-  padding: 1.5px;
-  clip-path: polygon(
-    0 0,
-    calc(100% - 24px) 0,
-    100% 24px,
-    100% 100%,
-    24px 100%,
-    0 calc(100% - 24px)
-  );
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.3) 0%, rgba(14, 165, 233, 0.1) 40%, rgba(56, 189, 248, 0.05) 70%, rgba(251, 191, 36, 0.25) 100%);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
-}
-
-.venue-hud-wrapper:hover .venue-hud-outer {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.8) 0%, rgba(14, 165, 233, 0.35) 45%, rgba(56, 189, 248, 0.2) 70%, rgba(251, 191, 36, 0.75) 100%);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.25);
-}
-
-.venue-hud-outer.is-active {
-  background: linear-gradient(135deg, #38bdf8 0%, rgba(56, 189, 248, 0.5) 50%, #0284c7 100%);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 35px rgba(56, 189, 248, 0.4);
-}
-
-.venue-hud-inner {
-  position: relative;
-  background: linear-gradient(180deg, rgba(7, 14, 34, 0.94) 0%, rgba(2, 6, 21, 0.97) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  clip-path: polygon(
-    0 0,
-    calc(100% - 23px) 0,
-    100% 23px,
-    100% 100%,
-    23px 100%,
-    0 calc(100% - 23px)
-  );
-  padding: 1.6rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-  height: 100%;
-}
-
-/* Subtle Cosmic HUD Grid Background */
-.venue-hud-grid-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: 
-    linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.6;
-  transition: opacity 0.35s ease;
-}
-
-.venue-hud-wrapper:hover .venue-hud-grid-overlay {
-  opacity: 1;
-}
-
-/* Watermark Sector Numeric Badge */
-.venue-hud-watermark {
-  position: absolute;
-  right: 1.25rem;
-  top: 3.25rem;
-  font-family: var(--font-mono);
-  font-size: 5.5rem;
-  font-weight: 900;
-  line-height: 1;
-  color: rgba(56, 189, 248, 0.04);
-  pointer-events: none;
-  user-select: none;
-  transition: color 0.35s ease, transform 0.35s ease;
-}
-
-.venue-hud-wrapper:hover .venue-hud-watermark {
-  color: rgba(56, 189, 248, 0.08);
-  transform: translateX(-4px);
-}
-
-/* Aerospace HUD Reticle Corners */
-.venue-corner-bracket {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-color: rgba(56, 189, 248, 0.35);
-  pointer-events: none;
-  transition: border-color 0.3s ease;
-}
-
-.venue-hud-wrapper:hover .venue-corner-bracket {
-  border-color: var(--cyan-primary);
-}
-
-/* Smooth Accordion / Telemetry Drawer */
-.venue-specs-drawer {
-  overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, margin-top 0.35s ease;
-}
-
-/* Chip interactive hover */
-.venue-highlight-chip {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.venue-highlight-chip:hover {
-  transform: translateY(-1px);
-  background: rgba(56, 189, 248, 0.18) !important;
-  border-color: rgba(56, 189, 248, 0.5) !important;
-}
-
-/* Event Badge Chips */
-.venue-mission-chip {
-  transition: all 0.25s ease;
-}
-
-.venue-mission-chip:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
-  border-color: var(--cyan-primary) !important;
 }
