@@ -85,7 +85,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
                   <span>Date</span>
                 </div>
                 <div style={{ fontFamily: 'var(--font-space)', fontSize: '0.8rem', fontWeight: 600, color: '#ffffff', marginTop: '0.2rem' }}>
-                  15 Nov 2026
+                  {event.date || '15 Nov 2026'}
                 </div>
               </div>
 
@@ -95,7 +95,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
                   <span>Time</span>
                 </div>
                 <div style={{ fontFamily: 'var(--font-space)', fontSize: '0.8rem', fontWeight: 600, color: '#ffffff', marginTop: '0.2rem' }}>
-                  10:00 AM
+                  {event.time || '10:00 AM'}
                 </div>
               </div>
 
@@ -135,9 +135,20 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
                   <span>Closes</span>
                 </div>
                 <div style={{ fontFamily: 'var(--font-space)', fontSize: '0.8rem', fontWeight: 600, color: 'var(--amber-primary)', marginTop: '0.2rem' }}>
-                  12 Nov 2026
+                  {event.closes || '12 Nov 2026'}
                 </div>
               </div>
+
+              {event.prizePool && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '11px', fontFamily: 'var(--font-space)', color: 'var(--amber-primary)' }}>
+                    <span>Prize Pool</span>
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-space)', fontSize: '0.8rem', fontWeight: 700, color: '#fcd34d', marginTop: '0.2rem' }}>
+                    {event.prizePool}
+                  </div>
+                </div>
+              )}
 
             </div>
 

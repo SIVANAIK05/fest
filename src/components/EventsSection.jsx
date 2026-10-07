@@ -17,9 +17,9 @@ export const MISSIONS_LIST = [
     teamSize: "2 - 4",
     venue: "CSE Block",
     date: "15 Nov 2026",
-    time: "10:00 AM",
-    closes: "12 Nov 2026",
-    prizePool: "₹25,000"
+    // time: "10:00 AM",
+    // closes: "12 Nov 2026",
+    // prizePool: "₹25,000"
   },
   {
     id: "codeverse",
@@ -32,9 +32,9 @@ export const MISSIONS_LIST = [
     teamSize: "2 - 4",
     venue: "Tesseract Lab",
     date: "15 Nov 2026",
-    time: "11:00 AM",
-    closes: "12 Nov 2026",
-    prizePool: "₹35,000"
+    // time: "11:00 AM",
+    // closes: "12 Nov 2026",
+    // prizePool: "₹35,000"
   },
   {
     id: "cyber-war",
