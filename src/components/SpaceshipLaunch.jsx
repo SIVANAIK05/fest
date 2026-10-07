@@ -105,8 +105,8 @@ export default function SpaceshipLaunch({ isTriggered, onLaunchStart, onLaunchCo
         {/* HIGH-PRECISION AEROSPACE SHUTTLE SVG */}
         <svg
           viewBox="0 0 120 180"
-          width="74"
-          height="110"
+          width="60"
+          height="88"
           style={{ display: 'block', overflow: 'visible' }}
         >
           <defs>

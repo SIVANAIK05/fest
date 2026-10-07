@@ -52,7 +52,7 @@ npm -v
 
 2. **Install dependencies**:
    ```bash
-   npm installgit
+   npm install
 
 ## 💻 Running the Project
 
