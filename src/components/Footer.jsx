@@ -205,10 +205,6 @@ export default function Footer() {
                 </form>
               )}
             </div>
-
-            <div style={{ marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(56, 189, 248, 0.1)', fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-space)' }}>
-              ⚡ Encrypted channel monitored 24/7 during fest preparations.
-            </div>
           </div>
 
           {/* ============================================================ */}
@@ -253,9 +249,6 @@ export default function Footer() {
                 <div style={{ fontSize: '11.5px', color: '#94a3b8', fontFamily: 'var(--font-space)', marginTop: '0.25rem' }}>
                   Nambur (V), Pedakakani (M), Guntur - 522508, Andhra Pradesh, India
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--cyan-primary)', fontFamily: 'var(--font-space)', marginTop: '0.25rem' }}>
-                  GPS Telemetry: 16.3533° N, 80.5284° E // Main Campus Tech Arena
-                </div>
               </div>
 
               {/* Contact Lines */}
@@ -265,7 +258,7 @@ export default function Footer() {
                   <div>
                     <span style={{ color: 'var(--text-muted)', fontSize: '10px', display: 'block' }}>OFFICIAL INBOX:</span>
                     <a href="mailto:control@astrion.org" style={{ color: '#ffffff', textDecoration: 'none', fontWeight: 600 }}>
-                      control@astrion.org / iic@vvit.net
+                      iic.vvituniversity@gmail.com / iicvvitu@vvitu.net
                     </a>
                   </div>
                 </div>
@@ -273,9 +266,9 @@ export default function Footer() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                   <Phone style={{ width: '1rem', height: '1rem', color: 'var(--cyan-primary)', flexShrink: 0 }} />
                   <div>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '10px', display: 'block' }}>STUDENT COORDINATOR HOTLINES:</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '10px', display: 'block' }}>  COORDINATOR HOTLINES:</span>
                     <span style={{ color: '#ffffff', fontWeight: 600 }}>
-                      +91 98401 23456 / +91 98402 34567
+                      +91  8885811784 / 9154775499 / 8639342286
                     </span>
                   </div>
                 </div>
