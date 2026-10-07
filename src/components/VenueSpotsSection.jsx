@@ -131,11 +131,11 @@ export default function VenueSpotsSection() {
                 textTransform: 'uppercase',
                 cursor: 'pointer',
                 background: isActive 
-                  ? 'linear-gradient(135deg, #06b6d4 0%, #38bdf8 100%)' 
+                  ? '#ffffff' 
                   : 'rgba(8, 14, 30, 0.75)',
-                color: isActive ? '#020617' : '#cbd5e1',
-                border: isActive ? '1px solid #7dd3fc' : '1px solid rgba(56, 189, 248, 0.22)',
-                boxShadow: isActive ? '0 0 20px rgba(56, 189, 248, 0.45)' : 'none',
+                color: isActive ? '#020409' : '#cbd5e1',
+                border: isActive ? '1px solid rgba(255, 255, 255, 0.9)' : '1px solid rgba(255, 255, 255, 0.16)',
+                boxShadow: isActive ? '0 0 20px rgba(255, 255, 255, 0.35)' : 'none',
                 backdropFilter: 'blur(12px)',
                 transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
               }}
@@ -146,8 +146,8 @@ export default function VenueSpotsSection() {
                   fontSize: '9.5px', 
                   padding: '0.1rem 0.45rem', 
                   borderRadius: '9999px', 
-                  background: isActive ? 'rgba(0, 0, 0, 0.25)' : 'rgba(56, 189, 248, 0.15)',
-                  color: isActive ? '#020617' : '#38bdf8',
+                  background: isActive ? 'rgba(0, 0, 0, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+                  color: isActive ? '#020409' : '#94a3b8',
                   fontFamily: 'var(--font-mono)',
                   fontWeight: 800
                 }}

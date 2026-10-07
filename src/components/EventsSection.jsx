@@ -16,9 +16,9 @@ export const MISSIONS_LIST = [
     planetImage: "/images/planet_ai.jpg",
     teamSize: "2 - 4",
     venue: "CSE Block",
-    date: "15 Nov 2026",
+    date: "15 Oct 2026",
     // time: "10:00 AM",
-    // closes: "12 Nov 2026",
+    // closes: "12 Oct 2026",
     // prizePool: "₹25,000"
   },
   {
@@ -31,9 +31,9 @@ export const MISSIONS_LIST = [
     planetImage: "/images/planet_codeverse.jpg",
     teamSize: "2 - 4",
     venue: "Tesseract Lab",
-    date: "15 Nov 2026",
+    date: "15 Oct 2026",
     // time: "11:00 AM",
-    // closes: "12 Nov 2026",
+    // closes: "12 Oct 2026",
     // prizePool: "₹35,000"
   },
   {
@@ -46,7 +46,7 @@ export const MISSIONS_LIST = [
     planetImage: "/images/planet_cyberwar.jpg",
     teamSize: "1 - 2",
     venue: "Cyber Arena",
-    date: "16 Nov 2026",
+    date: "16 Oct 2026",
     time: "01:30 PM",
     closes: "Spot Walk-in",
     prizePool: "₹20,000"
@@ -61,9 +61,9 @@ export const MISSIONS_LIST = [
     planetImage: "/images/planet_techquiz.jpg",
     teamSize: "2 Players",
     venue: "Newton Amphitheatre",
-    date: "16 Nov 2026",
+    date: "16 Oct 2026",
     time: "03:00 PM",
-    closes: "13 Nov 2026",
+    closes: "13 Oct 2026",
     prizePool: "₹15,000"
   },
 
@@ -78,9 +78,9 @@ export const MISSIONS_LIST = [
     planetImage: "/images/planet_codeverse.jpg",
     teamSize: "5 Players / Solo",
     venue: "Main Auditorium",
-    date: "15 Nov 2026",
+    date: "15 Oct 2026",
     time: "11:00 AM",
-    closes: "12 Nov 2026",
+    closes: "12 Oct 2026",
     prizePool: "₹25,000"
   },
   {
@@ -93,9 +93,9 @@ export const MISSIONS_LIST = [
     planetImage: "/images/planet_cyberwar.jpg",
     teamSize: "1 - 3",
     venue: "Executive Hall",
-    date: "16 Nov 2026",
+    date: "16 Oct 2026",
     time: "02:00 PM",
-    closes: "13 Nov 2026",
+    closes: "13 Oct 2026",
     prizePool: "₹20,000"
   },
   {
@@ -108,9 +108,9 @@ export const MISSIONS_LIST = [
     planetImage: "/images/planet_ai.jpg",
     teamSize: "6 - 15 Dancers",
     venue: "Open Air Stadium",
-    date: "16 Nov 2026",
+    date: "16 Oct 2026",
     time: "06:00 PM",
-    closes: "13 Nov 2026",
+    closes: "13 Oct 2026",
     prizePool: "₹25,000"
   },
   {
@@ -123,7 +123,7 @@ export const MISSIONS_LIST = [
     planetImage: "/images/planet_techquiz.jpg",
     teamSize: "2 Players",
     venue: "Central Courtyard",
-    date: "15 Nov 2026",
+    date: "15 Oct 2026",
     time: "03:30 PM",
     closes: "Spot Walk-in",
     prizePool: "₹10,000"

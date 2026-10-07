@@ -56,7 +56,7 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
         >
           {/* TOP RIGHT DATE WIDGET */}
           <div className="hero-date-widget">
-            <div className="month">NOV</div>
+            <div className="month">OCT</div>
             <div className="days">23 - 24</div>
             <div className="year">2026</div>
           </div>
@@ -78,7 +78,7 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
 
             {/* TOP BILLING LINE (matching Interstellar reference image) */}
             <div className="hero-billing-header">
-              ANNUAL INTER-COLLEGIATE FESTIVAL • NOV 23 - 24, 2026
+              ANNUAL INTER-COLLEGIATE FESTIVAL • OCT 23 - 24, 2026
             </div>
 
             {/* BIG CINEMATIC ASTRION TITLE IN INTERSTELLAR TYPOGRAPHY */}
@@ -127,7 +127,7 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
                   height: '1.4rem',
                   borderRadius: '9999px',
                   background: '#020617',
-                  color: '#38bdf8',
+                  color: '#fbbf24',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center'

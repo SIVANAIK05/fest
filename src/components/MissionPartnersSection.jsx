@@ -3,7 +3,6 @@ import { Award, Lightbulb, Rocket, ExternalLink, ShieldCheck } from 'lucide-reac
 
 export default function MissionPartnersSection() {
   const partners = [
-    { name: 'IEEE', desc: 'Technical Co-Sponsor' },
     { name: 'Google', desc: 'Cloud & AI Sponsor' },
     { name: 'Infosys', desc: 'Innovation Partner' },
     { name: 'TATA', desc: 'Strategic Alliance' },

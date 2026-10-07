@@ -1,23 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ShieldCheck, CheckCircle, X, Users, Sparkles } from 'lucide-react';
 import { playUiBeep } from '../utils/audioEngine';
 
 export default function PassVerificationModal({ pass, onClose }) {
+  useEffect(() => {
+    if (pass) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [pass]);
+
   if (!pass) return null;
 
-  return (
+  return typeof document !== 'undefined' && createPortal(
     <div 
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 100,
-        background: 'rgba(2, 4, 9, 0.88)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
+        zIndex: 99999,
+        background: 'rgba(2, 4, 9, 0.94)',
+        backdropFilter: 'blur(25px)',
+        WebkitBackdropFilter: 'blur(25px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1.5rem'
+        padding: '1.5rem',
+        overflowY: 'auto'
       }}
       onClick={onClose}
     >
@@ -140,6 +152,7 @@ export default function PassVerificationModal({ pass, onClose }) {
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

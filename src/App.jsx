@@ -87,7 +87,7 @@ export default function App() {
         {/* 04 — ECHOES THROUGH TIME (Memories carousel & year selector) */}
         <EchoesSection />
 
-        {/* MISSION PARTNERS (IEEE, Infosys, TATA, Google, Microsoft) */}
+        {/* MISSION PARTNERS (Google, Infosys, TATA, Microsoft) */}
         <MissionPartnersSection />
 
         {/* THE CREW (Circular glowing crew portraits) */}

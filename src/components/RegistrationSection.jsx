@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Check, 
   Download, 
@@ -46,6 +47,17 @@ export default function RegistrationSection({ preselectedEventId }) {
   const [isDownloaded, setIsDownloaded] = useState(false);
   const [showPassModal, setShowPassModal] = useState(false);
   const [isBreaching, setIsBreaching] = useState(false);
+
+  // Prevent background scrolling while Pass Modal is open so content never displays over the pass
+  useEffect(() => {
+    if (showPassModal) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [showPassModal]);
 
 
   useEffect(() => {
@@ -246,19 +258,19 @@ export default function RegistrationSection({ preselectedEventId }) {
                   padding: '1.1rem 1.25rem',
                   borderRadius: '1rem',
                   background: !formData.isSquad 
-                    ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(8, 14, 30, 0.8) 100%)' 
+                    ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(8, 14, 30, 0.85) 100%)' 
                     : 'rgba(15, 23, 42, 0.6)',
                   border: !formData.isSquad 
-                    ? '1.5px solid var(--cyan-primary)' 
+                    ? '1.5px solid rgba(255, 255, 255, 0.85)' 
                     : '1px solid rgba(51, 65, 85, 0.6)',
-                  boxShadow: !formData.isSquad ? '0 0 20px rgba(56, 189, 248, 0.25)' : 'none',
+                  boxShadow: !formData.isSquad ? '0 0 20px rgba(255, 255, 255, 0.2)' : 'none',
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.2s ease'
                 }}
               >
-                <div style={{ width: '2.75rem', height: '2.75rem', borderRadius: '0.75rem', background: !formData.isSquad ? 'rgba(56, 189, 248, 0.25)' : 'rgba(30, 41, 59, 0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <User style={{ width: '1.4rem', height: '1.4rem', color: !formData.isSquad ? 'var(--cyan-primary)' : 'var(--text-slate)' }} />
+                <div style={{ width: '2.75rem', height: '2.75rem', borderRadius: '0.75rem', background: !formData.isSquad ? 'rgba(255, 255, 255, 0.15)' : 'rgba(30, 41, 59, 0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <User style={{ width: '1.4rem', height: '1.4rem', color: !formData.isSquad ? '#ffffff' : 'var(--text-slate)' }} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.95rem', fontWeight: 700, color: '#ffffff' }}>
@@ -268,7 +280,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                     Individual participant entry pass
                   </div>
                 </div>
-                {!formData.isSquad && <CheckCircle2 style={{ width: '1.25rem', height: '1.25rem', color: 'var(--cyan-primary)' }} />}
+                {!formData.isSquad && <CheckCircle2 style={{ width: '1.25rem', height: '1.25rem', color: '#ffffff' }} />}
               </button>
 
               {/* Squad Button */}
@@ -540,8 +552,8 @@ export default function RegistrationSection({ preselectedEventId }) {
 
             {/* CATEGORY B: NON-TECHNICAL & GAMING MISSIONS */}
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.65rem', color: '#fbcfe8', fontSize: '12px', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
-                <Gamepad2 style={{ width: '0.9rem', height: '0.9rem', color: '#f472b6' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.65rem', color: 'var(--amber-primary)', fontSize: '12px', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
+                <Gamepad2 style={{ width: '0.9rem', height: '0.9rem', color: 'var(--amber-primary)' }} />
                 <span>Creative, Non-Tech & Gaming Missions</span>
               </div>
 
@@ -560,12 +572,12 @@ export default function RegistrationSection({ preselectedEventId }) {
                         padding: '0.85rem 1rem',
                         borderRadius: '0.85rem',
                         background: isSelected 
-                          ? 'linear-gradient(135deg, rgba(244, 114, 182, 0.2) 0%, rgba(15, 23, 42, 0.9) 100%)' 
+                          ? 'linear-gradient(135deg, rgba(251, 191, 36, 0.18) 0%, rgba(15, 23, 42, 0.9) 100%)' 
                           : 'rgba(15, 23, 42, 0.65)',
                         border: isSelected 
-                          ? '1.5px solid #f472b6' 
+                          ? '1.5px solid var(--amber-primary)' 
                           : '1px solid rgba(51, 65, 85, 0.5)',
-                        boxShadow: isSelected ? '0 0 15px rgba(244, 114, 182, 0.25)' : 'none',
+                        boxShadow: isSelected ? '0 0 15px rgba(251, 191, 36, 0.25)' : 'none',
                         cursor: 'pointer',
                         textAlign: 'left',
                         transition: 'all 0.15s ease'
@@ -575,7 +587,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                         <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.85rem', fontWeight: 700, color: isSelected ? '#ffffff' : '#cbd5e1' }}>
                           {m.title}
                         </span>
-                        {isSelected && <Check style={{ width: '1rem', height: '1rem', color: '#f472b6' }} />}
+                        {isSelected && <Check style={{ width: '1rem', height: '1rem', color: 'var(--amber-primary)' }} />}
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '0.25rem' }}>
@@ -603,17 +615,16 @@ export default function RegistrationSection({ preselectedEventId }) {
               className="btn-pill-cyan"
               style={{
                 width: '100%',
-                padding: '1.1rem',
-                fontSize: '1rem',
+                padding: '1.15rem',
+                fontSize: '0.95rem',
                 fontWeight: 800,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.65rem',
+                gap: '0.75rem',
                 cursor: 'pointer',
-                boxShadow: '0 0 35px rgba(56, 189, 248, 0.4)',
                 borderRadius: '1rem',
-                letterSpacing: '0.04em'
+                letterSpacing: '0.12em'
               }}
             >
               <Rocket style={{ width: '1.25rem', height: '1.25rem' }} />
@@ -633,19 +644,20 @@ export default function RegistrationSection({ preselectedEventId }) {
       {/* ============================================================ */}
       {/* 🚀 CREW ENTRY PASS POPUP MODAL (SHOWS ON FORM SUBMISSION)    */}
       {/* ============================================================ */}
-      {showPassModal && (
+      {showPassModal && typeof document !== 'undefined' && createPortal(
         <div 
           style={{
             position: 'fixed',
             inset: 0,
-            zIndex: 100,
-            background: 'rgba(2, 4, 9, 0.92)',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
+            zIndex: 99999,
+            background: 'rgba(2, 4, 9, 0.94)',
+            backdropFilter: 'blur(25px)',
+            WebkitBackdropFilter: 'blur(25px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '1.25rem',
+            padding: 'clamp(1rem, 2.5vw, 1.75rem)',
+            overflowY: 'auto',
             animation: 'fadeIn 0.25s ease-out'
           }}
           onClick={() => setShowPassModal(false)}
@@ -655,11 +667,12 @@ export default function RegistrationSection({ preselectedEventId }) {
             style={{
               width: '100%',
               maxWidth: '680px',
+              maxHeight: '92vh',
+              overflowY: 'auto',
               position: 'relative',
               borderRadius: '1.75rem',
-              overflow: 'hidden',
-              border: '2px solid rgba(56, 189, 248, 0.65)',
-              boxShadow: '0 25px 90px rgba(0, 0, 0, 0.95), 0 0 60px rgba(56, 189, 248, 0.35)',
+              border: '2px solid rgba(255, 255, 255, 0.65)',
+              boxShadow: '0 25px 90px rgba(0, 0, 0, 0.95), 0 0 45px rgba(245, 158, 11, 0.3)',
               fontFamily: 'var(--font-space)'
             }}
           >
@@ -681,7 +694,7 @@ export default function RegistrationSection({ preselectedEventId }) {
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(135deg, rgba(2, 6, 23, 0.92) 0%, rgba(3, 7, 21, 0.82) 55%, rgba(8, 20, 45, 0.92) 100%)',
+                background: 'linear-gradient(135deg, rgba(2, 6, 23, 0.93) 0%, rgba(3, 7, 21, 0.85) 55%, rgba(8, 20, 45, 0.93) 100%)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
                 zIndex: 1
@@ -704,20 +717,21 @@ export default function RegistrationSection({ preselectedEventId }) {
                   color: 'var(--text-slate)',
                   cursor: 'pointer',
                   background: 'rgba(15, 23, 42, 0.85)',
-                  border: '1px solid var(--border-cyan)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
                   borderRadius: '9999px',
                   padding: '0.4rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  zIndex: 10
+                  zIndex: 10,
+                  transition: 'all 0.2s ease'
                 }}
               >
                 <X style={{ width: '1.25rem', height: '1.25rem' }} />
               </button>
 
               {/* Modal Header: Official Logos & Gateway Clearance */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(56, 189, 248, 0.25)', paddingBottom: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.18)', paddingBottom: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#ffffff', padding: '0.25rem 0.65rem', borderRadius: '0.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
                   <img src="/images/iic_logo.png" alt="IIC" style={{ height: '1.4rem', width: 'auto' }} />
                   <span style={{ color: '#cbd5e1', fontSize: '11px' }}>|</span>
@@ -735,14 +749,14 @@ export default function RegistrationSection({ preselectedEventId }) {
               </div>
 
               {/* PASS CONTENT BODY */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem', alignItems: 'center', background: 'rgba(8, 14, 30, 0.75)', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: '1.25rem', padding: '1.5rem', marginBottom: '1.5rem', backdropFilter: 'blur(12px)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem', alignItems: 'center', background: 'rgba(8, 14, 30, 0.75)', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '1.25rem', padding: '1.5rem', marginBottom: '1.5rem', backdropFilter: 'blur(12px)' }}>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                   <div>
                     <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                       BOARDING PASS ID
                     </div>
-                    <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '1.65rem', color: 'var(--cyan-primary)', fontWeight: 900, letterSpacing: '0.04em' }}>
+                    <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '1.65rem', color: '#ffffff', fontWeight: 900, letterSpacing: '0.04em' }}>
                       {astrionId}
                     </div>
                   </div>
@@ -752,7 +766,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                       LEAD ASTRONAUT & PIN
                     </div>
                     <div style={{ fontSize: '15.5px', color: '#ffffff', fontWeight: 700 }}>
-                      {formData.fullName} • <span style={{ color: 'var(--cyan-primary)' }}>{formData.pin}</span>
+                      {formData.fullName} • <span style={{ color: 'var(--amber-primary)' }}>{formData.pin}</span>
                     </div>
                   </div>
 
@@ -780,7 +794,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                     <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
                       AUTHORIZED MISSIONS
                     </div>
-                    <div style={{ fontSize: '12px', color: '#38bdf8', fontWeight: 600 }}>
+                    <div style={{ fontSize: '12px', color: '#ffffff', fontWeight: 600 }}>
                       {selectedMissionsList.map(m => m.title).join(', ') || 'General Entry'}
                     </div>
                   </div>
@@ -795,8 +809,8 @@ export default function RegistrationSection({ preselectedEventId }) {
                       background: '#ffffff',
                       padding: '0.45rem',
                       borderRadius: '0.85rem',
-                      boxShadow: '0 0 30px rgba(56, 189, 248, 0.5)',
-                      border: '2px solid #38bdf8'
+                      boxShadow: '0 0 30px rgba(255, 255, 255, 0.4)',
+                      border: '2px solid rgba(255, 255, 255, 0.8)'
                     }}
                   >
                     {qrDataUrl && <img src={qrDataUrl} alt="Scan QR Code" style={{ width: '100%', height: '100%' }} />}
@@ -840,7 +854,8 @@ export default function RegistrationSection({ preselectedEventId }) {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 💥 HYPERSPACE SPACE BREACH & COCKPIT CRASH ANIMATION */}

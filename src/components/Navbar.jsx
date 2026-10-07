@@ -124,9 +124,9 @@ export default function Navbar() {
             style={{
               padding: '0.5rem',
               borderRadius: '9999px',
-              border: isAudioActive ? '1px solid var(--cyan-primary)' : '1px solid rgba(100, 116, 139, 0.4)',
-              background: isAudioActive ? 'rgba(56, 189, 248, 0.2)' : 'rgba(15, 23, 42, 0.6)',
-              color: isAudioActive ? 'var(--cyan-primary)' : 'var(--text-slate)',
+              border: isAudioActive ? '1px solid var(--amber-primary)' : '1px solid rgba(255, 255, 255, 0.2)',
+              background: isAudioActive ? 'rgba(251, 191, 36, 0.15)' : 'rgba(15, 23, 42, 0.6)',
+              color: isAudioActive ? 'var(--amber-primary)' : 'var(--text-slate)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',

@@ -288,7 +288,7 @@ export default function Footer() {
                   <span>Free Transit Shuttles for Outstation Teams</span>
                 </div>
                 <div style={{ fontSize: '11px', color: '#cbd5e1', marginTop: '0.25rem', lineHeight: '1.4' }}>
-                  Complimentary campus  buses operate  from Guntur  & Vijayawada Bus Terminal throughout 23 - 24 Nov 2026.
+                  Complimentary campus  buses operate  from Guntur  & Vijayawada Bus Terminal throughout 23 - 24 Oct 2026.
                 </div>
               </div>
             </div>

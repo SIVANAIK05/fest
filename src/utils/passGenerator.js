@@ -360,7 +360,7 @@ async function renderPassCanvas(canvas, { astrionId, formData, selectedMissions,
   // Bottom Guarantee Stamp
   ctx.fillStyle = '#34d399';
   ctx.font = 'bold 11px sans-serif';
-  ctx.fillText("✓ VERIFIED FOR VENUE ENTRY • DATES: 23 - 24 NOV 2026 • VENUE: VVIT CAMPUS", 42, 490);
+  ctx.fillText("✓ VERIFIED FOR VENUE ENTRY • DATES: 23 - 24 OCT 2026 • VENUE: VVIT CAMPUS", 42, 490);
 
   // --- STUB AREA (Right side: 750 to 1080) ---
   const stubCenterX = 750 + (1080 - 750) / 2;

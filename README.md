@@ -8,7 +8,7 @@
 
 **ASTRION 2026** is the flagship inter-collegiate festival organized in collaboration with the **Institution's Innovation Council (IIC)** and **VVIT**. Designed with an authentic deep-space aesthetic, this web portal delivers an immersive cinematic experience from the moment attendees enter orbit.
 
-- **Dates**: November 23 – 24, 2026
+- **Dates**: October 23 – 24, 2026
 - **Theme**: *Innovate Beyond Boundaries* (Gargantua & Nolan-inspired deep space exploration)
 - **Official Accreditations**: Ministry of Education's Innovation Cell (IIC) & VVITU
 

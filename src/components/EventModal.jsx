@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ArrowLeft,
   Calendar,
@@ -12,9 +13,19 @@ import {
 import { playUiBeep } from '../utils/audioEngine';
 
 export default function EventModal({ event, onClose, onRegisterEvent }) {
+  useEffect(() => {
+    if (event) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [event]);
+
   if (!event) return null;
 
-  return (
+  return typeof document !== 'undefined' && createPortal(
     <div className="cosmic-modal-overlay" onClick={onClose}>
       <div
         style={{
@@ -85,7 +96,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
                   <span>Date</span>
                 </div>
                 <div style={{ fontFamily: 'var(--font-space)', fontSize: '0.8rem', fontWeight: 600, color: '#ffffff', marginTop: '0.2rem' }}>
-                  {event.date || '15 Nov 2026'}
+                  {event.date || '15 Oct 2026'}
                 </div>
               </div>
 
@@ -135,7 +146,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
                   <span>Closes</span>
                 </div>
                 <div style={{ fontFamily: 'var(--font-space)', fontSize: '0.8rem', fontWeight: 600, color: 'var(--amber-primary)', marginTop: '0.2rem' }}>
-                  {event.closes || '12 Nov 2026'}
+                  {event.closes || '12 Oct 2026'}
                 </div>
               </div>
 
@@ -198,6 +209,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
 
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
