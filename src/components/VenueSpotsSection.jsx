@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { 
   MapPin, 
   Navigation, 
-  Compass, 
   Users, 
   Zap, 
-  ArrowRight, 
   ChevronDown, 
   Copy, 
   Check, 
@@ -496,96 +494,7 @@ export default function VenueSpotsSection() {
         })}
       </div>
 
-      {/* SELECTED WAYPOINT SPOTLIGHT / RAPID TRANSIT HUD */}
-      <div
-        style={{
-          maxWidth: '980px',
-          margin: '3rem auto 0',
-          background: 'linear-gradient(135deg, rgba(8, 18, 42, 0.9) 0%, rgba(3, 8, 22, 0.95) 100%)',
-          border: '1px solid rgba(56, 189, 248, 0.35)',
-          borderRadius: '1.25rem',
-          padding: '1.4rem 1.8rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1.25rem',
-          backdropFilter: 'blur(16px)',
-          boxShadow: '0 15px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.15)'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: '280px', flex: '1 1 300px' }}>
-          <div 
-            style={{ 
-              width: '42px', 
-              height: '42px', 
-              borderRadius: '0.75rem', 
-              background: 'rgba(56, 189, 248, 0.15)', 
-              border: '1px solid var(--cyan-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              boxShadow: '0 0 15px rgba(56, 189, 248, 0.3)'
-            }}
-          >
-            <Compass style={{ width: '1.4rem', height: '1.4rem', color: 'var(--cyan-primary)' }} />
-          </div>
 
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9.5px', color: 'var(--cyan-primary)', letterSpacing: '0.12em', fontWeight: 700 }}>
-                CAMPUS SPOT // {selectedSpot.name.toUpperCase()}
-              </span>
-              <span style={{ fontSize: '9px', padding: '0.1rem 0.45rem', borderRadius: '9999px', background: 'rgba(56, 189, 248, 0.15)', color: 'var(--cyan-primary)', border: '1px solid rgba(56, 189, 248, 0.3)', fontWeight: 700 }}>
-                {selectedSpot.status}
-              </span>
-            </div>
-            <div style={{ fontFamily: 'var(--font-space)', fontSize: '1.05rem', color: '#ffffff', fontWeight: 800 }}>
-              {selectedSpot.name}
-            </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8', fontFamily: 'var(--font-space)', marginTop: '0.2rem' }}>
-              <strong style={{ color: '#e2e8f0' }}>{selectedSpot.building}</strong> • Transit route: <span style={{ color: 'var(--amber-primary)' }}>{selectedSpot.transitGate}</span>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <a
-            href="#events"
-            onClick={() => playUiBeep(1200, 0.04)}
-            className="btn-pill-ghost"
-            style={{ 
-              fontSize: '11px', 
-              padding: '0.55rem 1.15rem', 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '0.4rem', 
-              textDecoration: 'none' 
-            }}
-          >
-            <Zap style={{ width: '0.85rem', height: '0.85rem', color: 'var(--amber-primary)' }} />
-            <span>View Events at this Spot</span>
-          </a>
-
-          <a
-            href="#register"
-            onClick={() => playUiBeep(1400, 0.04)}
-            className="btn-pill-cyan"
-            style={{ 
-              fontSize: '11px', 
-              padding: '0.55rem 1.25rem', 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '0.4rem', 
-              textDecoration: 'none' 
-            }}
-          >
-            <span>Get Venue Boarding Pass</span>
-            <ArrowRight style={{ width: '0.85rem', height: '0.85rem' }} />
-          </a>
-        </div>
-      </div>
 
     </section>
   );

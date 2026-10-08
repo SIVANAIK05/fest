@@ -22,12 +22,12 @@ export default function MissionSection() {
 
   return (
     <section id="mission" className="ast-section">
-      
+
       <div className="mission-grid">
-        
+
         {/* LEFT COLUMN: THE MISSION CONTENT (from reference image) */}
         <div className="mission-left">
-          
+
           {/* Index 01 — */}
           <div>
             <div className="section-index">01 —</div>
@@ -74,11 +74,11 @@ export default function MissionSection() {
 
         {/* RIGHT COLUMN: ORBITAL STATION VISUAL (from reference image) */}
         <div style={{ position: 'relative' }}>
-          
+
           <TiltCard maxTilt={4} scale={1.01}>
             <div className="mission-visual-box">
-              <img 
-                src="/images/mission_station.jpg" 
+              <img
+                src="/images/mission_station.jpg"
                 alt="Orbital Station above Planet"
               />
             </div>

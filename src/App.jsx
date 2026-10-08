@@ -10,8 +10,9 @@ import TheCrewSection from './components/TheCrewSection';
 import VenueSpotsSection from './components/VenueSpotsSection';
 import Footer from './components/Footer';
 import CosmicParticleField from './components/CosmicParticleField';
+import InterstellarGalaxyBackground from './components/InterstellarGalaxyBackground';
 import PassVerificationModal from './components/PassVerificationModal';
-import { playWarpSound } from './utils/audioEngine';
+import { playWarpSound, startAmbientAudio } from './utils/audioEngine';
 
 export default function App() {
   const [preselectedEventId, setPreselectedEventId] = useState(null);
@@ -45,10 +46,13 @@ export default function App() {
 
   const handleLaunchStart = () => {
     setIsWarping(true);
+    // Start Hans Zimmer Interstellar soundtrack on launch gesture
+    startAmbientAudio();
   };
 
   const handleEnterAstrion = () => {
     // The spaceship has breached outer space across the 5 reference boxes, transition smoothly into Section 01
+    startAmbientAudio();
     const missionSection = document.getElementById('mission');
     if (missionSection) {
       missionSection.scrollIntoView({ behavior: 'smooth' });
@@ -64,15 +68,19 @@ export default function App() {
       {/* 3D COSMIC PARTICLE & STARDUST CANVAS (Floating through space, mouse gravity & warp speed) */}
       <CosmicParticleField isWarping={isWarping} />
 
-      {/* NAVIGATION BAR */}
+      {/* INTERSTELLAR GALAXY BACKGROUND (Active everywhere except hero, mouse/touch gravity, cosmic shockwaves) */}
+      <InterstellarGalaxyBackground />
+
+
+      {/* NAVIGATION BAR WITH UNIQUE MOBILE DOCK & HOLOGRAPHIC FLIGHT DECK */}
       <Navbar />
 
       {/* MAIN SECTIONS ACCORDING TO REFERENCE IMAGE */}
       <main>
         {/* HERO SECTION (Astronaut + Gargantua Black Hole + ASTRION Title + Date) */}
-        <Hero 
-          onLaunchStart={handleLaunchStart} 
-          onEnterAstrion={handleEnterAstrion} 
+        <Hero
+          onLaunchStart={handleLaunchStart}
+          onEnterAstrion={handleEnterAstrion}
         />
 
         {/* 01 — THE MISSION (Mission statement, 4 key metrics & orbital space station) */}

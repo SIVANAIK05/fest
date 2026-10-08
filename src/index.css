@@ -129,6 +129,22 @@ button {
   .md-hide-btn {
     display: none !important;
   }
+
+  .desktop-only-btn {
+    display: inline-flex !important;
+  }
+
+  .mobile-only-dock {
+    display: none !important;
+  }
+}
+
+.desktop-only-btn {
+  display: none !important;
+}
+
+.mobile-only-dock {
+  display: flex !important;
 }
 
 /* Section Header (Index + Heading + Subtitle) */
@@ -1525,6 +1541,7 @@ button {
     transform: scale(0.85);
     opacity: 0.9;
   }
+
   100% {
     transform: scale(2.3);
     opacity: 0;
@@ -1535,6 +1552,7 @@ button {
   0% {
     background-position: 0 0;
   }
+
   100% {
     background-position: 0 40px;
   }
@@ -1554,14 +1572,12 @@ button {
 .venue-hud-outer {
   position: relative;
   padding: 1.5px;
-  clip-path: polygon(
-    0 0,
-    calc(100% - 24px) 0,
-    100% 24px,
-    100% 100%,
-    24px 100%,
-    0 calc(100% - 24px)
-  );
+  clip-path: polygon(0 0,
+      calc(100% - 24px) 0,
+      100% 24px,
+      100% 100%,
+      24px 100%,
+      0 calc(100% - 24px));
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.3) 0%, rgba(14, 165, 233, 0.1) 40%, rgba(56, 189, 248, 0.05) 70%, rgba(251, 191, 36, 0.25) 100%);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
@@ -1582,14 +1598,12 @@ button {
   background: linear-gradient(180deg, rgba(7, 14, 34, 0.94) 0%, rgba(2, 6, 21, 0.97) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  clip-path: polygon(
-    0 0,
-    calc(100% - 23px) 0,
-    100% 23px,
-    100% 100%,
-    23px 100%,
-    0 calc(100% - 23px)
-  );
+  clip-path: polygon(0 0,
+      calc(100% - 23px) 0,
+      100% 23px,
+      100% 100%,
+      23px 100%,
+      0 calc(100% - 23px));
   padding: 1.6rem;
   display: flex;
   flex-direction: column;
@@ -1603,7 +1617,7 @@ button {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: 
+  background-image:
     linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
   background-size: 24px 24px;
@@ -1676,3 +1690,210 @@ button {
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
   border-color: var(--cyan-primary) !important;
 }
+
+/* ==========================================================================
+   AUTHENTIC INTERSTELLAR FLIGHT PASS BOARDING TICKET
+   Identical to downloaded high-res boarding pass ticket with perforation & notches
+   ========================================================================== */
+
+.flight-pass-ticket-card {
+  position: relative;
+  width: 100%;
+  max-width: 980px;
+  background-color: #050914;
+  background-image: linear-gradient(135deg, rgba(4, 9, 24, 0.92) 0%, rgba(2, 6, 20, 0.88) 100%), url('/images/crew_shuttle_delivery.jpg');
+  background-size: cover;
+  background-position: center 35%;
+  border: 1.5px solid rgba(56, 189, 248, 0.45);
+  border-radius: 18px;
+  box-shadow: 0 25px 90px rgba(0, 0, 0, 0.95), 0 0 45px rgba(56, 189, 248, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  font-family: var(--font-space);
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+/* Subtle stardust particle overlay */
+.flight-pass-ticket-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 28px 38px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1.5px 1.5px at 140px 90px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 310px 210px, rgba(56, 189, 248, 0.9), transparent),
+    radial-gradient(1.5px 1.5px at 480px 75px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 640px 240px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1.5px 1.5px at 800px 120px, rgba(56, 189, 248, 0.8), transparent),
+    radial-gradient(1px 1px at 920px 290px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 170px 340px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 420px 430px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 860px 460px, rgba(56, 189, 248, 0.7), transparent);
+  background-repeat: repeat;
+  background-size: 550px 420px;
+  pointer-events: none;
+  opacity: 0.6;
+  z-index: 1;
+}
+
+/* Main Ticket Body (Left) */
+.flight-pass-main-body {
+  position: relative;
+  flex: 1 1 68%;
+  min-width: 0;
+  padding: 2.25rem 2.25rem 2rem 2.5rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justifyContent: space-between;
+}
+
+/* Ticket Perforation Divider */
+.flight-pass-perforation {
+  position: relative;
+  width: 0;
+  border-right: 1.5px dashed rgba(56, 189, 248, 0.35);
+  flex-shrink: 0;
+  z-index: 3;
+}
+
+/* Semi-circular tear-off ticket notches */
+.flight-pass-notch-top {
+  position: absolute;
+  top: -14px;
+  left: -14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #020409;
+  border: 1.5px solid rgba(56, 189, 248, 0.45);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9);
+  z-index: 4;
+}
+
+.flight-pass-notch-bottom {
+  position: absolute;
+  bottom: -14px;
+  left: -14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #020409;
+  border: 1.5px solid rgba(56, 189, 248, 0.45);
+  box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.9);
+  z-index: 4;
+}
+
+/* Right Tear-Off Stub */
+.flight-pass-stub-body {
+  position: relative;
+  flex: 0 0 32%;
+  min-width: 280px;
+  padding: 2.25rem 1.75rem 2rem;
+  background: rgba(3, 7, 18, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justifyContent: space-between;
+  gap: 1rem;
+  z-index: 2;
+  text-align: center;
+}
+
+/* Responsive Stacking for Tablets & Mobile */
+@media (max-width: 820px) {
+  .flight-pass-ticket-card {
+    flex-direction: column;
+    border-radius: 16px;
+  }
+
+  .flight-pass-main-body {
+    padding: 1.75rem 1.5rem 1.5rem;
+  }
+
+  .flight-pass-perforation {
+    width: 100%;
+    height: 0;
+    border-right: none;
+    border-bottom: 1.5px dashed rgba(56, 189, 248, 0.35);
+  }
+
+  .flight-pass-notch-top {
+    left: -14px;
+    top: -14px;
+    bottom: auto;
+  }
+
+  .flight-pass-notch-bottom {
+    right: -14px;
+    top: -14px;
+    bottom: auto;
+    left: auto;
+  }
+
+  .flight-pass-stub-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+/* ============================================================ */
+/* UNIQUE SCI-FI MOBILE NAV & RESPONSIVE HEADER ADAPTATION     */
+/* ============================================================ */
+.mobile-only-dock {
+  display: flex !important;
+}
+
+.md-hide-btn {
+  display: flex !important;
+}
+
+.desktop-only-btn {
+  display: inline-flex !important;
+}
+
+.md-flex-nav {
+  display: none !important;
+}
+
+@media (min-width: 769px) {
+  .mobile-only-dock {
+    display: none !important;
+  }
+
+  .md-hide-btn {
+    display: none !important;
+  }
+
+  .desktop-only-btn {
+    display: inline-flex !important;
+  }
+
+  .md-flex-nav {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-only-btn {
+    display: none !important;
+  }
+
+  .md-flex-nav {
+    display: none !important;
+  }
+
+  .mobile-only-dock {
+    display: flex !important;
+  }
+
+  .md-hide-btn {
+    display: flex !important;
+  }
+}

@@ -274,7 +274,10 @@ async function renderPassCanvas(canvas, { astrionId, formData, selectedMissions,
 
   ctx.fillStyle = '#ffffff';
   ctx.font = 'bold 20px sans-serif';
-  const truncatedName = formData.fullName.length > 28 ? formData.fullName.substring(0, 26) + '...' : formData.fullName;
+  const displayName = formData.studentId 
+    ? `${formData.fullName} • ${formData.studentId}` 
+    : formData.fullName;
+  const truncatedName = displayName.length > 32 ? displayName.substring(0, 30) + '...' : displayName;
   ctx.fillText(truncatedName || 'Commander Cooper', 42, row1Y + 24);
 
   ctx.fillStyle = '#94a3b8';
@@ -310,7 +313,7 @@ async function renderPassCanvas(canvas, { astrionId, formData, selectedMissions,
   const row3Y = 325;
   ctx.fillStyle = '#94a3b8';
   ctx.font = 'bold 9.5px sans-serif';
-  ctx.fillText("CREW MEMBERS / CO-ASTRONAUTS", 42, row3Y);
+  ctx.fillText("CREW MEMBERS / TEAMMATES", 42, row3Y);
 
   ctx.fillStyle = '#cbd5e1';
   ctx.font = '12px sans-serif';

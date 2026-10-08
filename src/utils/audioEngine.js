@@ -16,61 +16,103 @@ function getAudioContext() {
   return audioCtx;
 }
 
-export function toggleAmbientAudio(onStateChange) {
-  const ctx = getAudioContext();
-  if (!ctx) return false;
+// Hans Zimmer Interstellar Soundtrack & Cosmic Audio Engine
+const THEME_AUDIO_URL = '/audio/interstellar-theme.mp3';
+const TARGET_VOLUME = 0.55;
 
-  if (isPlaying) {
-    ambientNodes.forEach(node => {
-      try {
-        if (node.stop) node.stop();
-        node.disconnect();
-      } catch (e) { }
+let bgMusicAudio = null;
+let isThemePlaying = false;
+let fadeInterval = null;
+const audioSubscribers = new Set();
+
+function notifySubscribers(state) {
+  audioSubscribers.forEach((cb) => {
+    try { cb(state); } catch (e) { }
+  });
+}
+
+export function subscribeAudioState(cb) {
+  audioSubscribers.add(cb);
+  cb(isThemePlaying);
+  return () => audioSubscribers.delete(cb);
+}
+
+export function isAmbientAudioPlaying() {
+  return isThemePlaying;
+}
+
+function getBgMusic() {
+  if (!bgMusicAudio && typeof window !== 'undefined') {
+    bgMusicAudio = new Audio(THEME_AUDIO_URL);
+    bgMusicAudio.loop = true;
+    bgMusicAudio.volume = 0;
+    bgMusicAudio.preload = 'auto';
+    bgMusicAudio.addEventListener('ended', () => {
+      bgMusicAudio.currentTime = 0;
+      bgMusicAudio.play().catch(() => {});
     });
-    ambientNodes = [];
-    isPlaying = false;
+  }
+  return bgMusicAudio;
+}
+
+export function startAmbientAudio(onStateChange) {
+  const audio = getBgMusic();
+  if (!audio) return;
+
+  clearInterval(fadeInterval);
+  audio.play().then(() => {
+    isThemePlaying = true;
+    notifySubscribers(true);
+    if (onStateChange) onStateChange(true);
+
+    // Smoothly fade in to TARGET_VOLUME
+    let currentVol = audio.volume;
+    const step = 0.04;
+    fadeInterval = setInterval(() => {
+      currentVol = Math.min(TARGET_VOLUME, currentVol + step);
+      audio.volume = Number(currentVol.toFixed(3));
+      if (currentVol >= TARGET_VOLUME) {
+        clearInterval(fadeInterval);
+      }
+    }, 45);
+  }).catch((err) => {
+    console.warn('Audio playback requires user interaction:', err);
+    isThemePlaying = false;
+    notifySubscribers(false);
     if (onStateChange) onStateChange(false);
+  });
+}
+
+export function stopAmbientAudio(onStateChange) {
+  const audio = getBgMusic();
+  if (!audio) return;
+
+  clearInterval(fadeInterval);
+  let currentVol = audio.volume;
+  const step = 0.05;
+  fadeInterval = setInterval(() => {
+    currentVol = Math.max(0, currentVol - step);
+    audio.volume = Number(currentVol.toFixed(3));
+    if (currentVol <= 0) {
+      clearInterval(fadeInterval);
+      audio.pause();
+      isThemePlaying = false;
+      notifySubscribers(false);
+      if (onStateChange) onStateChange(false);
+    }
+  }, 35);
+}
+
+export function toggleAmbientAudio(onStateChange) {
+  if (isThemePlaying) {
+    stopAmbientAudio(onStateChange);
     return false;
   } else {
-    try {
-      const now = ctx.currentTime;
-      const masterGain = ctx.createGain();
-      masterGain.gain.setValueAtTime(0, now);
-      masterGain.gain.linearRampToValueAtTime(0.18, now + 1.5);
-      masterGain.connect(ctx.destination);
-
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(220, now);
-      filter.Q.setValueAtTime(2.5, now);
-      filter.connect(masterGain);
-
-      const osc1 = ctx.createOscillator();
-      osc1.type = 'sawtooth';
-      osc1.frequency.setValueAtTime(55, now); // A1
-      osc1.connect(filter);
-      osc1.start();
-
-      const osc2 = ctx.createOscillator();
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(27.5, now); // Sub bass A0
-      const subGain = ctx.createGain();
-      subGain.gain.setValueAtTime(0.4, now);
-      osc2.connect(subGain);
-      subGain.connect(masterGain);
-      osc2.start();
-
-      ambientNodes = [masterGain, filter, osc1, osc2, subGain];
-      isPlaying = true;
-      if (onStateChange) onStateChange(true);
-      return true;
-    } catch (err) {
-      isPlaying = false;
-      if (onStateChange) onStateChange(false);
-      return false;
-    }
+    startAmbientAudio(onStateChange);
+    return true;
   }
 }
+
 
 export function playWarpSound() {
   const ctx = getAudioContext();
@@ -268,4 +310,58 @@ export function playHydraulicDockSound() {
   } catch (e) { }
 }
 
+export function playRcsThrusterPulse() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    const bufferSize = Math.floor(ctx.sampleRate * 0.22);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
 
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1600, now);
+    filter.frequency.exponentialRampToValueAtTime(320, now + 0.2);
+    filter.Q.setValueAtTime(4.0, now);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.01, now);
+    gain.gain.linearRampToValueAtTime(0.18, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.21);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    noise.start(now);
+    noise.stop(now + 0.22);
+  } catch (e) { }
+}
+
+export function playRotationSyncTone(step = 1) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    const freqs = [440, 554.37, 659.25, 880];
+    const freq = freqs[Math.min(step, freqs.length - 1)] || 659.25;
+    osc.frequency.setValueAtTime(freq, now);
+
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(0.08, now + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.26);
+  } catch (e) { }
+}

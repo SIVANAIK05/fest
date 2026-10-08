@@ -14,7 +14,11 @@ import {
   Cpu,
   Gamepad2,
   CheckCircle2,
-  ExternalLink
+  ExternalLink,
+  Plus,
+  Trash2,
+  Mail,
+  Phone
 } from 'lucide-react';
 import { INSTITUTIONS_LIST } from '../data/eventsData';
 import { MISSIONS_LIST } from './EventsSection';
@@ -30,6 +34,8 @@ export default function RegistrationSection({ preselectedEventId }) {
   // Form State
   const [formData, setFormData] = useState({
     fullName: 'Cooper Brand',
+    email: 'cooper.brand@endurance.edu',
+    mobile: '9876543210',
     college: INSTITUTIONS_LIST[0],
     customCollege: '',
     pin: '21VV1A0589',
@@ -37,8 +43,12 @@ export default function RegistrationSection({ preselectedEventId }) {
     year: '3rd Year',
     isSquad: false,
     teamName: '',
+    teammates: [
+      { name: 'Murphy Cooper', email: 'murphy.cooper@vvit.net', mobile: '9876543211' },
+      { name: 'Donald Brand', email: 'donald.brand@vvit.net', mobile: '9876543212' }
+    ],
     crewNames: '',
-    selectedEvents: ['ai-odyssey', 'codeverse']
+    selectedEvents: ['space-speak', 'tars-wars']
   });
 
   const [astrionId, setAstrionId] = useState('ASTR-26-8F42');
@@ -74,14 +84,25 @@ export default function RegistrationSection({ preselectedEventId }) {
   // Generate QR Code payload
   useEffect(() => {
     const selectedMissions = MISSIONS_LIST.filter(m => formData.selectedEvents.includes(m.id));
+    const coAstronautsText = formData.isSquad
+      ? (formData.teammates && formData.teammates.length > 0
+          ? formData.teammates
+              .filter(t => t.name && t.name.trim())
+              .map(t => `${t.name.trim()}${t.mobile ? ` (${t.mobile.trim()})` : ''}`)
+              .join(', ') || 'Squad Flight'
+          : (formData.crewNames || 'Squad Flight'))
+      : 'Solo Explorer';
+
     const passFormData = {
       fullName: formData.fullName,
+      email: formData.email,
+      mobile: formData.mobile,
       institution: formData.college === 'Other Institution / University' ? formData.customCollege : formData.college,
       studentId: formData.pin,
       department: formData.department,
       yearOfStudy: formData.year,
       teamName: formData.isSquad ? (formData.teamName || 'Squad Flight') : 'Solo Explorer',
-      coAstronauts: formData.isSquad ? (formData.crewNames || 'None') : 'Solo Explorer'
+      coAstronauts: coAstronautsText
     };
     const payload = buildQrPayload({ astrionId, formData: passFormData, selectedMissions, format: 'url' });
     generateQrCodeDataUrl(payload).then(url => {
@@ -97,13 +118,51 @@ export default function RegistrationSection({ preselectedEventId }) {
     }));
   };
 
+  const handleTeammateChange = (index, field, value) => {
+    setFormData(prev => {
+      const updated = [...prev.teammates];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, teammates: updated };
+    });
+  };
+
+  const handleAddTeammate = () => {
+    playUiBeep(1250, 0.04);
+    setFormData(prev => {
+      if (prev.teammates.length >= 5) return prev;
+      return {
+        ...prev,
+        teammates: [
+          ...prev.teammates,
+          { name: '', email: '', mobile: '' }
+        ]
+      };
+    });
+  };
+
+  const handleRemoveTeammate = (index) => {
+    playUiBeep(850, 0.04);
+    setFormData(prev => {
+      if (prev.teammates.length <= 1) return prev;
+      return {
+        ...prev,
+        teammates: prev.teammates.filter((_, i) => i !== index)
+      };
+    });
+  };
+
   const handleModeChange = (isSquadMode) => {
     playUiBeep(1200, 0.04);
     setFormData(prev => ({
       ...prev,
       isSquad: isSquadMode,
       teamName: isSquadMode && !prev.teamName ? 'Endurance Squadron' : prev.teamName,
-      crewNames: isSquadMode && !prev.crewNames ? 'Murphy Cooper (21VV1A0590), Donald Brand (21VV1A0591)' : prev.crewNames
+      teammates: isSquadMode && (!prev.teammates || prev.teammates.length === 0)
+        ? [
+            { name: 'Murphy Cooper', email: 'murphy.cooper@vvit.net', mobile: '9876543211' },
+            { name: 'Donald Brand', email: 'donald.brand@vvit.net', mobile: '9876543212' }
+          ]
+        : prev.teammates
     }));
   };
 
@@ -145,14 +204,25 @@ export default function RegistrationSection({ preselectedEventId }) {
     playUiBeep(1400, 0.08);
     setIsDownloading(true);
     const selectedMissions = MISSIONS_LIST.filter(m => formData.selectedEvents.includes(m.id));
+    const coAstronautsText = formData.isSquad
+      ? (formData.teammates && formData.teammates.length > 0
+          ? formData.teammates
+              .filter(t => t.name && t.name.trim())
+              .map(t => `${t.name.trim()}${t.mobile ? ` (${t.mobile.trim()})` : ''}`)
+              .join(', ') || 'Squad Flight'
+          : (formData.crewNames || 'Squad Flight'))
+      : 'Solo Explorer';
+
     const passFormData = {
       fullName: formData.fullName,
+      email: formData.email,
+      mobile: formData.mobile,
       institution: formData.college === 'Other Institution / University' ? (formData.customCollege || 'National University') : formData.college,
       studentId: formData.pin,
       department: formData.department,
       yearOfStudy: formData.year,
       teamName: formData.isSquad ? (formData.teamName || 'Squad Flight') : 'Solo Explorer',
-      coAstronauts: formData.isSquad ? (formData.crewNames || 'None') : 'Solo Explorer'
+      coAstronauts: coAstronautsText
     };
     try {
       await downloadAstrionPassImage({
@@ -323,23 +393,51 @@ export default function RegistrationSection({ preselectedEventId }) {
           </div>
 
           {/* ============================================================ */}
-          {/* STEP 2: ASTRONAUT CREDENTIALS                                */}
+          {/* STEP 2: TEAM LEAD / ASTRONAUT CREDENTIALS                    */}
           {/* ============================================================ */}
           <div>
             <label style={{ display: 'block', fontFamily: 'var(--font-space)', fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', marginBottom: '0.75rem', fontWeight: 600 }}>
-              2. Astronaut Personal Details
+              2. Team Lead / Lead Astronaut Details
             </label>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
               
               {/* Full Name */}
               <div>
-                <label className="form-field-label">Lead Astronaut Name *</label>
+                <label className="form-field-label">Lead Astronaut / Team Lead Name *</label>
                 <input
                   type="text"
                   name="fullName"
                   placeholder="e.g. Cooper Brand"
                   value={formData.fullName}
+                  onChange={handleInputChange}
+                  className="reference-input"
+                  required
+                />
+              </div>
+
+              {/* Lead Email */}
+              <div>
+                <label className="form-field-label">Lead Email Address *</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="e.g. cooper@vvit.net"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="reference-input"
+                  required
+                />
+              </div>
+
+              {/* Lead Mobile */}
+              <div>
+                <label className="form-field-label">Lead Mobile Number *</label>
+                <input
+                  type="tel"
+                  name="mobile"
+                  placeholder="e.g. 9876543210"
+                  value={formData.mobile}
                   onChange={handleInputChange}
                   className="reference-input"
                   required
@@ -430,7 +528,7 @@ export default function RegistrationSection({ preselectedEventId }) {
           </div>
 
           {/* ============================================================ */}
-          {/* STEP 3: SQUAD CREDENTIALS (IF SQUAD MODE ACTIVE)             */}
+          {/* STEP 3: SQUAD CREDENTIALS & TEAMMATES (BELOW TEAM LEAD)      */}
           {/* ============================================================ */}
           {formData.isSquad && (
             <div 
@@ -442,41 +540,161 @@ export default function RegistrationSection({ preselectedEventId }) {
                 padding: '1.5rem',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '1rem'
+                gap: '1.25rem'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid rgba(251, 191, 36, 0.2)', paddingBottom: '0.65rem' }}>
-                <Users style={{ width: '1.1rem', height: '1.1rem', color: 'var(--amber-primary)' }} />
-                <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.9rem', color: '#ffffff', fontWeight: 700 }}>
-                  SQUADRON MANIFEST & CREW MEMBERS
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(251, 191, 36, 0.2)', paddingBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Users style={{ width: '1.1rem', height: '1.1rem', color: 'var(--amber-primary)' }} />
+                  <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.9rem', color: '#ffffff', fontWeight: 700 }}>
+                    SQUADRON MANIFEST & TEAMMATES REGISTRATION
+                  </span>
+                </div>
+                <span style={{ fontFamily: 'var(--font-space)', fontSize: '11px', color: 'var(--amber-primary)', background: 'rgba(251, 191, 36, 0.15)', padding: '0.2rem 0.65rem', borderRadius: '9999px', border: '1px solid rgba(251, 191, 36, 0.3)' }}>
+                  {formData.teammates.length} Teammates Registered
                 </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
-                <div>
-                  <label className="form-field-label" style={{ color: 'var(--amber-primary)' }}>Squadron / Team Name *</label>
-                  <input
-                    type="text"
-                    name="teamName"
-                    placeholder="e.g. Endurance Squadron"
-                    value={formData.teamName}
-                    onChange={handleInputChange}
-                    className="reference-input"
-                    required={formData.isSquad}
-                  />
+              <div>
+                <label className="form-field-label" style={{ color: 'var(--amber-primary)' }}>Squadron / Team Name *</label>
+                <input
+                  type="text"
+                  name="teamName"
+                  placeholder="e.g. Endurance Squadron"
+                  value={formData.teamName}
+                  onChange={handleInputChange}
+                  className="reference-input"
+                  required={formData.isSquad}
+                />
+              </div>
+
+              {/* Dynamic Teammates Registration Cards */}
+              <div>
+                <div style={{ marginBottom: '0.75rem' }}>
+                  <div style={{ fontFamily: 'var(--font-space)', fontSize: '12px', fontWeight: 600, color: '#f1f5f9', letterSpacing: '0.04em' }}>
+                    Teammates in Squad (Name, Email, Mobile No)
+                  </div>
+                  <p style={{ fontFamily: 'var(--font-space)', fontSize: '11px', color: 'var(--text-slate)', margin: '0.2rem 0 0 0' }}>
+                    As Team Lead, register your teammates below. Each member will receive access credentials with your team flight pass.
+                  </p>
                 </div>
 
-                <div>
-                  <label className="form-field-label" style={{ color: '#cbd5e1' }}>Crew Members (Names & PINs) *</label>
-                  <input
-                    type="text"
-                    name="crewNames"
-                    placeholder="e.g. Murphy (21VV1A0590), Donald (21VV1A0591)"
-                    value={formData.crewNames}
-                    onChange={handleInputChange}
-                    className="reference-input"
-                    required={formData.isSquad}
-                  />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  {formData.teammates.map((teammate, idx) => (
+                    <div
+                      key={idx}
+                      className="animate-fadeIn"
+                      style={{
+                        background: 'rgba(2, 6, 23, 0.65)',
+                        border: '1px solid rgba(251, 191, 36, 0.25)',
+                        borderRadius: '0.85rem',
+                        padding: '1rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontFamily: 'var(--font-orbitron)', fontSize: '12px', fontWeight: 700, color: 'var(--amber-primary)' }}>
+                          <User style={{ width: '0.85rem', height: '0.85rem' }} />
+                          <span>Teammate #{idx + 1}</span>
+                        </div>
+                        {formData.teammates.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveTeammate(idx)}
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.15)',
+                              border: '1px solid rgba(239, 68, 68, 0.35)',
+                              color: '#f87171',
+                              borderRadius: '6px',
+                              padding: '0.2rem 0.55rem',
+                              fontSize: '10.5px',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.3rem',
+                              fontFamily: 'var(--font-space)',
+                              transition: 'all 0.15s ease'
+                            }}
+                            title="Remove this teammate"
+                          >
+                            <Trash2 style={{ width: '0.75rem', height: '0.75rem' }} />
+                            <span>Remove</span>
+                          </button>
+                        )}
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+                        {/* Teammate Name */}
+                        <div>
+                          <label className="form-field-label" style={{ fontSize: '10.5px' }}>Name *</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Murphy Cooper"
+                            value={teammate.name}
+                            onChange={(e) => handleTeammateChange(idx, 'name', e.target.value)}
+                            className="reference-input"
+                            required={formData.isSquad}
+                          />
+                        </div>
+
+                        {/* Teammate Email */}
+                        <div>
+                          <label className="form-field-label" style={{ fontSize: '10.5px' }}>Email *</label>
+                          <input
+                            type="email"
+                            placeholder="e.g. murphy@vvit.net"
+                            value={teammate.email}
+                            onChange={(e) => handleTeammateChange(idx, 'email', e.target.value)}
+                            className="reference-input"
+                            required={formData.isSquad}
+                          />
+                        </div>
+
+                        {/* Teammate Mobile */}
+                        <div>
+                          <label className="form-field-label" style={{ fontSize: '10.5px' }}>Mobile No *</label>
+                          <input
+                            type="tel"
+                            placeholder="e.g. 9876543211"
+                            value={teammate.mobile}
+                            onChange={(e) => handleTeammateChange(idx, 'mobile', e.target.value)}
+                            className="reference-input"
+                            required={formData.isSquad}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add Teammate Button */}
+                  {formData.teammates.length < 5 && (
+                    <button
+                      type="button"
+                      onClick={handleAddTeammate}
+                      style={{
+                        alignSelf: 'flex-start',
+                        background: 'rgba(251, 191, 36, 0.12)',
+                        border: '1px dashed rgba(251, 191, 36, 0.5)',
+                        color: 'var(--amber-primary)',
+                        borderRadius: '0.65rem',
+                        padding: '0.55rem 1rem',
+                        fontSize: '11.5px',
+                        fontFamily: 'var(--font-space)',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        transition: 'all 0.2s ease',
+                        marginTop: '0.25rem'
+                      }}
+                    >
+                      <Plus style={{ width: '0.85rem', height: '0.85rem' }} />
+                      <span>+ Add Another Teammate ({formData.teammates.length}/5)</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -537,8 +755,8 @@ export default function RegistrationSection({ preselectedEventId }) {
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '0.25rem' }}>
-                        <span style={{ fontSize: '9px', color: 'var(--text-slate)', fontFamily: 'var(--font-space)' }}>
-                          Team: {m.teamSize}
+                        <span style={{ fontSize: '9px', color: 'var(--cyan-primary)', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
+                          {m.day || 'Day 1'} • Team: {m.teamSize}
                         </span>
                         <span style={{ fontSize: '9px', padding: '0.15rem 0.45rem', borderRadius: '4px', background: m.regType === 'pre-registration' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(52, 211, 153, 0.2)', color: m.regType === 'pre-registration' ? '#fbbf24' : '#34d399', fontWeight: 600 }}>
                           {m.regType === 'pre-registration' ? 'PRE-REG' : 'SPOT'}
@@ -591,8 +809,8 @@ export default function RegistrationSection({ preselectedEventId }) {
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '0.25rem' }}>
-                        <span style={{ fontSize: '9px', color: 'var(--text-slate)', fontFamily: 'var(--font-space)' }}>
-                          Team: {m.teamSize}
+                        <span style={{ fontSize: '9px', color: 'var(--amber-primary)', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
+                          {m.day ? `${m.day} • ` : ''}Team: {m.teamSize}
                         </span>
                         <span style={{ fontSize: '9px', padding: '0.15rem 0.45rem', borderRadius: '4px', background: m.regType === 'pre-registration' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(52, 211, 153, 0.2)', color: m.regType === 'pre-registration' ? '#fbbf24' : '#34d399', fontWeight: 600 }}>
                           {m.regType === 'pre-registration' ? 'PRE-REG' : 'SPOT'}
@@ -656,7 +874,7 @@ export default function RegistrationSection({ preselectedEventId }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 'clamp(1rem, 2.5vw, 1.75rem)',
+            padding: 'clamp(0.75rem, 2vw, 1.5rem)',
             overflowY: 'auto',
             animation: 'fadeIn 0.25s ease-out'
           }}
@@ -666,191 +884,360 @@ export default function RegistrationSection({ preselectedEventId }) {
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '100%',
-              maxWidth: '680px',
-              maxHeight: '92vh',
+              maxWidth: '1000px',
+              maxHeight: '94vh',
               overflowY: 'auto',
-              position: 'relative',
-              borderRadius: '1.75rem',
-              border: '2px solid rgba(255, 255, 255, 0.65)',
-              boxShadow: '0 25px 90px rgba(0, 0, 0, 0.95), 0 0 45px rgba(245, 158, 11, 0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.85rem',
               fontFamily: 'var(--font-space)'
             }}
           >
-            {/* Background Image: Shuttle Stargazer & Crew Officer */}
-            <div 
-              style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundImage: 'url("/images/crew_shuttle_delivery.jpg")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center 35%',
-                filter: 'brightness(0.48) contrast(1.15)',
-                zIndex: 0
-              }}
-            />
+            {/* MODAL TOP HUD BAR */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 10px #34d399' }} />
+                <span style={{ fontSize: '10.5px', letterSpacing: '0.14em', color: '#34d399', fontWeight: 800, textTransform: 'uppercase' }}>
+                  GATEWAY CLEARANCE AUTHORIZED // FLIGHT PASS READY
+                </span>
+              </div>
 
-            {/* Dark Sci-Fi Aerospace Glass Overlay */}
-            <div 
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(135deg, rgba(2, 6, 23, 0.93) 0%, rgba(3, 7, 21, 0.85) 55%, rgba(8, 20, 45, 0.93) 100%)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                zIndex: 1
-              }}
-            />
-
-            {/* Pass Content Layer */}
-            <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(1.5rem, 3vw, 2.25rem)' }}>
-
-              {/* Modal Close Button */}
+              {/* Close Button */}
               <button
+                type="button"
                 onClick={() => {
                   playUiBeep(900, 0.03);
                   setShowPassModal(false);
                 }}
                 style={{
-                  position: 'absolute',
-                  top: '1.25rem',
-                  right: '1.25rem',
                   color: 'var(--text-slate)',
                   cursor: 'pointer',
                   background: 'rgba(15, 23, 42, 0.85)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
                   borderRadius: '9999px',
-                  padding: '0.4rem',
+                  padding: '0.45rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  zIndex: 10,
                   transition: 'all 0.2s ease'
                 }}
+                title="Close Pass"
               >
-                <X style={{ width: '1.25rem', height: '1.25rem' }} />
+                <X style={{ width: '1.2rem', height: '1.2rem' }} />
               </button>
+            </div>
 
-              {/* Modal Header: Official Logos & Gateway Clearance */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.18)', paddingBottom: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#ffffff', padding: '0.25rem 0.65rem', borderRadius: '0.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
-                  <img src="/images/iic_logo.png" alt="IIC" style={{ height: '1.4rem', width: 'auto' }} />
-                  <span style={{ color: '#cbd5e1', fontSize: '11px' }}>|</span>
-                  <img src="/images/vvit_logo.png" alt="VVIT" style={{ height: '1.4rem', width: 'auto' }} />
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '9.5px', letterSpacing: '0.15em', color: '#34d399', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.35rem', justifyContent: 'flex-end' }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '9999px', background: '#34d399', boxShadow: '0 0 6px #34d399' }} />
-                    GATEWAY CLEARANCE AUTHORIZED
-                  </span>
-                  <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '13px', color: '#ffffff', fontWeight: 800 }}>
-                    ASTRION 2026 // FLIGHT PASS
-                  </span>
-                </div>
-              </div>
-
-              {/* PASS CONTENT BODY */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem', alignItems: 'center', background: 'rgba(8, 14, 30, 0.75)', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '1.25rem', padding: '1.5rem', marginBottom: '1.5rem', backdropFilter: 'blur(12px)' }}>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-                      BOARDING PASS ID
-                    </div>
-                    <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '1.65rem', color: '#ffffff', fontWeight: 900, letterSpacing: '0.04em' }}>
-                      {astrionId}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                      LEAD ASTRONAUT & PIN
-                    </div>
-                    <div style={{ fontSize: '15.5px', color: '#ffffff', fontWeight: 700 }}>
-                      {formData.fullName} • <span style={{ color: 'var(--amber-primary)' }}>{formData.pin}</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                      INSTITUTION / DEPARTMENT
-                    </div>
-                    <div style={{ fontSize: '12.5px', color: '#e2e8f0' }}>
-                      {institutionDisplayName} ({formData.department} - {formData.year})
-                    </div>
-                  </div>
-
-                  {formData.isSquad && (
-                    <div style={{ background: 'rgba(2, 6, 23, 0.85)', padding: '0.65rem 0.85rem', borderRadius: '0.5rem', border: '1px solid rgba(251, 191, 36, 0.4)' }}>
-                      <div style={{ fontSize: '11.5px', color: 'var(--amber-primary)', fontWeight: 700 }}>
-                        Squad: {formData.teamName}
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#cbd5e1', marginTop: '0.15rem' }}>
-                        Crew: {formData.crewNames}
-                      </div>
-                    </div>
-                  )}
-
-                  <div>
-                    <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                      AUTHORIZED MISSIONS
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#ffffff', fontWeight: 600 }}>
-                      {selectedMissionsList.map(m => m.title).join(', ') || 'General Entry'}
-                    </div>
-                  </div>
-                </div>
-
-                {/* REAL SCANNABLE QR CODE IN POPUP */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                  <div 
+            {/* ============================================================ */}
+            {/* 🎫 AUTHENTIC FLIGHT PASS TICKET (EXACT MATCH OF DOWNLOADED PASS) */}
+            {/* ============================================================ */}
+            <div className="flight-pass-ticket-card">
+              
+              {/* LEFT: MAIN PASS BODY */}
+              <div className="flight-pass-main-body">
+                <div>
+                  {/* Top-Left Official Logos Badge */}
+                  <div
                     style={{
-                      width: '8.5rem',
-                      height: '8.5rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.55rem',
                       background: '#ffffff',
-                      padding: '0.45rem',
-                      borderRadius: '0.85rem',
-                      boxShadow: '0 0 30px rgba(255, 255, 255, 0.4)',
-                      border: '2px solid rgba(255, 255, 255, 0.8)'
+                      padding: '0.35rem 0.85rem',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
+                      marginBottom: '1rem'
                     }}
                   >
-                    {qrDataUrl && <img src={qrDataUrl} alt="Scan QR Code" style={{ width: '100%', height: '100%' }} />}
+                    <img src="/images/iic_logo.png" alt="IIC" style={{ height: '1.45rem', width: 'auto' }} />
+                    <span style={{ color: '#cbd5e1', fontSize: '13px' }}>|</span>
+                    <img src="/images/vvit_logo.png" alt="VVIT" style={{ height: '1.45rem', width: 'auto' }} />
                   </div>
-                  <span style={{ fontSize: '9.5px', color: '#34d399', fontWeight: 700, letterSpacing: '0.08em' }}>
-                    SCAN WITH ANY PHONE CAMERA
+
+                  {/* Header Titles: ASTRION & Subtitle */}
+                  <div>
+                    <h3
+                      style={{
+                        fontFamily: 'var(--font-orbitron)',
+                        fontSize: 'clamp(1.85rem, 3.4vw, 2.45rem)',
+                        fontWeight: 900,
+                        letterSpacing: '0.04em',
+                        color: '#ffffff',
+                        lineHeight: 1.1,
+                        margin: 0
+                      }}
+                    >
+                      ASTRION
+                    </h3>
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-space)',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        color: '#38bdf8',
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        marginTop: '0.35rem'
+                      }}
+                    >
+                      INNOVATE BEYOND BOUNDARIES // OFFICIAL FLIGHT PASS
+                    </div>
+                  </div>
+
+                  {/* Separator Line */}
+                  <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.12)', margin: '1rem 0 1.15rem' }} />
+
+                  {/* Telemetry Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1rem 1.75rem', marginBottom: '1rem' }}>
+                    {/* Section 1: Lead Astronaut */}
+                    <div>
+                      <div style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                        LEAD ASTRONAUT / PARTICIPANT
+                      </div>
+                      <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ffffff', marginTop: '0.2rem' }}>
+                        {formData.fullName || 'Commander Cooper'}
+                        {formData.pin && (
+                          <span style={{ color: 'var(--amber-primary)', marginLeft: '0.4rem', fontSize: '0.95rem' }}>
+                            • {formData.pin}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Section 2: Institution */}
+                    <div>
+                      <div style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                        INSTITUTION / UNIVERSITY
+                      </div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#38bdf8', marginTop: '0.2rem' }}>
+                        {institutionDisplayName}
+                      </div>
+                    </div>
+
+                    {/* Section 3: Department & Year */}
+                    <div>
+                      <div style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                        DEPARTMENT & YEAR
+                      </div>
+                      <div style={{ fontSize: '0.85rem', color: '#e2e8f0', marginTop: '0.2rem' }}>
+                        {formData.department || 'General'} • {formData.year || '3rd Year'}
+                      </div>
+                    </div>
+
+                    {/* Section 4: Squad / Crew */}
+                    <div>
+                      <div style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                        SQUAD / CREW CALL-SIGN
+                      </div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f1f5f9', marginTop: '0.2rem' }}>
+                        Squad: {formData.isSquad ? (formData.teamName || 'Endurance Squadron') : 'Solo Flight'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 5: Co-Astronauts */}
+                  <div style={{ marginBottom: '1rem' }}>
+                    <div style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                      CREW MEMBERS / TEAMMATES
+                    </div>
+                    {formData.isSquad && formData.teammates && formData.teammates.length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.35rem' }}>
+                        {formData.teammates.map((t, idx) => (
+                          <div key={idx} style={{ fontSize: '0.82rem', color: '#cbd5e1', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+                            <span style={{ color: '#ffffff', fontWeight: 600 }}>• {t.name || `Teammate ${idx + 1}`}</span>
+                            {t.email && <span style={{ color: '#94a3b8', fontSize: '11px' }}>({t.email})</span>}
+                            {t.mobile && <span style={{ color: 'var(--cyan-primary)', fontSize: '11px', fontFamily: 'var(--font-space)' }}>📱 {t.mobile}</span>}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: '0.82rem', color: '#cbd5e1', marginTop: '0.2rem' }}>
+                        Solo Explorer (None specified)
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Section 6: Authorized Missions */}
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                      AUTHORIZED MISSIONS (PRE-REGISTRATION CLEARANCE)
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', marginTop: '0.35rem' }}>
+                      {selectedMissionsList.length === 0 ? (
+                        <span style={{ fontStyle: 'italic', fontSize: '11px', color: '#94a3b8' }}>
+                          General Entry Pass (Spot events available at venue)
+                        </span>
+                      ) : (
+                        <>
+                          {selectedMissionsList.slice(0, 3).map((m) => (
+                            <span
+                              key={m.id}
+                              style={{
+                                background: '#0f172a',
+                                border: '1px solid rgba(56, 189, 248, 0.4)',
+                                color: '#38bdf8',
+                                fontSize: '10.5px',
+                                fontWeight: 700,
+                                padding: '0.25rem 0.65rem',
+                                borderRadius: '6px',
+                                letterSpacing: '0.04em',
+                                display: 'inline-flex',
+                                alignItems: 'center'
+                              }}
+                            >
+                              {m.title} [PRE-REG]
+                            </span>
+                          ))}
+                          {selectedMissionsList.length > 3 && (
+                            <span style={{ fontSize: '11px', color: '#94a3b8', alignSelf: 'center' }}>
+                              +{selectedMissionsList.length - 3} more
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Verification Guarantee */}
+                <div style={{ color: '#34d399', fontWeight: 700, fontSize: '11px', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '0.4rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                  <span>✓ VERIFIED FOR VENUE ENTRY • DATES: 23 - 24 OCT 2026 • VENUE: VVIT CAMPUS</span>
+                </div>
+              </div>
+
+              {/* CENTER: PERFORATION DIVIDER WITH NOTCH CUTOUTS */}
+              <div className="flight-pass-perforation">
+                <div className="flight-pass-notch-top" />
+                <div className="flight-pass-notch-bottom" />
+              </div>
+
+              {/* RIGHT: TEAR-OFF BOARDING STUB */}
+              <div className="flight-pass-stub-body">
+                {/* Stub Header */}
+                <div>
+                  <div style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                    BOARDING PASS ID
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '1.45rem', fontWeight: 900, color: '#38bdf8', letterSpacing: '0.06em', margin: '0.2rem 0' }}>
+                    {astrionId}
+                  </div>
+                  <div style={{ fontSize: '9.5px', color: '#94a3b8', letterSpacing: '0.05em' }}>
+                    SCAN AT VENUE GATEWAY
+                  </div>
+                </div>
+
+                {/* Scannable High-Contrast QR Code Card */}
+                <div
+                  style={{
+                    background: '#ffffff',
+                    padding: '0.55rem',
+                    borderRadius: '12px',
+                    border: '1.5px solid rgba(56, 189, 248, 0.5)',
+                    boxShadow: '0 0 25px rgba(56, 189, 248, 0.25)',
+                    width: '160px',
+                    height: '160px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto'
+                  }}
+                >
+                  {qrDataUrl ? (
+                    <img src={qrDataUrl} alt="Astrion QR Pass" style={{ width: '100%', height: '100%', display: 'block' }} />
+                  ) : (
+                    <div style={{ color: '#030712', fontSize: '10.5px', textAlign: 'center', fontWeight: 600 }}>Generating QR...</div>
+                  )}
+                </div>
+
+                {/* Gateway Clearance Pill */}
+                <div
+                  style={{
+                    background: 'rgba(52, 211, 153, 0.15)',
+                    border: '1px solid #34d399',
+                    borderRadius: '8px',
+                    padding: '0.35rem 0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                    width: '100%',
+                    maxWidth: '220px'
+                  }}
+                >
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 6px #34d399' }} />
+                  <span style={{ color: '#34d399', fontWeight: 800, fontSize: '10px', letterSpacing: '0.08em', fontFamily: 'var(--font-space)' }}>
+                    STATUS: AUTHORIZED // IIC VVITU
                   </span>
                 </div>
 
-              </div>
-
-              {/* MODAL FOOTER BUTTONS */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '11px', color: 'var(--text-muted)' }}>
-                  <ShieldCheck style={{ width: '1rem', height: '1rem', color: '#34d399' }} />
-                  <span>Issued by IIC VVITU • Venue Entry Approved</span>
+                {/* Barcode Graphic Decoration */}
+                <div style={{ width: '100%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px', height: '30px', margin: '0.35rem 0' }}>
+                    {[2, 1, 3, 1, 2, 4, 1, 3, 2, 1, 3, 1, 4, 2, 1, 3, 1, 2, 3, 1, 2, 4, 1, 2, 3, 1, 2, 1, 3, 2, 1, 4].map((w, idx) => (
+                      <div 
+                        key={idx} 
+                        style={{ 
+                          width: `${w}px`, 
+                          height: '100%', 
+                          background: 'rgba(255, 255, 255, 0.38)',
+                          borderRadius: '1px'
+                        }} 
+                      />
+                    ))}
+                  </div>
+                  <div style={{ fontSize: '9px', color: '#94a3b8', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '0.25rem' }}>
+                    ISSUED BY IIC VVITU
+                  </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.65rem' }}>
-                  <button
-                    type="button"
-                    onClick={handleDownload}
-                    disabled={isDownloading}
-                    className="btn-pill-cyan"
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '0.45rem', 
-                      fontSize: '11.5px', 
-                      padding: '0.65rem 1.6rem',
-                      fontWeight: 700,
-                      cursor: isDownloading ? 'wait' : 'pointer'
-                    }}
-                  >
-                    <Download style={{ width: '0.9rem', height: '0.9rem' }} />
-                    <span>{isDownloading ? 'Generating Pass...' : isDownloaded ? 'Pass Downloaded ✓' : 'Download Pass (.PNG)'}</span>
-                  </button>
-                </div>
               </div>
 
+            </div>
+
+            {/* MODAL ACTION FOOTER */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', padding: '0.4rem 0.5rem 0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '11px', color: 'var(--text-muted)' }}>
+                <ShieldCheck style={{ width: '1rem', height: '1rem', color: '#34d399' }} />
+                <span>Instant camera scan verified • Official IIC VVITU clearance pass</span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowPassModal(false)}
+                  style={{
+                    background: 'rgba(15, 23, 42, 0.75)',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    color: 'var(--text-slate)',
+                    padding: '0.65rem 1.25rem',
+                    borderRadius: '9999px',
+                    fontSize: '11.5px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  Close
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="btn-pill-cyan"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem', 
+                    fontSize: '11.5px', 
+                    padding: '0.65rem 1.75rem',
+                    fontWeight: 800,
+                    cursor: isDownloading ? 'wait' : 'pointer'
+                  }}
+                >
+                  <Download style={{ width: '0.95rem', height: '0.95rem' }} />
+                  <span>{isDownloading ? 'Generating Pass...' : isDownloaded ? 'Pass Downloaded ✓' : 'Download Pass (.PNG)'}</span>
+                </button>
+              </div>
             </div>
 
           </div>
