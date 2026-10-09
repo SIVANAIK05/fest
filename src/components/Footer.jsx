@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowUp, MapPin, Mail, Phone, Send, Radio, ShieldCheck, CheckCircle2, Bus, Clock } from 'lucide-react';
 import { playUiBeep } from '../utils/audioEngine';
+import { supabase } from '../lib/supabase';
 
 export default function Footer() {
   const [formState, setFormState] = useState({
@@ -9,7 +10,7 @@ export default function Footer() {
     category: 'Registration & Entry Pass',
     message: ''
   });
-  const [isSent, setIsSent] = useState(false);
+  const [isSent, setIsSent] = useState(false); 
 
   const scrollToTop = () => {
     playUiBeep(1400, 0.08);
@@ -21,10 +22,29 @@ export default function Footer() {
     setFormState(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const { error } = await supabase
+      .from('contact_messages')
+      .insert({
+        name: formState.name,
+        contact: formState.contact,
+        department: formState.category,
+        message: formState.message
+      });
+
+    if (error) {
+      console.error('Contact message error:', error);
+      alert('Message failed: ' + error.message);
+      return;
+    }
+
     playUiBeep(1200, 0.1);
+
     setIsSent(true);
+
     setTimeout(() => {
       setFormState({
         name: '',
@@ -33,7 +53,12 @@ export default function Footer() {
         message: ''
       });
     }, 2000);
-  };
+
+  } catch (error) {
+    console.error('Contact submission error:', error);
+    alert('Message failed. Please try again.');
+  }
+};
 
   return (
     <footer id="contact" style={{ background: '#020409', borderTop: '1px solid rgba(56, 189, 248, 0.2)', padding: '4.5rem 1.5rem 2.5rem 1.5rem', position: 'relative' }}>
