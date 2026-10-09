@@ -12,7 +12,7 @@ import CosmicParticleField from './components/CosmicParticleField';
 import InterstellarGalaxyBackground from './components/InterstellarGalaxyBackground';
 import HeroSpaceshipCursor from './components/HeroSpaceshipCursor';
 import PassVerificationModal from './components/PassVerificationModal';
-import { playWarpSound, startAmbientAudio } from './utils/audioEngine';
+import { startAmbientAudio } from './utils/audioEngine';
 
 export default function App() {
   const [preselectedEventId, setPreselectedEventId] = useState(null);
