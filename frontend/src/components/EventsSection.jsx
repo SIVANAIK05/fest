@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Search,
   Sparkles,
+  Calendar,
   Clock,
   Users,
   User,
@@ -534,7 +535,7 @@ export default function EventsSection({ onSelectEventForRegistration }) {
 
       {/* MINIMAL & ATTRACTIVE CARDS GRID */}
       <div
-        key={`${activeCategory}-${activeDay}-${searchQuery}`}
+        key={`${activeCategory}-${searchQuery}`}
         className="missions-cards-grid animate-fadeIn"
       >
         {displayedMissions.map((mission, idx) => (
