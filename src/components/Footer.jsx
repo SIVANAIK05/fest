@@ -244,7 +244,7 @@ export default function Footer() {
                   HOST INSTITUTION & VENUE
                 </div>
                 <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '1.05rem', color: '#ffffff', fontWeight: 800, marginTop: '0.2rem' }}>
-                  Vasireddy Venkatadri Institute of Technology (VVIT)
+                  Vasireddy Venkatadri International Technological University (VVITU)
                 </div>
                 <div style={{ fontSize: '11.5px', color: '#94a3b8', fontFamily: 'var(--font-space)', marginTop: '0.25rem' }}>
                   Nambur (V), Pedakakani (M), Guntur - 522508, Andhra Pradesh, India
@@ -325,12 +325,12 @@ export default function Footer() {
                 />
               </div>
               <span className="font-orbitron" style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '0.2em', color: '#ffffff', textTransform: 'uppercase' }}>
-                ASTRION
+                ASTRION<span style={{ color: 'var(--cyan-primary)' }}>-2k26</span >
               </span>
             </div>
             <span style={{ color: 'var(--text-muted)' }}>|</span>
             <span className="font-space" style={{ fontSize: '0.75rem', letterSpacing: '0.08em', color: 'var(--text-slate)', textTransform: 'uppercase' }}>
-              ORGANIZED BY INSTITUTION'S INNOVATION COUNCIL — VVIT UNIVERSITY (IIC VVITU)
+              ORGANIZED BY INSTITUTION'S INNOVATION COUNCIL —  IIC VVITU
             </span>
           </div>
 

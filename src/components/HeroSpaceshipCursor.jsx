@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export default function HeroSpaceshipCursor({ containerRef }) {
+export default function HeroSpaceshipCursor({ containerRef = null }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isBoosting, setIsBoosting] = useState(false);
   const [isHoveringClickable, setIsHoveringClickable] = useState(false);
@@ -21,15 +21,28 @@ export default function HeroSpaceshipCursor({ containerRef }) {
   const rafRef = useRef(null);
   const isInsideRef = useRef(false);
 
-  useEffect(() => {
-    const container = containerRef?.current;
-    if (!container) return;
+  const isGlobal = !containerRef;
 
-    // Track mouse coordinates relative to container
+  useEffect(() => {
+    // Disable custom spaceship cursor on touch-only devices
+    if (typeof window !== 'undefined') {
+      const isTouchOnly = window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(pointer: fine)').matches;
+      if (isTouchOnly) return;
+    }
+
+    const container = containerRef?.current;
+    if (containerRef && !container) return;
+
+    // Track mouse coordinates (relative to container if provided, otherwise viewport)
     const handleMouseMove = (e) => {
-      const rect = container.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
+      let mouseX = e.clientX;
+      let mouseY = e.clientY;
+
+      if (container) {
+        const rect = container.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      }
 
       targetRef.current = { x: mouseX, y: mouseY };
 
@@ -39,21 +52,23 @@ export default function HeroSpaceshipCursor({ containerRef }) {
         posRef.current = { x: mouseX, y: mouseY };
       }
 
-      // Check if hovering clickable interactive element
-      const targetTag = e.target?.tagName?.toLowerCase();
-      const isClickable =
-        targetTag === 'button' ||
-        targetTag === 'a' ||
-        e.target?.closest('button') ||
-        e.target?.closest('a') ||
-        e.target?.classList?.contains('hero-title-letter');
+      // Check if hovering clickable interactive element across the DOM
+      const isClickable = e.target?.closest?.(
+        'button, a, input, select, textarea, [role="button"], .clickable, .btn-pill-cyan, .event-hud-wrapper, .hero-title-letter, .filter-chip, [tabindex="0"], label'
+      );
       setIsHoveringClickable(!!isClickable);
     };
 
     const handleMouseEnter = (e) => {
-      const rect = container.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
+      let mouseX = e.clientX;
+      let mouseY = e.clientY;
+
+      if (container) {
+        const rect = container.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      }
+
       targetRef.current = { x: mouseX, y: mouseY };
       posRef.current = { x: mouseX, y: mouseY };
       isInsideRef.current = true;
@@ -67,17 +82,17 @@ export default function HeroSpaceshipCursor({ containerRef }) {
 
     const handleMouseDown = () => {
       setIsBoosting(true);
-      // Spawn explosive burst of cyan plasma particles on click
-      for (let i = 0; i < 10; i++) {
+      // Spawn explosive burst of cyan plasma particles on click anywhere
+      for (let i = 0; i < 14; i++) {
         const pAngle = Math.random() * Math.PI * 2;
-        const pSpeed = Math.random() * 4 + 2;
+        const pSpeed = Math.random() * 4.5 + 2.5;
         particlesRef.current.push({
           x: posRef.current.x,
           y: posRef.current.y,
           vx: Math.cos(pAngle) * pSpeed,
           vy: Math.sin(pAngle) * pSpeed,
           alpha: 1,
-          size: Math.random() * 1.8 + 1,
+          size: Math.random() * 2.2 + 1.2,
           color: Math.random() > 0.35 ? '#38bdf8' : '#ffffff'
         });
       }
@@ -87,21 +102,45 @@ export default function HeroSpaceshipCursor({ containerRef }) {
       setIsBoosting(false);
     };
 
-    container.addEventListener('mousemove', handleMouseMove, { passive: true });
-    container.addEventListener('mouseenter', handleMouseEnter);
-    container.addEventListener('mouseleave', handleMouseLeave);
-    container.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
+    const handleScroll = () => {
+      if (targetRef.current.x > 0 && targetRef.current.y > 0) {
+        const el = document.elementFromPoint(targetRef.current.x, targetRef.current.y);
+        const isClickable = el?.closest?.(
+          'button, a, input, select, textarea, [role="button"], .clickable, .btn-pill-cyan, .event-hud-wrapper, .hero-title-letter, .filter-chip, [tabindex="0"], label'
+        );
+        setIsHoveringClickable(!!isClickable);
+      }
+    };
 
     // Canvas resize
     const canvas = canvasRef.current;
     const resizeCanvas = () => {
-      if (canvas && container) {
+      if (!canvas) return;
+      if (container) {
         canvas.width = container.offsetWidth;
         canvas.height = container.offsetHeight;
+      } else {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
       }
     };
     resizeCanvas();
+
+    if (container) {
+      container.addEventListener('mousemove', handleMouseMove, { passive: true });
+      container.addEventListener('mouseenter', handleMouseEnter);
+      container.addEventListener('mouseleave', handleMouseLeave);
+      container.addEventListener('mousedown', handleMouseDown);
+    } else {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      document.documentElement.addEventListener('mouseenter', handleMouseEnter);
+      document.documentElement.addEventListener('mouseleave', handleMouseLeave);
+      window.addEventListener('mousedown', handleMouseDown);
+      window.addEventListener('blur', handleMouseLeave);
+    }
+
+    window.addEventListener('mouseup', handleMouseUp);
     window.addEventListener('resize', resizeCanvas);
 
     // Ultra-Fast & Silky-Smooth Kinematics Loop
@@ -192,12 +231,12 @@ export default function HeroSpaceshipCursor({ containerRef }) {
       }
 
       // REAL-TIME PARTICLES ENGINE TRAIL
-      if (canvas && isInsideRef.current) {
+      if (canvas && (isInsideRef.current || particlesRef.current.length > 0)) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Spawn thruster particles
-        if (currentSpeed > 1.8 || isBoosting) {
+        if (isInsideRef.current && (currentSpeed > 1.8 || isBoosting)) {
           const spawnCount = isBoosting ? 3 : currentSpeed > 7 ? 2 : 1;
           const rad = (angleRef.current - 90) * (Math.PI / 180);
           const tailDist = 15;
@@ -249,10 +288,19 @@ export default function HeroSpaceshipCursor({ containerRef }) {
     rafRef.current = requestAnimationFrame(animate);
 
     return () => {
-      container.removeEventListener('mousemove', handleMouseMove);
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-      container.removeEventListener('mousedown', handleMouseDown);
+      if (container) {
+        container.removeEventListener('mousemove', handleMouseMove);
+        container.removeEventListener('mouseenter', handleMouseEnter);
+        container.removeEventListener('mouseleave', handleMouseLeave);
+        container.removeEventListener('mousedown', handleMouseDown);
+      } else {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('scroll', handleScroll);
+        document.documentElement.removeEventListener('mouseenter', handleMouseEnter);
+        document.documentElement.removeEventListener('mouseleave', handleMouseLeave);
+        window.removeEventListener('mousedown', handleMouseDown);
+        window.removeEventListener('blur', handleMouseLeave);
+      }
       window.removeEventListener('mouseup', handleMouseUp);
       window.removeEventListener('resize', resizeCanvas);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -265,10 +313,10 @@ export default function HeroSpaceshipCursor({ containerRef }) {
       <canvas
         ref={canvasRef}
         style={{
-          position: 'absolute',
+          position: isGlobal ? 'fixed' : 'absolute',
           inset: 0,
           pointerEvents: 'none',
-          zIndex: 40,
+          zIndex: isGlobal ? 9998 : 40,
           opacity: isVisible ? 1 : 0,
           transition: 'opacity 0.25s ease'
         }}
@@ -278,11 +326,11 @@ export default function HeroSpaceshipCursor({ containerRef }) {
       <div
         ref={shipElRef}
         style={{
-          position: 'absolute',
+          position: isGlobal ? 'fixed' : 'absolute',
           top: 0,
           left: 0,
           pointerEvents: 'none',
-          zIndex: 50,
+          zIndex: isGlobal ? 9999 : 50,
           opacity: isVisible ? 1 : 0,
           transition: 'opacity 0.2s ease',
           filter: isBoosting
@@ -293,23 +341,40 @@ export default function HeroSpaceshipCursor({ containerRef }) {
           willChange: 'transform'
         }}
       >
-        {/* TARGETING RETICLE RING WHEN HOVERING INTERACTIVE BUTTONS */}
+        {/* PRECISION TARGETING HUD WHEN HOVERING INTERACTIVE BUTTONS & CARDS */}
         {isHoveringClickable && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              width: '42px',
-              height: '42px',
-              transform: 'translate(-50%, -50%)',
-              border: '1px dashed rgba(56, 189, 248, 0.65)',
-              borderRadius: '9999px',
-              boxShadow: '0 0 12px rgba(56, 189, 248, 0.3)',
-              animation: 'spinSlow 6s linear infinite',
-              pointerEvents: 'none'
-            }}
-          />
+          <>
+            {/* Outer Rotating Tactical Reticle Ring */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '30%',
+                left: '50%',
+                width: '46px',
+                height: '46px',
+                transform: 'translate(-50%, -50%)',
+                border: '1.5px dashed rgba(56, 189, 248, 0.85)',
+                borderRadius: '9999px',
+                boxShadow: '0 0 16px rgba(56, 189, 248, 0.5), inset 0 0 10px rgba(56, 189, 248, 0.2)',
+                animation: 'spinSlow 5s linear infinite',
+                pointerEvents: 'none'
+              }}
+            />
+            {/* Inner Precision Crosshair Laser Pulse */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '30%',
+                left: '50%',
+                width: '16px',
+                height: '16px',
+                transform: 'translate(-50%, -50%)',
+                border: '1px solid rgba(255, 255, 255, 0.7)',
+                borderRadius: '9999px',
+                pointerEvents: 'none'
+              }}
+            />
+          </>
         )}
 
         {/* VECTOR HIGH-PRECISION DELTA SPACECRAFT */}

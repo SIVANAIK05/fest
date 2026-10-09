@@ -48,14 +48,12 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        background: 'rgba(2, 4, 10, 0.88)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
+        background: 'radial-gradient(ellipse at center, rgba(10, 16, 34, 0.78) 0%, rgba(2, 4, 10, 0.90) 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '1rem',
-        overflowY: 'auto'
+        overflow: 'hidden'
       }}
     >
       <div
@@ -190,10 +188,10 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
                   boxShadow: '0 0 20px rgba(251, 191, 36, 0.1)'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', justifyContent: 'flex-end', color: '#fbbf24', fontSize: '11px', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
+                {/* <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', justifyContent: 'flex-end', color: '#fbbf24', fontSize: '11px', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
                   <Trophy style={{ width: '0.9rem', height: '0.9rem' }} />
                   <span>PRIZE POOL</span>
-                </div>
+                </div> */}
                 <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '1.25rem', fontWeight: 800, color: '#fef08a', marginTop: '0.15rem' }}>
                   {event.prizePool}
                 </div>
@@ -366,7 +364,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
           </button>
         </div>
 
-        {/* MODAL BODY (SCROLLABLE CONTENT) */}
+        {/* MODAL BODY (SCROLLABLE CONTENT - HARDWARE ACCELERATED) */}
         <div
           style={{
             padding: '1.75rem 2rem',
@@ -374,7 +372,11 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            gap: '1.5rem'
+            gap: '1.5rem',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            willChange: 'scroll-position',
+            transform: 'translateZ(0)'
           }}
         >
           {/* TAB 1: OVERVIEW & CONCEPT */}

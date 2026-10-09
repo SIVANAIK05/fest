@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { 
-  Check, 
-  Download, 
-  Sparkles, 
-  Users, 
-  User, 
-  QrCode, 
+import {
+  Check,
+  Download,
+  Sparkles,
+  Users,
+  User,
+  QrCode,
   X,
   FileCheck,
   Rocket,
@@ -23,32 +23,31 @@ import {
 import { INSTITUTIONS_LIST } from '../data/eventsData';
 import { MISSIONS_LIST } from './EventsSection';
 import { playUiBeep, playWarpSound, playSpaceBreachSound } from '../utils/audioEngine';
-import { 
-  buildQrPayload, 
-  generateQrCodeDataUrl, 
-  downloadAstrionPassImage 
+import {
+  buildQrPayload,
+  generateQrCodeDataUrl,
+  downloadAstrionPassImage
 } from '../utils/passGenerator';
 import SpaceBreachOverlay from './SpaceBreachOverlay';
 
 export default function RegistrationSection({ preselectedEventId }) {
   // Form State
   const [formData, setFormData] = useState({
-    fullName: 'Cooper Brand',
-    email: 'cooper.brand@endurance.edu',
-    mobile: '9876543210',
+    fullName: '',
+    email: '',
+    mobile: '',
     college: INSTITUTIONS_LIST[0],
     customCollege: '',
-    pin: '21VV1A0589',
-    department: 'Computer Science & AI',
-    year: '3rd Year',
+    pin: '',
+    department: '',
+    year: '1st Year',
     isSquad: false,
     teamName: '',
     teammates: [
-      { name: 'Murphy Cooper', email: 'murphy.cooper@vvit.net', mobile: '9876543211' },
-      { name: 'Donald Brand', email: 'donald.brand@vvit.net', mobile: '9876543212' }
+      { name: '', email: '', mobile: '' }
     ],
     crewNames: '',
-    selectedEvents: ['space-speak', 'tars-wars']
+    selectedEvents: []
   });
 
   const [astrionId, setAstrionId] = useState('ASTR-26-8F42');
@@ -74,8 +73,8 @@ export default function RegistrationSection({ preselectedEventId }) {
     if (preselectedEventId) {
       setFormData(prev => ({
         ...prev,
-        selectedEvents: prev.selectedEvents.includes(preselectedEventId) 
-          ? prev.selectedEvents 
+        selectedEvents: prev.selectedEvents.includes(preselectedEventId)
+          ? prev.selectedEvents
           : [...prev.selectedEvents, preselectedEventId]
       }));
     }
@@ -86,11 +85,11 @@ export default function RegistrationSection({ preselectedEventId }) {
     const selectedMissions = MISSIONS_LIST.filter(m => formData.selectedEvents.includes(m.id));
     const coAstronautsText = formData.isSquad
       ? (formData.teammates && formData.teammates.length > 0
-          ? formData.teammates
-              .filter(t => t.name && t.name.trim())
-              .map(t => `${t.name.trim()}${t.mobile ? ` (${t.mobile.trim()})` : ''}`)
-              .join(', ') || 'Squad Flight'
-          : (formData.crewNames || 'Squad Flight'))
+        ? formData.teammates
+          .filter(t => t.name && t.name.trim())
+          .map(t => `${t.name.trim()}${t.mobile ? ` (${t.mobile.trim()})` : ''}`)
+          .join(', ') || 'Squad Flight'
+        : (formData.crewNames || 'Squad Flight'))
       : 'Solo Explorer';
 
     const passFormData = {
@@ -159,9 +158,9 @@ export default function RegistrationSection({ preselectedEventId }) {
       teamName: isSquadMode && !prev.teamName ? 'Endurance Squadron' : prev.teamName,
       teammates: isSquadMode && (!prev.teammates || prev.teammates.length === 0)
         ? [
-            { name: 'Murphy Cooper', email: 'murphy.cooper@vvit.net', mobile: '9876543211' },
-            { name: 'Donald Brand', email: 'donald.brand@vvit.net', mobile: '9876543212' }
-          ]
+          { name: 'Murphy Cooper', email: 'murphy.cooper@vvit.net', mobile: '9876543211' },
+          { name: 'Donald Brand', email: 'donald.brand@vvit.net', mobile: '9876543212' }
+        ]
         : prev.teammates
     }));
   };
@@ -172,7 +171,7 @@ export default function RegistrationSection({ preselectedEventId }) {
       const exists = prev.selectedEvents.includes(id);
       return {
         ...prev,
-        selectedEvents: exists 
+        selectedEvents: exists
           ? prev.selectedEvents.filter(x => x !== id)
           : [...prev.selectedEvents, id]
       };
@@ -206,11 +205,11 @@ export default function RegistrationSection({ preselectedEventId }) {
     const selectedMissions = MISSIONS_LIST.filter(m => formData.selectedEvents.includes(m.id));
     const coAstronautsText = formData.isSquad
       ? (formData.teammates && formData.teammates.length > 0
-          ? formData.teammates
-              .filter(t => t.name && t.name.trim())
-              .map(t => `${t.name.trim()}${t.mobile ? ` (${t.mobile.trim()})` : ''}`)
-              .join(', ') || 'Squad Flight'
-          : (formData.crewNames || 'Squad Flight'))
+        ? formData.teammates
+          .filter(t => t.name && t.name.trim())
+          .map(t => `${t.name.trim()}${t.mobile ? ` (${t.mobile.trim()})` : ''}`)
+          .join(', ') || 'Squad Flight'
+        : (formData.crewNames || 'Squad Flight'))
       : 'Solo Explorer';
 
     const passFormData = {
@@ -250,7 +249,7 @@ export default function RegistrationSection({ preselectedEventId }) {
 
   return (
     <section id="register" className="ast-section" style={{ position: 'relative' }}>
-      
+
       {/* SECTION HEADER */}
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <div className="section-index" style={{ justifyContent: 'center' }}>03 —</div>
@@ -264,24 +263,64 @@ export default function RegistrationSection({ preselectedEventId }) {
 
       {/* CENTERED, SPACIOUS FLIGHT TERMINAL CARD */}
       <div style={{ maxWidth: '880px', margin: '0 auto' }}>
-        
-        <form 
+
+        <form
           onSubmit={handleSubmit}
           style={{
-            background: 'linear-gradient(180deg, rgba(8, 14, 30, 0.92) 0%, rgba(2, 6, 23, 0.96) 100%)',
+            position: 'relative',
+            overflow: 'hidden',
+            background: 'linear-gradient(180deg, rgba(8, 14, 30, 0.94) 0%, rgba(2, 6, 23, 0.98) 100%)',
             border: '1.5px solid rgba(56, 189, 248, 0.35)',
             borderRadius: '1.75rem',
             padding: 'clamp(1.5rem, 3vw, 2.5rem)',
-            backdropFilter: 'blur(24px)',
             boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(56, 189, 248, 0.12)',
             display: 'flex',
             flexDirection: 'column',
             gap: '2rem'
           }}
         >
-          
+          {/* SPACE TECH COMMAND COCKPIT BACKGROUND LAYER */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'url(/images/spacetech_registration_bg.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center 20%',
+              opacity: 0.22,
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
+
+          {/* SPACE TECH TELEMETRY HUD GRID */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: `
+                linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px)
+              `,
+              backgroundSize: '36px 36px',
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
+
+          {/* SPACE TECH GRADIENT SHIELD (Ensures 100% high-contrast readability) */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(ellipse at 50% 15%, rgba(10, 18, 38, 0.85) 0%, rgba(2, 6, 23, 0.96) 75%)',
+              pointerEvents: 'none',
+              zIndex: 0
+            }}
+          />
+
           {/* TERMINAL TOP STATUS BAR */}
-          <div 
+          <div
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -298,7 +337,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                 TERMINAL CONSOLE // FAST CLEARANCE
               </span>
             </div>
-            
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(56, 189, 248, 0.2)', padding: '0.3rem 0.75rem', borderRadius: '9999px' }}>
               <ShieldCheck style={{ width: '0.9rem', height: '0.9rem', color: '#38bdf8' }} />
               <span style={{ fontFamily: 'var(--font-space)', fontSize: '11px', color: 'var(--cyan-primary)', fontWeight: 600 }}>
@@ -316,7 +355,7 @@ export default function RegistrationSection({ preselectedEventId }) {
             </label>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
-              
+
               {/* Solo Button */}
               <button
                 type="button"
@@ -327,11 +366,11 @@ export default function RegistrationSection({ preselectedEventId }) {
                   gap: '1rem',
                   padding: '1.1rem 1.25rem',
                   borderRadius: '1rem',
-                  background: !formData.isSquad 
-                    ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(8, 14, 30, 0.85) 100%)' 
+                  background: !formData.isSquad
+                    ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(8, 14, 30, 0.85) 100%)'
                     : 'rgba(15, 23, 42, 0.6)',
-                  border: !formData.isSquad 
-                    ? '1.5px solid rgba(255, 255, 255, 0.85)' 
+                  border: !formData.isSquad
+                    ? '1.5px solid rgba(255, 255, 255, 0.85)'
                     : '1px solid rgba(51, 65, 85, 0.6)',
                   boxShadow: !formData.isSquad ? '0 0 20px rgba(255, 255, 255, 0.2)' : 'none',
                   cursor: 'pointer',
@@ -363,11 +402,11 @@ export default function RegistrationSection({ preselectedEventId }) {
                   gap: '1rem',
                   padding: '1.1rem 1.25rem',
                   borderRadius: '1rem',
-                  background: formData.isSquad 
-                    ? 'linear-gradient(135deg, rgba(251, 191, 36, 0.16) 0%, rgba(8, 14, 30, 0.8) 100%)' 
+                  background: formData.isSquad
+                    ? 'linear-gradient(135deg, rgba(251, 191, 36, 0.16) 0%, rgba(8, 14, 30, 0.8) 100%)'
                     : 'rgba(15, 23, 42, 0.6)',
-                  border: formData.isSquad 
-                    ? '1.5px solid var(--amber-primary)' 
+                  border: formData.isSquad
+                    ? '1.5px solid var(--amber-primary)'
                     : '1px solid rgba(51, 65, 85, 0.6)',
                   boxShadow: formData.isSquad ? '0 0 20px rgba(251, 191, 36, 0.25)' : 'none',
                   cursor: 'pointer',
@@ -401,14 +440,14 @@ export default function RegistrationSection({ preselectedEventId }) {
             </label>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
-              
+
               {/* Full Name */}
               <div>
                 <label className="form-field-label">Lead Astronaut / Team Lead Name *</label>
                 <input
                   type="text"
                   name="fullName"
-                  placeholder="e.g. Cooper Brand"
+                  placeholder="Enter full name"
                   value={formData.fullName}
                   onChange={handleInputChange}
                   className="reference-input"
@@ -422,7 +461,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                 <input
                   type="email"
                   name="email"
-                  placeholder="e.g. cooper@vvit.net"
+                  placeholder="Enter email address"
                   value={formData.email}
                   onChange={handleInputChange}
                   className="reference-input"
@@ -436,7 +475,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                 <input
                   type="tel"
                   name="mobile"
-                  placeholder="e.g. 9876543210"
+                  placeholder="Enter 10-digit mobile number"
                   value={formData.mobile}
                   onChange={handleInputChange}
                   className="reference-input"
@@ -450,7 +489,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                 <input
                   type="text"
                   name="pin"
-                  placeholder="e.g. 21VV1A0589"
+                  placeholder="Enter roll number / PIN (e.g. 22VV1A0501)"
                   value={formData.pin}
                   onChange={handleInputChange}
                   className="reference-input"
@@ -498,7 +537,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                 <input
                   type="text"
                   name="department"
-                  placeholder="e.g. CSE / AI / ECE"
+                  placeholder="Enter department (e.g. CSE, AI, ECE)"
                   value={formData.department}
                   onChange={handleInputChange}
                   className="reference-input"
@@ -531,7 +570,7 @@ export default function RegistrationSection({ preselectedEventId }) {
           {/* STEP 3: SQUAD CREDENTIALS & TEAMMATES (BELOW TEAM LEAD)      */}
           {/* ============================================================ */}
           {formData.isSquad && (
-            <div 
+            <div
               className="animate-fadeIn"
               style={{
                 background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(15, 23, 42, 0.8) 100%)',
@@ -560,7 +599,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                 <input
                   type="text"
                   name="teamName"
-                  placeholder="e.g. Endurance Squadron"
+                  placeholder="Enter team name (e.g. Nova Squadron)"
                   value={formData.teamName}
                   onChange={handleInputChange}
                   className="reference-input"
@@ -631,7 +670,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                           <label className="form-field-label" style={{ fontSize: '10.5px' }}>Name *</label>
                           <input
                             type="text"
-                            placeholder="e.g. Murphy Cooper"
+                            placeholder="Enter teammate name"
                             value={teammate.name}
                             onChange={(e) => handleTeammateChange(idx, 'name', e.target.value)}
                             className="reference-input"
@@ -644,7 +683,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                           <label className="form-field-label" style={{ fontSize: '10.5px' }}>Email *</label>
                           <input
                             type="email"
-                            placeholder="e.g. murphy@vvit.net"
+                            placeholder="Enter teammate email"
                             value={teammate.email}
                             onChange={(e) => handleTeammateChange(idx, 'email', e.target.value)}
                             className="reference-input"
@@ -657,7 +696,7 @@ export default function RegistrationSection({ preselectedEventId }) {
                           <label className="form-field-label" style={{ fontSize: '10.5px' }}>Mobile No *</label>
                           <input
                             type="tel"
-                            placeholder="e.g. 9876543211"
+                            placeholder="Enter teammate mobile number"
                             value={teammate.mobile}
                             onChange={(e) => handleTeammateChange(idx, 'mobile', e.target.value)}
                             className="reference-input"
@@ -714,8 +753,8 @@ export default function RegistrationSection({ preselectedEventId }) {
               </span>
             </div>
 
-            {/* CATEGORY A: TECHNICAL MISSIONS */}
-            <div style={{ marginBottom: '1.25rem' }}>
+            {/* TECHNICAL MISSIONS */}
+            <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.65rem', color: '#93c5fd', fontSize: '12px', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
                 <Cpu style={{ width: '0.9rem', height: '0.9rem', color: 'var(--cyan-primary)' }} />
                 <span>Technical Missions</span>
@@ -735,11 +774,11 @@ export default function RegistrationSection({ preselectedEventId }) {
                         justifyContent: 'space-between',
                         padding: '0.85rem 1rem',
                         borderRadius: '0.85rem',
-                        background: isSelected 
-                          ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(15, 23, 42, 0.9) 100%)' 
+                        background: isSelected
+                          ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(15, 23, 42, 0.9) 100%)'
                           : 'rgba(15, 23, 42, 0.65)',
-                        border: isSelected 
-                          ? '1.5px solid var(--cyan-primary)' 
+                        border: isSelected
+                          ? '1.5px solid var(--cyan-primary)'
                           : '1px solid rgba(51, 65, 85, 0.5)',
                         boxShadow: isSelected ? '0 0 15px rgba(56, 189, 248, 0.25)' : 'none',
                         cursor: 'pointer',
@@ -757,60 +796,6 @@ export default function RegistrationSection({ preselectedEventId }) {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '0.25rem' }}>
                         <span style={{ fontSize: '9px', color: 'var(--cyan-primary)', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
                           {m.day || 'Day 1'} • Team: {m.teamSize}
-                        </span>
-                        <span style={{ fontSize: '9px', padding: '0.15rem 0.45rem', borderRadius: '4px', background: m.regType === 'pre-registration' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(52, 211, 153, 0.2)', color: m.regType === 'pre-registration' ? '#fbbf24' : '#34d399', fontWeight: 600 }}>
-                          {m.regType === 'pre-registration' ? 'PRE-REG' : 'SPOT'}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* CATEGORY B: NON-TECHNICAL & GAMING MISSIONS */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.65rem', color: 'var(--amber-primary)', fontSize: '12px', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
-                <Gamepad2 style={{ width: '0.9rem', height: '0.9rem', color: 'var(--amber-primary)' }} />
-                <span>Creative, Non-Tech & Gaming Missions</span>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
-                {nonTechnicalMissions.map((m) => {
-                  const isSelected = formData.selectedEvents.includes(m.id);
-                  return (
-                    <button
-                      type="button"
-                      key={m.id}
-                      onClick={() => handleEventToggle(m.id)}
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        padding: '0.85rem 1rem',
-                        borderRadius: '0.85rem',
-                        background: isSelected 
-                          ? 'linear-gradient(135deg, rgba(251, 191, 36, 0.18) 0%, rgba(15, 23, 42, 0.9) 100%)' 
-                          : 'rgba(15, 23, 42, 0.65)',
-                        border: isSelected 
-                          ? '1.5px solid var(--amber-primary)' 
-                          : '1px solid rgba(51, 65, 85, 0.5)',
-                        boxShadow: isSelected ? '0 0 15px rgba(251, 191, 36, 0.25)' : 'none',
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                        transition: 'all 0.15s ease'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '0.35rem' }}>
-                        <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.85rem', fontWeight: 700, color: isSelected ? '#ffffff' : '#cbd5e1' }}>
-                          {m.title}
-                        </span>
-                        {isSelected && <Check style={{ width: '1rem', height: '1rem', color: 'var(--amber-primary)' }} />}
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '0.25rem' }}>
-                        <span style={{ fontSize: '9px', color: 'var(--amber-primary)', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
-                          {m.day ? `${m.day} • ` : ''}Team: {m.teamSize}
                         </span>
                         <span style={{ fontSize: '9px', padding: '0.15rem 0.45rem', borderRadius: '4px', background: m.regType === 'pre-registration' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(52, 211, 153, 0.2)', color: m.regType === 'pre-registration' ? '#fbbf24' : '#34d399', fontWeight: 600 }}>
                           {m.regType === 'pre-registration' ? 'PRE-REG' : 'SPOT'}
@@ -846,7 +831,7 @@ export default function RegistrationSection({ preselectedEventId }) {
               }}
             >
               <Rocket style={{ width: '1.25rem', height: '1.25rem' }} />
-              <span>CONFIRM REGISTRATION & ISSUE FLIGHT PASS</span>
+              <span> ISSUE FLIGHT PASS</span>
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '0.85rem', color: 'var(--text-slate)', fontSize: '11px', fontFamily: 'var(--font-space)' }}>
@@ -863,7 +848,7 @@ export default function RegistrationSection({ preselectedEventId }) {
       {/* 🚀 CREW ENTRY PASS POPUP MODAL (SHOWS ON FORM SUBMISSION)    */}
       {/* ============================================================ */}
       {showPassModal && typeof document !== 'undefined' && createPortal(
-        <div 
+        <div
           style={{
             position: 'fixed',
             inset: 0,
@@ -880,7 +865,7 @@ export default function RegistrationSection({ preselectedEventId }) {
           }}
           onClick={() => setShowPassModal(false)}
         >
-          <div 
+          <div
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '100%',
@@ -931,7 +916,7 @@ export default function RegistrationSection({ preselectedEventId }) {
             {/* 🎫 AUTHENTIC FLIGHT PASS TICKET (EXACT MATCH OF DOWNLOADED PASS) */}
             {/* ============================================================ */}
             <div className="flight-pass-ticket-card">
-              
+
               {/* LEFT: MAIN PASS BODY */}
               <div className="flight-pass-main-body">
                 <div>
@@ -1173,14 +1158,14 @@ export default function RegistrationSection({ preselectedEventId }) {
                 <div style={{ width: '100%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px', height: '30px', margin: '0.35rem 0' }}>
                     {[2, 1, 3, 1, 2, 4, 1, 3, 2, 1, 3, 1, 4, 2, 1, 3, 1, 2, 3, 1, 2, 4, 1, 2, 3, 1, 2, 1, 3, 2, 1, 4].map((w, idx) => (
-                      <div 
-                        key={idx} 
-                        style={{ 
-                          width: `${w}px`, 
-                          height: '100%', 
+                      <div
+                        key={idx}
+                        style={{
+                          width: `${w}px`,
+                          height: '100%',
                           background: 'rgba(255, 255, 255, 0.38)',
                           borderRadius: '1px'
-                        }} 
+                        }}
                       />
                     ))}
                   </div>
@@ -1224,11 +1209,11 @@ export default function RegistrationSection({ preselectedEventId }) {
                   onClick={handleDownload}
                   disabled={isDownloading}
                   className="btn-pill-cyan"
-                  style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '0.5rem', 
-                    fontSize: '11.5px', 
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    fontSize: '11.5px',
                     padding: '0.65rem 1.75rem',
                     fontWeight: 800,
                     cursor: isDownloading ? 'wait' : 'pointer'
@@ -1246,9 +1231,9 @@ export default function RegistrationSection({ preselectedEventId }) {
       )}
 
       {/* 💥 HYPERSPACE SPACE BREACH & COCKPIT CRASH ANIMATION */}
-      <SpaceBreachOverlay 
-        isActive={isBreaching} 
-        onComplete={handleBreachComplete} 
+      <SpaceBreachOverlay
+        isActive={isBreaching}
+        onComplete={handleBreachComplete}
       />
 
     </section>

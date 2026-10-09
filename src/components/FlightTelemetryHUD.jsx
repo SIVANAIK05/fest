@@ -14,9 +14,8 @@ export default function FlightTelemetryHUD() {
     { id: 'mission', num: '01', name: 'MISSION COGNITION', target: '#mission' },
     { id: 'events', num: '02', name: 'EXOPLANET WORLDS', target: '#events' },
     { id: 'register', num: '03', name: 'SHUTTLE DOCKING', target: '#register' },
-    { id: 'gallery', num: '04', name: 'RELATIVITY ARCHIVE', target: '#gallery' },
-    { id: 'partners', num: '05', name: 'IIC COUNCIL & ALLIANCE', target: '#partners' },
-    { id: 'crew', num: '06', name: 'CREW MANIFEST', target: '#crew' },
+    { id: 'crew', num: '04', name: 'CREW MANIFEST', target: '#crew' },
+    { id: 'partners', num: '05', name: 'IIC COUNCIL & ALLIANCE', target: '#partners' }
   ];
 
   useEffect(() => {

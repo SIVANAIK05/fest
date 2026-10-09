@@ -1,16 +1,8 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
 import TiltCard from './TiltCard';
 import { playUiBeep } from '../utils/audioEngine';
 
 export default function MissionSection() {
-  const stats = [
-    { value: '50+', label: 'Institutions' },
-    { value: '25+', label: 'Events' },
-    { value: '3', label: 'Days' },
-    { value: '∞', label: 'Possibilities' }
-  ];
-
   const verticalTags = [
     'TECHNOLOGY',
     'CREATIVITY',
@@ -55,21 +47,6 @@ export default function MissionSection() {
               <span>→</span>
             </a>
           </div>
-
-          {/* Stats Metrics (50+ Institutions, 25+ Events, 3 Days, ∞ Possibilities) */}
-          <div className="mission-stats-row">
-            {stats.map((stat, idx) => (
-              <div key={idx} className="stat-item">
-                <div className="stat-value">
-                  {stat.value}
-                </div>
-                <div className="stat-label">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-
         </div>
 
         {/* RIGHT COLUMN: ORBITAL STATION VISUAL (from reference image) */}

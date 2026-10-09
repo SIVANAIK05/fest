@@ -8,7 +8,6 @@ import {
   Compass, 
   Radio, 
   Calendar, 
-  MapPin, 
   Users, 
   Orbit, 
   Sparkles, 
@@ -18,7 +17,7 @@ import {
 } from 'lucide-react';
 import { toggleAmbientAudio, subscribeAudioState, playUiBeep } from '../utils/audioEngine';
 
-export default function Navbar() {
+export default function Navbar({ onOpenRegister }) {
   const [isAudioActive, setIsAudioActive] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -65,10 +64,8 @@ export default function Navbar() {
     { name: 'Home', href: '#home', id: 'home', icon: Orbit, num: '00' },
     { name: 'Mission', href: '#mission', id: 'mission', icon: Compass, num: '01' },
     { name: 'Events', href: '#events', id: 'events', icon: Calendar, num: '02' },
-    { name: 'Venues', href: '#venues', id: 'venues', icon: MapPin, num: '03' },
-    { name: 'Gallery', href: '#gallery', id: 'gallery', icon: Disc, num: '04' },
-    { name: 'Our Crew', href: '#crew', id: 'crew', icon: Users, num: '05' },
-    { name: 'Contact', href: '#contact', id: 'contact', icon: Radio, num: '06' }
+    { name: 'The Crew', href: '#crew', id: 'crew', icon: Users, num: '03' },
+    { name: 'Contact', href: '#contact', id: 'contact', icon: Radio, num: '04' }
   ];
 
   const handleMobileNavClick = (href) => {
@@ -77,6 +74,15 @@ export default function Navbar() {
     const targetEl = document.querySelector(href);
     if (targetEl) {
       targetEl.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleJoinCrew = (e) => {
+    if (e) e.preventDefault();
+    playUiBeep(1300, 0.06);
+    if (mobileMenuOpen) setMobileMenuOpen(false);
+    if (onOpenRegister) {
+      onOpenRegister();
     }
   };
 
@@ -240,16 +246,24 @@ export default function Navbar() {
               {isAudioActive ? <Volume2 size={15} /> : <VolumeX size={15} />}
             </button>
 
-            {/* Desktop-Only "Join the Crew" Button (Hidden on Mobile to completely eliminate overflow!) */}
-            <a
-              href="#register"
-              onClick={() => playUiBeep(1300, 0.06)}
-              className="btn-pill-ghost desktop-only-btn"
-              style={{ padding: '0.5rem 1.25rem', fontSize: '0.75rem' }}
+            {/* Desktop-Only "Join the Crew" Button (Opens registration modal popup) */}
+            <button
+              type="button"
+              id="nav-join-crew-btn"
+              onClick={handleJoinCrew}
+              className="btn-pill-cyan desktop-only-btn"
+              style={{
+                padding: '0.5rem 1.15rem',
+                fontSize: '0.78rem',
+                cursor: 'pointer',
+                fontWeight: 800,
+                letterSpacing: '0.04em',
+                boxShadow: '0 0 16px rgba(56, 189, 248, 0.4)'
+              }}
             >
               <span>Join the Crew</span>
-              <span>→</span>
-            </a>
+              <Rocket size={13} style={{ transform: 'rotate(45deg)' }} />
+            </button>
 
             {/* Unique Futuristic Mobile Command Toggle (Visible only on Mobile) */}
             <button
@@ -366,9 +380,9 @@ export default function Navbar() {
         </a>
 
         {/* Slot 3: CENTER PROMINENT "JOIN CREW" GLOWING CAPSULE (100% CONTAINER-BOUNDED, NO OVERFLOW) */}
-        <a
-          href="#register"
-          onClick={() => playUiBeep(1300, 0.06)}
+        <button
+          type="button"
+          onClick={handleJoinCrew}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -381,15 +395,15 @@ export default function Navbar() {
             fontWeight: 800,
             fontFamily: 'var(--font-space)',
             letterSpacing: '0.04em',
-            textDecoration: 'none',
+            border: '1px solid rgba(255, 255, 255, 0.6)',
             boxShadow: '0 0 16px rgba(56, 189, 248, 0.6)',
-            flexShrink: 0,
-            border: '1px solid rgba(255, 255, 255, 0.6)'
+            cursor: 'pointer',
+            flexShrink: 0
           }}
         >
           <Rocket size={13} style={{ transform: 'rotate(45deg)' }} />
           <span>JOIN CREW</span>
-        </a>
+        </button>
 
         {/* Slot 4: Events */}
         <a
@@ -541,9 +555,9 @@ export default function Navbar() {
           {/* Bottom Call-To-Action: 100% Responsive "Join the Crew" Card */}
           <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(56, 189, 248, 0.2)' }}>
             
-            <a
-              href="#register"
-              onClick={() => handleMobileNavClick('#register')}
+            <button
+              type="button"
+              onClick={handleJoinCrew}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -558,15 +572,15 @@ export default function Navbar() {
                 fontWeight: 800,
                 fontFamily: 'var(--font-space)',
                 letterSpacing: '0.08em',
-                textDecoration: 'none',
                 boxShadow: '0 0 25px rgba(56, 189, 248, 0.5)',
                 border: '1px solid rgba(255, 255, 255, 0.7)',
-                textAlign: 'center'
+                textAlign: 'center',
+                cursor: 'pointer'
               }}
             >
               <Rocket size={16} />
               <span>JOIN THE CREW // ISSUE BOARDING PASS</span>
-            </a>
+            </button>
 
             <div style={{
               display: 'flex',

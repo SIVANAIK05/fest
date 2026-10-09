@@ -64,22 +64,16 @@ function loadImageSafely(src) {
     if (!src) return resolve(null);
     const img = new Image();
     
-    // Never set crossOrigin on data URIs as some browsers reject it
-    if (!src.startsWith('data:')) {
-      img.crossOrigin = 'anonymous';
+    // Only set crossOrigin on external http/https URLs from a different origin
+    if (src.startsWith('http://') || src.startsWith('https://')) {
+      if (typeof window !== 'undefined' && !src.startsWith(window.location.origin)) {
+        img.crossOrigin = 'anonymous';
+      }
     }
 
     img.onload = () => resolve(img);
     img.onerror = () => {
-      // If anonymous CORS failed on a relative asset, retry without crossOrigin
-      if (img.crossOrigin) {
-        const retryImg = new Image();
-        retryImg.onload = () => resolve(retryImg);
-        retryImg.onerror = () => resolve(null);
-        retryImg.src = src;
-      } else {
-        resolve(null);
-      }
+      resolve(null);
     };
     img.src = src;
   });

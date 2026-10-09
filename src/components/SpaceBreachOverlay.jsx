@@ -1,21 +1,36 @@
-import React, { useEffect } from 'react';
-import { ShieldCheck, Radio, Disc, Sparkles } from 'lucide-react';
-import { playHydraulicDockSound } from '../utils/audioEngine';
+import React, { useEffect, useRef } from 'react';
+import { ShieldCheck, Radio, Disc, Sparkles, ArrowRight } from 'lucide-react';
+import { playHydraulicDockSound, playUiBeep } from '../utils/audioEngine';
 
-export default function SpaceBreachOverlay({ isActive, onComplete }) {
+export default function SpaceBreachOverlay({ isActive = true, onComplete, onAnimationComplete }) {
+  const finishCallback = onComplete || onAnimationComplete;
+  const finishCallbackRef = useRef(finishCallback);
+  finishCallbackRef.current = finishCallback;
+
+  const hasTriggeredRef = useRef(false);
+
+  const triggerCompletion = () => {
+    if (hasTriggeredRef.current) return;
+    hasTriggeredRef.current = true;
+    if (finishCallbackRef.current) {
+      finishCallbackRef.current();
+    }
+  };
+
   useEffect(() => {
     if (!isActive) return;
 
+    hasTriggeredRef.current = false;
     // Immediately play hydraulic docking hiss and mechanical clamp lock sound
     playHydraulicDockSound();
 
     // After viewing the aircraft touchdown & crew officer pass delivery, transition to pass modal
     const timer = setTimeout(() => {
-      if (onComplete) onComplete();
-    }, 2400);
+      triggerCompletion();
+    }, 2000);
 
     return () => clearTimeout(timer);
-  }, [isActive, onComplete]);
+  }, [isActive]);
 
   if (!isActive) return null;
 
@@ -136,6 +151,31 @@ export default function SpaceBreachOverlay({ isActive, onComplete }) {
           <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '11px', color: '#ffffff', fontWeight: 800, letterSpacing: '0.06em' }}>
             DECRYPTING ENTRY CREDENTIALS // EXPANDING HOLOGRAM...
           </span>
+        </div>
+
+        {/* Immediate Proceed Action */}
+        <div style={{ marginTop: '1.1rem' }}>
+          <button
+            type="button"
+            onClick={() => {
+              playUiBeep(1300, 0.05);
+              triggerCompletion();
+            }}
+            className="btn-pill-cyan"
+            style={{
+              padding: '0.65rem 1.75rem',
+              fontSize: '12px',
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              boxShadow: '0 0 20px rgba(56, 189, 248, 0.5)'
+            }}
+          >
+            <span>VIEW BOARDING PASS</span>
+            <ArrowRight size={14} />
+          </button>
         </div>
       </div>
 

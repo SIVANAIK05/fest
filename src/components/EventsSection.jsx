@@ -1,29 +1,327 @@
-import React, { useState, useMemo } from 'react';
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  Search, 
-  Sparkles, 
-  Calendar, 
-  Clock, 
-  Users, 
-  Laptop, 
-  Zap, 
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Search,
+  Sparkles,
+  Calendar,
+  Clock,
+  Users,
+  User,
+  Laptop,
+  Zap,
   MapPin,
-  Trophy
+  Trophy,
+  Compass,
+  ChevronDown,
+  ChevronUp,
+  Layers
 } from 'lucide-react';
-import TiltCard from './TiltCard';
 import EventModal from './EventModal';
 import { playUiBeep } from '../utils/audioEngine';
 import { MISSIONS_LIST, TECHNICAL_EVENTS, NON_TECHNICAL_EVENTS } from '../data/eventsData';
 
 export { MISSIONS_LIST };
 
+const formatVenue = (v) => {
+  if (!v || v.toLowerCase() === 'venue') return 'Tesseract Computing Complex • 3rd Floor';
+  return v;
+};
+
+const getTeamBadgeInfo = (teamSize) => {
+  const str = (teamSize || '').toLowerCase();
+  if (
+    str.includes('2') ||
+    str.includes('3') ||
+    str.includes('4') ||
+    str.includes('5') ||
+    str.includes('team') ||
+    str.includes('squad') ||
+    str.includes('pair')
+  ) {
+    let label = 'TEAM';
+    if (str.includes('pair')) label = 'PAIR';
+    else if (str.includes('squad')) label = 'SQUAD';
+    else if (str.includes('2 - 4')) label = 'TEAM (2-4)';
+    else if (str.includes('2')) label = 'TEAM (2)';
+    return { isSolo: false, label };
+  }
+  return { isSolo: true, label: 'SOLO' };
+};
+
+// Subcomponent for each event card with on-load stagger and scroll-reveal IntersectionObserver
+function EventHudCard({
+  mission,
+  idx,
+  onOpenDetail,
+  onRegisterDirect
+}) {
+  const cardRef = useRef(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+      }
+    );
+
+    observer.observe(el);
+    return () => {
+      if (el) observer.unobserve(el);
+    };
+  }, []);
+
+  const isDay2 = mission.dayNumber === 2 || (mission.day && mission.day.includes('Day 2'));
+  const isPrototypeReq = mission.prototype === 'Compulsory';
+  const isLaptopReq = mission.laptops === 'Needed';
+  const teamBadge = getTeamBadgeInfo(mission.teamSize);
+  const numericId = String(idx + 1).padStart(2, '0');
+  const posterImg = mission.planetImage || mission.image || '/images/mission_station.jpg';
+
+  // Stagger calculation based on index (cycles every 6 items for fast, smooth cadence)
+  const staggerDelay = `${(idx % 6) * 75}ms`;
+
+  return (
+    <div
+      ref={cardRef}
+      className={`event-hud-wrapper group ${inView ? 'is-in-view' : ''}`}
+      style={{
+        animationDelay: staggerDelay,
+        transitionDelay: staggerDelay
+      }}
+      onClick={() => onOpenDetail(mission)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpenDetail(mission);
+        }
+      }}
+    >
+      {/* Outer Chamfered Border Chassis */}
+      <div className="event-hud-outer">
+        {/* Inner Card Body with Chamfered Mask */}
+        <div className="event-hud-inner">
+
+          {/* Cosmic Grid & Sector Watermark Tag */}
+          <div className="event-hud-grid-overlay" />
+          <div className="event-hud-watermark">{numericId}</div>
+
+          {/* Aerospace HUD Reticle Corners */}
+          <div className="event-corner-bracket" style={{ top: '8px', left: '8px', borderTop: '2px solid', borderLeft: '2px solid' }} />
+          <div className="event-corner-bracket" style={{ bottom: '8px', right: '8px', borderBottom: '2px solid', borderRight: '2px solid' }} />
+
+          {/* CARD BODY CONTENT */}
+          <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+            
+            <div>
+              {/* TOP STATUS BAR: Day & Category (Left) | SOLO / TEAM Indication (Right) */}
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between', 
+                  gap: '0.5rem', 
+                  marginBottom: '0.85rem',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {/* Top Left: Day & Category */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  <span className={`event-day-pill ${isDay2 ? 'is-day2' : 'is-day1'}`}>
+                    <Calendar style={{ width: '0.7rem', height: '0.7rem', flexShrink: 0 }} />
+                    <span>{mission.day || (isDay2 ? 'Day 2 - 24' : 'Day 1 - 23')}</span>
+                  </span>
+                  
+                  <span className="event-category-pill">
+                    {mission.category === 'technical' ? 'TECH' : 'GAME'}
+                  </span>
+                </div>
+
+                {/* Top Right: TEAM or SOLO Indication */}
+                <div className={`event-team-pill ${teamBadge.isSolo ? 'is-solo' : 'is-team'}`}>
+                  <span className="event-team-dot" />
+                  {teamBadge.isSolo ? (
+                    <>
+                      <User style={{ width: '0.75rem', height: '0.75rem', flexShrink: 0 }} />
+                      <span>{teamBadge.label}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Users style={{ width: '0.75rem', height: '0.75rem', flexShrink: 0 }} />
+                      <span>{teamBadge.label}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* EVENT POSTER BANNER */}
+              <div className="event-poster-container">
+                <img
+                  src={posterImg}
+                  alt={mission.title}
+                  className="event-poster-img"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/images/mission_station.jpg';
+                  }}
+                />
+                
+                {/* Poster Vignette & Scanline Gradient */}
+                <div className="event-poster-gradient" />
+
+                {/* Floating Telemetry Chips on Poster Bottom */}
+                <div className="event-poster-badges-bottom">
+                  {isPrototypeReq ? (
+                    <span className="poster-badge-alert">
+                      <Zap style={{ width: '0.65rem', height: '0.65rem' }} />
+                      <span>PROTOTYPE REQ</span>
+                    </span>
+                  ) : isLaptopReq ? (
+                    <span className="poster-badge-info">
+                      <Laptop style={{ width: '0.65rem', height: '0.65rem' }} />
+                      <span>LAPTOP REQ</span>
+                    </span>
+                  ) : (
+                    <span className={`poster-badge-reg ${mission.regType === 'pre-registration' ? 'is-prereg' : 'is-spot'}`}>
+                      {mission.regType === 'pre-registration' ? 'PRE-REG' : 'SPOT WALK-IN'}
+                    </span>
+                  )}
+
+                  <span className="poster-badge-size">
+                    {mission.teamSize}
+                  </span>
+                </div>
+              </div>
+
+              {/* TITLE & SUBTITLE */}
+              <div style={{ marginTop: '0.2rem', marginBottom: '0.35rem' }}>
+                <h3 className="event-hud-title">
+                  {mission.title}
+                </h3>
+                {mission.subtitle && (
+                  <p className="event-hud-subtitle">
+                    {mission.subtitle}
+                  </p>
+                )}
+              </div>
+
+              {/* DESCRIPTION */}
+              <p className="event-hud-description" title={mission.description}>
+                {mission.description}
+              </p>
+
+              {/* VENUE BOX (Styled like the present venue card layout) */}
+              <div className="event-hud-venue-box">
+                <div className="event-venue-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <MapPin className="event-venue-icon" />
+                    <span className="event-venue-label">FACILITY / VENUE</span>
+                  </div>
+                  <span className="event-venue-status-chip">
+                    <span className="event-venue-pulse-dot" />
+                    <span>{mission.timings || mission.time || 'ACTIVE ARENA'}</span>
+                  </span>
+                </div>
+                <div className="event-venue-name" title={formatVenue(mission.venue)}>
+                  {formatVenue(mission.venue)}
+                </div>
+              </div>
+            </div>
+
+            {/* CARD BOTTOM ACTION FOOTER: Telemetry + EXPLORE BUTTON + Direct Register */}
+            <div className="event-hud-footer">
+              {/* Left Telemetry (Prize pool or schedule entry) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
+                {mission.prizePool ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#fbbf24' }}>
+                    <Trophy style={{ width: '0.85rem', height: '0.85rem', color: '#fbbf24', flexShrink: 0 }} />
+                    <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                      {mission.prizePool}
+                    </span>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#38bdf8' }}>
+                    <Clock style={{ width: '0.85rem', height: '0.85rem', color: '#38bdf8', flexShrink: 0 }} />
+                    <span style={{ fontSize: '10.5px', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                      {mission.time || '10:15 AM'}
+                    </span>
+                  </div>
+                )}
+                <span style={{ fontSize: '9px', fontFamily: 'var(--font-mono)', color: '#64748b' }}>
+                  {mission.regType === 'pre-registration' ? 'FREE ENTRY PASS' : 'OPEN SPOT ENTRY'}
+                </span>
+              </div>
+
+              {/* Right: EXPLORE BUTTON & REGISTER CTA */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <button
+                  type="button"
+                  className="event-hud-explore-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenDetail(mission);
+                  }}
+                  title={`Explore full briefing for ${mission.title}`}
+                >
+                  <span>Explore</span>
+                  <Compass style={{ width: '0.85rem', height: '0.85rem' }} />
+                </button>
+
+                <button
+                  type="button"
+                  className="event-hud-register-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    playUiBeep(1250, 0.05);
+                    onRegisterDirect(mission.id);
+                  }}
+                  title={`Register directly for ${mission.title}`}
+                >
+                  <span>Register</span>
+                  <ArrowRight style={{ width: '0.75rem', height: '0.75rem' }} />
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function EventsSection({ onSelectEventForRegistration }) {
   const [activeCategory, setActiveCategory] = useState('all'); // 'all' | 'technical' | 'non-technical'
   const [activeDay, setActiveDay] = useState('all'); // 'all' | 'Day 1' | 'Day 2'
   const [searchQuery, setSearchQuery] = useState('');
   const [activeModalEvent, setActiveModalEvent] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(6);
+
+  // Reset pagination count when category, day, or search query changes
+  useEffect(() => {
+    setVisibleCount(6);
+  }, [activeCategory, activeDay, searchQuery]);
 
   // Filter Missions by Category, Day, and Search
   const filteredMissions = useMemo(() => {
@@ -55,6 +353,34 @@ export default function EventsSection({ onSelectEventForRegistration }) {
     });
   }, [activeCategory, activeDay, searchQuery]);
 
+  // Slice displayed missions based on visibleCount to avoid overwhelming clumsy list
+  const displayedMissions = useMemo(() => {
+    return filteredMissions.slice(0, visibleCount);
+  }, [filteredMissions, visibleCount]);
+
+  const hasMore = visibleCount < filteredMissions.length;
+  const remainingCount = filteredMissions.length - visibleCount;
+  const isExpanded = visibleCount >= filteredMissions.length && filteredMissions.length > 6;
+
+  const handleViewMore = () => {
+    playUiBeep(1200, 0.04);
+    setVisibleCount((prev) => Math.min(prev + 6, filteredMissions.length));
+  };
+
+  const handleViewAll = () => {
+    playUiBeep(1350, 0.05);
+    setVisibleCount(filteredMissions.length);
+  };
+
+  const handleCollapse = () => {
+    playUiBeep(950, 0.04);
+    setVisibleCount(6);
+    const el = document.getElementById('events');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const handleOpenDetail = (mission) => {
     playUiBeep(1100, 0.04);
     setActiveModalEvent(mission);
@@ -63,10 +389,6 @@ export default function EventsSection({ onSelectEventForRegistration }) {
   const handleRegisterDirect = (eventId) => {
     if (onSelectEventForRegistration) {
       onSelectEventForRegistration(eventId);
-    }
-    const regSection = document.getElementById('register');
-    if (regSection) {
-      regSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -374,244 +696,80 @@ export default function EventsSection({ onSelectEventForRegistration }) {
         key={`${activeCategory}-${activeDay}-${searchQuery}`}
         className="missions-cards-grid animate-fadeIn"
       >
-        {filteredMissions.map((mission) => {
-          const isDay2 = mission.dayNumber === 2 || (mission.day && mission.day.includes('Day 2'));
-          const isPrototypeReq = mission.prototype === 'Compulsory';
-          const isLaptopReq = mission.laptops === 'Needed';
-
-          return (
-            <TiltCard
-              key={mission.id}
-              maxTilt={3}
-              scale={1.01}
-              onClick={() => handleOpenDetail(mission)}
-              className="event-planet-card group"
-            >
-              <div 
-                style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  height: '100%', 
-                  justifyContent: 'space-between',
-                  gap: '0.85rem'
-                }}
-              >
-                <div>
-                  {/* Top Minimal Badges Bar */}
-                  <div 
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between', 
-                      gap: '0.35rem', 
-                      flexWrap: 'wrap',
-                      marginBottom: '0.75rem'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      {/* Day Pill */}
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-space)',
-                          fontSize: '9px',
-                          fontWeight: 700,
-                          letterSpacing: '0.08em',
-                          padding: '0.2rem 0.55rem',
-                          borderRadius: '9999px',
-                          background: isDay2 ? 'rgba(168, 85, 247, 0.16)' : 'rgba(56, 189, 248, 0.16)',
-                          color: isDay2 ? '#c084fc' : '#38bdf8',
-                          border: isDay2 ? '1px solid rgba(168, 85, 247, 0.35)' : '1px solid rgba(56, 189, 248, 0.35)',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        {mission.day || (isDay2 ? 'Day 2 - 24' : 'Day 1 - 23')}
-                      </span>
-
-                      {/* Category Pill */}
-                      <span className="badge-tech-pill" style={{ padding: '0.2rem 0.55rem', fontSize: '8.5px' }}>
-                        {mission.category === 'technical' ? 'TECH' : 'GAME'}
-                      </span>
-                    </div>
-
-                    {/* Requirement Chip (Minimal & High Priority) */}
-                    {isPrototypeReq ? (
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-space)',
-                          fontSize: '8.5px',
-                          fontWeight: 700,
-                          padding: '0.2rem 0.55rem',
-                          borderRadius: '9999px',
-                          background: 'rgba(245, 158, 11, 0.16)',
-                          color: '#fbbf24',
-                          border: '1px solid rgba(245, 158, 11, 0.4)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.25rem'
-                        }}
-                      >
-                        <Zap style={{ width: '0.65rem', height: '0.65rem' }} />
-                        <span>Prototype Req</span>
-                      </span>
-                    ) : isLaptopReq ? (
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-space)',
-                          fontSize: '8.5px',
-                          fontWeight: 600,
-                          padding: '0.2rem 0.55rem',
-                          borderRadius: '9999px',
-                          background: 'rgba(56, 189, 248, 0.12)',
-                          color: '#93c5fd',
-                          border: '1px solid rgba(56, 189, 248, 0.25)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.25rem'
-                        }}
-                      >
-                        <Laptop style={{ width: '0.65rem', height: '0.65rem' }} />
-                        <span>Laptop Req</span>
-                      </span>
-                    ) : (
-                      <span className={mission.regType === 'pre-registration' ? 'badge-prereg-pill' : 'badge-spot-pill'} style={{ padding: '0.2rem 0.55rem', fontSize: '8.5px' }}>
-                        {mission.regType === 'pre-registration' ? 'PRE-REG' : 'SPOT'}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Circular Planet Sphere Graphic */}
-                  <div className="planet-sphere-glow" style={{ width: '105px', height: '105px', margin: '0.35rem auto 1rem auto' }}>
-                    <div className="planet-orbital-ring-3d" style={{ width: '135px', height: '135px' }} />
-                    <div className="planet-shadow-crescent" />
-                    <img
-                      src={mission.planetImage}
-                      alt={mission.title}
-                      loading="lazy"
-                    />
-                  </div>
-
-                  {/* Event Title */}
-                  <h3 
-                    className="event-card-title" 
-                    style={{ 
-                      fontSize: '1.15rem', 
-                      marginBottom: '0.2rem', 
-                      marginTop: '0.25rem',
-                      textAlign: 'left'
-                    }}
-                  >
-                    {mission.title}
-                  </h3>
-
-                  {/* Subtitle / Punchline */}
-                  {mission.subtitle && (
-                    <div 
-                      style={{ 
-                        fontFamily: 'var(--font-space)', 
-                        fontSize: '11px', 
-                        color: 'var(--cyan-primary)', 
-                        marginBottom: '0.55rem', 
-                        fontWeight: 600,
-                        letterSpacing: '0.03em'
-                      }}
-                    >
-                      {mission.subtitle}
-                    </div>
-                  )}
-
-                  {/* Description (Clean, concise) */}
-                  <p 
-                    className="event-card-desc" 
-                    style={{ 
-                      fontSize: '0.79rem', 
-                      lineHeight: 1.5, 
-                      marginBottom: '0.75rem',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis'
-                    }}
-                    title={mission.description}
-                  >
-                    {mission.description}
-                  </p>
-
-                  {/* Minimal Meta Row (Timings & Team Size) */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '0.5rem',
-                      padding: '0.45rem 0.65rem',
-                      background: 'rgba(3, 7, 18, 0.55)',
-                      borderRadius: '0.65rem',
-                      border: '1px solid rgba(56, 189, 248, 0.08)',
-                      fontSize: '10px',
-                      color: '#cbd5e1',
-                      fontFamily: 'var(--font-space)'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', overflow: 'hidden' }}>
-                      <Clock style={{ width: '0.75rem', height: '0.75rem', color: 'var(--cyan-primary)', flexShrink: 0 }} />
-                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#e2e8f0', fontWeight: 500 }}>
-                        {mission.timings || mission.time}
-                      </span>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', flexShrink: 0 }}>
-                      <Users style={{ width: '0.75rem', height: '0.75rem', color: 'var(--cyan-primary)' }} />
-                      <span>{mission.teamSize}</span>
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Minimal Footer: Venue, Prize & Sleek Explore Button */}
-                <div 
-                  className="event-card-bottom" 
-                  style={{ 
-                    paddingTop: '0.65rem', 
-                    borderTop: '1px solid rgba(56, 189, 248, 0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                  }}
-                >
-                  <div style={{ maxWidth: '75%' }}>
-                    <span 
-                      style={{ 
-                        display: 'block', 
-                        fontSize: '9.5px', 
-                        color: 'var(--text-muted)', 
-                        fontFamily: 'var(--font-space)',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}
-                    >
-                      📍 {mission.venue}
-                    </span>
-                    <span style={{ fontFamily: 'var(--font-space)', fontSize: '9px', color: '#38bdf8', fontWeight: 600 }}>
-                      Prize: {mission.prizePool}
-                    </span>
-                  </div>
-
-                  <div 
-                    className="event-arrow-btn" 
-                    title="View Briefing"
-                    style={{ width: '1.85rem', height: '1.85rem', flexShrink: 0 }}
-                  >
-                    <ArrowRight style={{ width: '0.85rem', height: '0.85rem' }} />
-                  </div>
-                </div>
-
-              </div>
-            </TiltCard>
-          );
-        })}
+        {displayedMissions.map((mission, idx) => (
+          <EventHudCard
+            key={mission.id}
+            mission={mission}
+            idx={idx}
+            onOpenDetail={handleOpenDetail}
+            onRegisterDirect={handleRegisterDirect}
+          />
+        ))}
       </div>
+
+      {/* PROGRESSIVE VIEW MORE / DISCLOSURE CONTROL (PREVENTS CLUMSY WALL OF CARDS) */}
+      {filteredMissions.length > 6 && (
+        <div className="missions-pagination-wrapper">
+          {/* Telemetry Progress Status */}
+          <div className="missions-telemetry-status">
+            <div className="missions-telemetry-text">
+              <span className="missions-telemetry-dot" />
+              <span>
+                DISPLAYING <strong style={{ color: '#38bdf8' }}>{Math.min(visibleCount, filteredMissions.length)}</strong> OF <strong style={{ color: '#ffffff' }}>{filteredMissions.length}</strong> MISSIONS
+              </span>
+            </div>
+
+            {/* Micro Cyan Progress Gauge */}
+            <div className="missions-telemetry-gauge">
+              <div
+                className="missions-telemetry-fill"
+                style={{
+                  width: `${Math.min(100, Math.round((Math.min(visibleCount, filteredMissions.length) / filteredMissions.length) * 100))}%`
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Action Button Deck */}
+          <div className="missions-pagination-actions">
+            {hasMore ? (
+              <>
+                <button
+                  type="button"
+                  onClick={handleViewMore}
+                  className="missions-load-more-btn"
+                  title="Reveal next sector missions"
+                >
+                  <Layers style={{ width: '1rem', height: '1rem', color: 'var(--cyan-primary)' }} />
+                  <span>VIEW MORE MISSIONS (+{Math.min(6, remainingCount)})</span>
+                  <ChevronDown className="animate-bounce" style={{ width: '1.1rem', height: '1.1rem' }} />
+                </button>
+
+                {remainingCount > 6 && (
+                  <button
+                    type="button"
+                    onClick={handleViewAll}
+                    className="missions-view-all-btn"
+                    title="Expand all missions at once"
+                  >
+                    <span>VIEW ALL ({filteredMissions.length})</span>
+                  </button>
+                )}
+              </>
+            ) : isExpanded ? (
+              <button
+                type="button"
+                onClick={handleCollapse}
+                className="missions-collapse-btn"
+                title="Collapse list to initial 6 missions"
+              >
+                <ChevronUp style={{ width: '1rem', height: '1rem', color: '#94a3b8' }} />
+                <span>SHOW LESS (COLLAPSE TO 6)</span>
+              </button>
+            ) : null}
+          </div>
+        </div>
+      )}
 
       {/* DETAILED MODAL VIEW */}
       <EventModal

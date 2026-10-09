@@ -1,13 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Play } from 'lucide-react';
 import { playUiBeep } from '../utils/audioEngine';
 import SpaceshipLaunch from './SpaceshipLaunch';
 import AstronautHeroParallax from './AstronautHeroParallax';
-import HeroSpaceshipCursor from './HeroSpaceshipCursor';
 
 export default function Hero({ onEnterAstrion, onLaunchStart }) {
   const [isLaunching, setIsLaunching] = useState(false);
-  const heroRef = useRef(null);
 
   const handleEnter = () => {
     if (isLaunching) return;
@@ -33,7 +31,6 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
   return (
     <section
       id="home"
-      ref={heroRef}
       style={{
         position: 'relative',
         width: '100%',
@@ -41,9 +38,6 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
         overflow: 'hidden'
       }}
     >
-      {/* INTERACTIVE FLIGHT SPACESHIP CURSOR (with momentum, banking & thruster trails) */}
-      <HeroSpaceshipCursor containerRef={heroRef} />
-
       <AstronautHeroParallax>
         <div
           className="hero-wrapper"
@@ -78,7 +72,7 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
 
             {/* TOP BILLING LINE (matching Interstellar reference image) */}
             <div className="hero-billing-header">
-              ANNUAL INTER-COLLEGIATE FESTIVAL • OCT 23 - 24, 2026
+               • OCT 23 - 24, 2026
             </div>
 
             {/* BIG CINEMATIC ASTRION TITLE IN INTERSTELLAR TYPOGRAPHY */}

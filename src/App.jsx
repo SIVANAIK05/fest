@@ -3,19 +3,20 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import MissionSection from './components/MissionSection';
 import EventsSection from './components/EventsSection';
-import RegistrationSection from './components/RegistrationSection';
-import EchoesSection from './components/EchoesSection';
+import ExploreIICSection from './components/ExploreIICSection';
+import RegistrationModal from './components/RegistrationModal';
 import MissionPartnersSection from './components/MissionPartnersSection';
 import TheCrewSection from './components/TheCrewSection';
-import VenueSpotsSection from './components/VenueSpotsSection';
 import Footer from './components/Footer';
 import CosmicParticleField from './components/CosmicParticleField';
 import InterstellarGalaxyBackground from './components/InterstellarGalaxyBackground';
+import HeroSpaceshipCursor from './components/HeroSpaceshipCursor';
 import PassVerificationModal from './components/PassVerificationModal';
 import { playWarpSound, startAmbientAudio } from './utils/audioEngine';
 
 export default function App() {
   const [preselectedEventId, setPreselectedEventId] = useState(null);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isWarping, setIsWarping] = useState(false);
   const [verifiedPass, setVerifiedPass] = useState(null);
 
@@ -36,12 +37,15 @@ export default function App() {
     }
   }, []);
 
-  const handleSelectEventForRegistration = (eventId) => {
-    setPreselectedEventId(eventId);
-    const regEl = document.getElementById('register');
-    if (regEl) {
-      regEl.scrollIntoView({ behavior: 'smooth' });
+  const handleOpenRegister = (eventId = null) => {
+    if (eventId) {
+      setPreselectedEventId(eventId);
     }
+    setIsRegisterOpen(true);
+  };
+
+  const handleSelectEventForRegistration = (eventId) => {
+    handleOpenRegister(eventId);
   };
 
   const handleLaunchStart = () => {
@@ -71,9 +75,11 @@ export default function App() {
       {/* INTERSTELLAR GALAXY BACKGROUND (Active everywhere except hero, mouse/touch gravity, cosmic shockwaves) */}
       <InterstellarGalaxyBackground />
 
+      {/* INTERACTIVE SPACESHIP CURSOR (Active site-wide with momentum, banking, targeting HUD & particle exhaust) */}
+      <HeroSpaceshipCursor />
 
       {/* NAVIGATION BAR WITH UNIQUE MOBILE DOCK & HOLOGRAPHIC FLIGHT DECK */}
-      <Navbar />
+      <Navbar onOpenRegister={() => handleOpenRegister()} />
 
       {/* MAIN SECTIONS ACCORDING TO REFERENCE IMAGE */}
       <main>
@@ -89,24 +95,25 @@ export default function App() {
         {/* 02 — MISSIONS (Tech & Non-Tech events with 3D planetary cards & modal briefing) */}
         <EventsSection onSelectEventForRegistration={handleSelectEventForRegistration} />
 
-        {/* 03 — JOIN THE CREW (Interactive 5-step registration & Mission Accepted Cockpit Pass) */}
-        <RegistrationSection preselectedEventId={preselectedEventId} />
+        {/* 03 — EXPLORE IIC & INNOVATION COUNCIL */}
+        <ExploreIICSection onOpenRegister={() => handleOpenRegister()} />
 
-        {/* 04 — ECHOES THROUGH TIME (Memories carousel & year selector) */}
-        <EchoesSection />
+        {/* 04 — THE CREW (Leadership commanders & core mission personnel) */}
+        <TheCrewSection />
 
         {/* MISSION PARTNERS (Google, Infosys, TATA, Microsoft) */}
         <MissionPartnersSection />
-
-        {/* THE CREW (Circular glowing crew portraits) */}
-        <TheCrewSection />
-
-        {/* 04 — CAMPUS VENUE SPOTS (Event Locations & Matrix) */}
-        <VenueSpotsSection />
       </main>
 
       {/* 05 — CONTACT MISSION CONTROL & BASE TELEMETRY */}
       <Footer />
+
+      {/* POPUP REGISTRATION MODAL (Triggered by Join Crew & Event cards) */}
+      <RegistrationModal
+        isOpen={isRegisterOpen}
+        onClose={() => setIsRegisterOpen(false)}
+        preselectedEventId={preselectedEventId}
+      />
 
       {/* LIVE SCAN VERIFICATION MODAL (Triggered when mobile camera scans QR code) */}
       <PassVerificationModal
