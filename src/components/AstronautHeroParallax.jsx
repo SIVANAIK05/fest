@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-
+import BlackHole from './BlackHole';
 export default function AstronautHeroParallax({ children }) {
   const [scrollY, setScrollY] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -92,23 +92,6 @@ export default function AstronautHeroParallax({ children }) {
         overflow: 'hidden'
       }}
     >
-      {/* ============================================================ */}
-      {/* LAYER 1: DEEP SPACE GARGANTUA & CRAGGY HORIZON               */}
-      {/* ============================================================ */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `linear-gradient(to bottom, rgba(2, 4, 9, 0.35) 0%, rgba(2, 4, 9, 0.15) 55%, rgba(2, 4, 9, 0.95) 100%), url('/images/hero_gargantua_bg.jpg')`,
-          backgroundSize: 'cover',
-          backgroundPosition: `calc(50% + ${mousePos.x * 6}px) calc(50% + ${mousePos.y * 4}px)`,
-          transform: `translate3d(0, ${bgScrollOffset}px, 0) scale(1.04)`,
-          transformOrigin: 'center center',
-          transition: 'transform 0.08s linear',
-          zIndex: 1,
-          pointerEvents: 'none'
-        }}
-      />
 
       {/* ============================================================ */}
       {/* LAYER 2: INTERSTELLAR COSMIC DUST & ATMOSPHERIC HAZE         */}
@@ -136,6 +119,11 @@ export default function AstronautHeroParallax({ children }) {
           pointerEvents: 'none'
         }}
       />
+
+      {/* ============================================================ */}
+      {/* LAYER 2.5: REAL-TIME CINEMATIC BLACK HOLE (WebGL)            */}
+      {/* ============================================================ */}
+      <BlackHole scrollY={scrollY} mousePos={mousePos} />
 
       {/* ============================================================ */}
       {/* LAYER 3: FOREGROUND REALISTIC ASTRONAUT (SCROLLS BOTTOM->UP) */}

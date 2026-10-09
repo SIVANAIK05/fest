@@ -591,6 +591,44 @@ button {
 }
 
 /* ==========================================================================
+   REAL-TIME BLACK HOLE WEBGL CANVAS
+   ========================================================================== */
+.blackhole-canvas-container {
+  position: absolute;
+  top: 48%;
+  right: -18%;
+  transform: translateY(-50%);
+  width: clamp(700px, 85vw, 1300px);
+  height: clamp(700px, 85vw, 1300px);
+  z-index: 4;
+  pointer-events: none;
+  opacity: 1.0;
+  filter: contrast(1.15) brightness(1.12);
+  transition: opacity 0.4s ease;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .blackhole-canvas-container {
+    width: clamp(550px, 70vw, 800px);
+    height: clamp(550px, 70vw, 800px);
+    right: -15%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .blackhole-canvas-container {
+    width: clamp(400px, 90vw, 550px);
+    height: clamp(400px, 90vw, 550px);
+    top: 15%;
+    right: -25%;
+    transform: none;
+    opacity: 0.85;
+  }
+}
+
+/* ==========================================================================
    01 — THE MISSION SECTION
    ========================================================================== */
 .mission-grid {
@@ -1896,4 +1934,4 @@ button {
   .md-hide-btn {
     display: flex !important;
   }
-}
+}
