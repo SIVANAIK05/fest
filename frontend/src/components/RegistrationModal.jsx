@@ -3,26 +3,20 @@ import { createPortal } from 'react-dom';
 import {
   Check,
   Download,
-  Sparkles,
   Users,
   User,
   QrCode,
   X,
-  FileCheck,
   Rocket,
   ShieldCheck,
   Cpu,
-  Gamepad2,
   CheckCircle2,
-  ExternalLink,
   Plus,
-  Trash2,
-  Mail,
-  Phone
+  Trash2
 } from 'lucide-react';
 import { INSTITUTIONS_LIST } from '../data/eventsData';
 import { MISSIONS_LIST } from './EventsSection';
-import { playUiBeep, playWarpSound, playSpaceBreachSound } from '../utils/audioEngine';
+import { playUiBeep, playSpaceBreachSound } from '../utils/audioEngine';
 import {
   buildQrPayload,
   generateQrCodeDataUrl,
@@ -348,8 +342,31 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
         setQrDataUrl(freshQr);
         activeQrRef.current = freshQr;
       }
+
+      // Determine API URL (Render/Production vs Localhost)
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+      // Send the data to the backend Supabase API
+      const response = await fetch(`${baseUrl}/api/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          astrionId: randomId,
+          rawFormData: passFormData,
+          fullFormData: formData,
+          selectedMissions: selectedMissions
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Server rejected registration request.");
+      }
     } catch (err) {
-      console.error('Pre-generating QR error:', err);
+      console.error('Registration/QR error:', err);
+      alert("Registration failed. Ensure backend is running! Details: " + err.message);
+      return; // Abort transition if backend fails
     }
 
     // Play space breach sound (acceleration rumble + klaxon + sonic crash boom)
@@ -460,7 +477,6 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
 
   const selectedMissionsList = MISSIONS_LIST.filter(m => formData.selectedEvents.includes(m.id));
   const technicalMissions = MISSIONS_LIST.filter(m => m.category === 'technical');
-  const nonTechnicalMissions = MISSIONS_LIST.filter(m => m.category !== 'technical');
 
   const institutionDisplayName = formData.college === 'Other Institution / University'
     ? (formData.customCollege || 'Other College')
@@ -1358,7 +1374,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
                     BOARDING PASS ID
                   </div>
                   <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '1.45rem', fontWeight: 900, color: '#38bdf8', letterSpacing: '0.06em', margin: '0.2rem 0' }}>
-                    {activeIdRef.current || astrionId}
+                    {astrionId}
                   </div>
                   <div style={{ fontSize: '9.5px', color: '#94a3b8', letterSpacing: '0.05em' }}>
                     SCAN AT VENUE GATEWAY
@@ -1381,9 +1397,9 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
                     margin: '0.4rem 0'
                   }}
                 >
-                  {(activeQrRef.current || qrDataUrl) ? (
+                  {(qrDataUrl) ? (
                     <img
-                      src={activeQrRef.current || qrDataUrl}
+                      src={qrDataUrl}
                       alt="Pass Verification QR Code"
                       style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                     />

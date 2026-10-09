@@ -4,26 +4,19 @@ import { supabase } from '../lib/supabase';
 import {
   Check,
   Download,
-  Sparkles,
   Users,
   User,
-  QrCode,
   X,
-  FileCheck,
   Rocket,
   ShieldCheck,
   Cpu,
-  Gamepad2,
   CheckCircle2,
-  ExternalLink,
   Plus,
-  Trash2,
-  Mail,
-  Phone
+  Trash2
 } from 'lucide-react';
 import { INSTITUTIONS_LIST } from '../data/eventsData';
 import { MISSIONS_LIST } from './EventsSection';
-import { playUiBeep, playWarpSound, playSpaceBreachSound } from '../utils/audioEngine';
+import { playUiBeep, playSpaceBreachSound } from '../utils/audioEngine';
 import {
   buildQrPayload,
   generateQrCodeDataUrl,
@@ -181,86 +174,86 @@ export default function RegistrationSection({ preselectedEventId }) {
 
   // SUBMIT HANDLER: Trigger Space Breach & Hyperspace Crash Sequence!
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (formData.selectedEvents.length === 0) {
-    alert('Please select at least one event.');
-    return;
-  }
-
-  try {
-    const selectedMissions = MISSIONS_LIST.filter((m) =>
-      formData.selectedEvents.includes(m.id)
-    );
-
-    for (const mission of selectedMissions) {
-      const { error } = await supabase
-        .from('registrations')
-        .insert({
-          event_name: mission.title,
-          team_lead_roll_no: formData.pin,
-
-          flight_mode: formData.isSquad
-            ? 'Squadron / Team'
-            : 'Solo Flight',
-
-          team_lead_name: formData.fullName,
-          team_lead_email: formData.email,
-          team_lead_mobile: formData.mobile,
-
-          college:
-            formData.college === 'Other Institution / University'
-              ? formData.customCollege
-              : formData.college,
-
-          department: formData.department,
-          year_of_study: formData.year,
-
-          team_member_email_2:
-            formData.isSquad && formData.teammates[0]?.email
-              ? formData.teammates[0].email
-              : null,
-
-          team_member_email_3:
-            formData.isSquad && formData.teammates[1]?.email
-              ? formData.teammates[1].email
-              : null,
-
-          team_member_email_4:
-            formData.isSquad && formData.teammates[2]?.email
-              ? formData.teammates[2].email
-              : null,
-
-          team_member_email_5:
-            formData.isSquad && formData.teammates[3]?.email
-              ? formData.teammates[3].email
-              : null
-        });
-
-      if (error) {
-        console.error('Supabase registration error:', error);
-        alert('Registration failed: ' + error.message);
-        return;
-      }
+    if (formData.selectedEvents.length === 0) {
+      alert('Please select at least one event.');
+      return;
     }
 
-    // Generate flight pass after successful database insertion
-    const randomId =
-      'ASTR-26-' +
-      Math.floor(1000 + Math.random() * 9000)
-        .toString(16)
-        .toUpperCase();
+    try {
+      const selectedMissions = MISSIONS_LIST.filter((m) =>
+        formData.selectedEvents.includes(m.id)
+      );
 
-    setAstrionId(randomId);
+      for (const mission of selectedMissions) {
+        const { error } = await supabase
+          .from('registrations')
+          .insert({
+            event_name: mission.title,
+            team_lead_roll_no: formData.pin,
 
-    playSpaceBreachSound();
-    setIsBreaching(true);
+            flight_mode: formData.isSquad
+              ? 'Squadron / Team'
+              : 'Solo Flight',
 
-  } catch (error) {
-    console.error('Registration error:', error);
-    alert('Registration failed. Please try again.');
-  }
-};
+            team_lead_name: formData.fullName,
+            team_lead_email: formData.email,
+            team_lead_mobile: formData.mobile,
+
+            college:
+              formData.college === 'Other Institution / University'
+                ? formData.customCollege
+                : formData.college,
+
+            department: formData.department,
+            year_of_study: formData.year,
+
+            team_member_email_2:
+              formData.isSquad && formData.teammates[0]?.email
+                ? formData.teammates[0].email
+                : null,
+
+            team_member_email_3:
+              formData.isSquad && formData.teammates[1]?.email
+                ? formData.teammates[1].email
+                : null,
+
+            team_member_email_4:
+              formData.isSquad && formData.teammates[2]?.email
+                ? formData.teammates[2].email
+                : null,
+
+            team_member_email_5:
+              formData.isSquad && formData.teammates[3]?.email
+                ? formData.teammates[3].email
+                : null
+          });
+
+        if (error) {
+          console.error('Supabase registration error:', error);
+          alert('Registration failed: ' + error.message);
+          return;
+        }
+      }
+
+      // Generate flight pass after successful database insertion
+      const randomId =
+        'ASTR-26-' +
+        Math.floor(1000 + Math.random() * 9000)
+          .toString(16)
+          .toUpperCase();
+
+      setAstrionId(randomId);
+
+      playSpaceBreachSound();
+      setIsBreaching(true);
+
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('Registration failed. Please try again.');
+    }
+  };
   const handleBreachComplete = () => {
     setIsBreaching(false);
     setShowPassModal(true);
@@ -309,7 +302,6 @@ export default function RegistrationSection({ preselectedEventId }) {
 
   const selectedMissionsList = MISSIONS_LIST.filter(m => formData.selectedEvents.includes(m.id));
   const technicalMissions = MISSIONS_LIST.filter(m => m.category === 'technical');
-  const nonTechnicalMissions = MISSIONS_LIST.filter(m => m.category !== 'technical');
 
   const institutionDisplayName = formData.college === 'Other Institution / University'
     ? (formData.customCollege || 'Other College')
