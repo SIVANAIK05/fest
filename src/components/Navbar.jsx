@@ -129,12 +129,11 @@ export default function Navbar({ onOpenRegister }) {
               flexShrink: 0
             }}
           >
-            {/* Dual Logo Container on clean white capsule */}
+            {/* VVIT University Logo Capsule */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.35rem',
-              padding: '0.2rem 0.45rem',
+              padding: '0.2rem 0.55rem',
               borderRadius: '0.45rem',
               background: '#ffffff',
               boxShadow: '0 0 16px rgba(56, 189, 248, 0.35)',
@@ -142,15 +141,9 @@ export default function Navbar({ onOpenRegister }) {
               flexShrink: 0
             }}>
               <img
-                src="/images/iic_logo.png"
-                alt="IIC Logo"
-                style={{ height: '1.45rem', width: 'auto', objectFit: 'contain' }}
-              />
-              <span style={{ color: '#cbd5e1', fontSize: '9px', fontWeight: 300 }}>|</span>
-              <img
                 src="/images/vvit_logo.png"
                 alt="VVIT Logo"
-                style={{ height: '1.45rem', width: 'auto', objectFit: 'contain' }}
+                style={{ height: '1.6rem', width: 'auto', objectFit: 'contain' }}
               />
             </div>
 

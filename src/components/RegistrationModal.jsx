@@ -473,7 +473,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 99990,
+        zIndex: 10000,
         background: 'radial-gradient(ellipse at center, rgba(10, 16, 34, 0.78) 0%, rgba(2, 4, 10, 0.90) 100%)',
         display: 'flex',
         alignItems: 'center',

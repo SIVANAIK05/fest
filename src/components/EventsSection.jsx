@@ -4,14 +4,12 @@ import {
   ArrowRight,
   Search,
   Sparkles,
-  Calendar,
   Clock,
   Users,
   User,
   Laptop,
   Zap,
   MapPin,
-  Trophy,
   Compass,
   ChevronDown,
   ChevronUp,
@@ -29,22 +27,28 @@ const formatVenue = (v) => {
 };
 
 const getTeamBadgeInfo = (teamSize) => {
-  const str = (teamSize || '').toLowerCase();
+  const str = (teamSize || '').trim();
+  const lower = str.toLowerCase();
   if (
-    str.includes('2') ||
-    str.includes('3') ||
-    str.includes('4') ||
-    str.includes('5') ||
-    str.includes('team') ||
-    str.includes('squad') ||
-    str.includes('pair')
+    lower.includes('2') ||
+    lower.includes('3') ||
+    lower.includes('4') ||
+    lower.includes('5') ||
+    lower.includes('team') ||
+    lower.includes('squad') ||
+    lower.includes('pair')
   ) {
-    let label = 'TEAM';
-    if (str.includes('pair')) label = 'PAIR';
-    else if (str.includes('squad')) label = 'SQUAD';
-    else if (str.includes('2 - 4')) label = 'TEAM (2-4)';
-    else if (str.includes('2')) label = 'TEAM (2)';
-    return { isSolo: false, label };
+    const match = str.match(/(\d+)\s*[-–]\s*(\d+)/);
+    if (match) {
+      return { isSolo: false, label: `TEAM (${match[1]}-${match[2]})` };
+    }
+    const singleMatch = str.match(/(\d+)/);
+    if (singleMatch && singleMatch[1] !== '1') {
+      return { isSolo: false, label: `TEAM (${singleMatch[1]})` };
+    }
+    if (lower.includes('pair')) return { isSolo: false, label: 'PAIR' };
+    if (lower.includes('squad')) return { isSolo: false, label: 'SQUAD' };
+    return { isSolo: false, label: 'TEAM' };
   }
   return { isSolo: true, label: 'SOLO' };
 };
@@ -190,6 +194,10 @@ function EventHudCard({
 
                 {/* Floating Telemetry Chips on Poster Bottom */}
                 <div className="event-poster-badges-bottom">
+                  <span className={`poster-badge-reg ${mission.regType === 'pre-registration' ? 'is-prereg' : 'is-spot'}`}>
+                    {mission.regType === 'pre-registration' ? 'PRE-REG' : 'SPOT WALK-IN'}
+                  </span>
+
                   {isPrototypeReq ? (
                     <span className="poster-badge-alert">
                       <Zap style={{ width: '0.65rem', height: '0.65rem' }} />
@@ -200,15 +208,7 @@ function EventHudCard({
                       <Laptop style={{ width: '0.65rem', height: '0.65rem' }} />
                       <span>LAPTOP REQ</span>
                     </span>
-                  ) : (
-                    <span className={`poster-badge-reg ${mission.regType === 'pre-registration' ? 'is-prereg' : 'is-spot'}`}>
-                      {mission.regType === 'pre-registration' ? 'PRE-REG' : 'SPOT WALK-IN'}
-                    </span>
-                  )}
-
-                  <span className="poster-badge-size">
-                    {mission.teamSize}
-                  </span>
+                  ) : null}
                 </div>
               </div>
 
@@ -238,7 +238,7 @@ function EventHudCard({
                   </div>
                   <span className="event-venue-status-chip">
                     <span className="event-venue-pulse-dot" />
-                    <span>{mission.timings || mission.time || 'ACTIVE ARENA'}</span>
+                    <span>{(mission.timings || mission.time || 'ACTIVE ARENA').replace(/\s*&&\s*/g, ' & ')}</span>
                   </span>
                 </div>
                 <div className="event-venue-name" title={formatVenue(mission.venue)}>
@@ -247,60 +247,36 @@ function EventHudCard({
               </div>
             </div>
 
-            {/* CARD BOTTOM ACTION FOOTER: Telemetry + EXPLORE BUTTON + Direct Register */}
+            {/* CARD BOTTOM ACTION FOOTER: Explore and Register Buttons */}
             <div className="event-hud-footer">
-              {/* Left Telemetry (Prize pool or schedule entry) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                {mission.prizePool ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#fbbf24' }}>
-                    <Trophy style={{ width: '0.85rem', height: '0.85rem', color: '#fbbf24', flexShrink: 0 }} />
-                    <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                      {mission.prizePool}
-                    </span>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#38bdf8' }}>
-                    <Clock style={{ width: '0.85rem', height: '0.85rem', color: '#38bdf8', flexShrink: 0 }} />
-                    <span style={{ fontSize: '10.5px', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                      {mission.time || '10:15 AM'}
-                    </span>
-                  </div>
-                )}
-                <span style={{ fontSize: '9px', fontFamily: 'var(--font-mono)', color: '#64748b' }}>
-                  {mission.regType === 'pre-registration' ? 'FREE ENTRY PASS' : 'OPEN SPOT ENTRY'}
-                </span>
-              </div>
+              <button
+                type="button"
+                className="event-hud-explore-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenDetail(mission);
+                }}
+                title={`Explore full briefing for ${mission.title}`}
+                style={{ flex: 1, justifyContent: 'center' }}
+              >
+                <span>Explore</span>
+                <Compass style={{ width: '0.85rem', height: '0.85rem' }} />
+              </button>
 
-              {/* Right: EXPLORE BUTTON & REGISTER CTA */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <button
-                  type="button"
-                  className="event-hud-explore-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenDetail(mission);
-                  }}
-                  title={`Explore full briefing for ${mission.title}`}
-                >
-                  <span>Explore</span>
-                  <Compass style={{ width: '0.85rem', height: '0.85rem' }} />
-                </button>
-
-                <button
-                  type="button"
-                  className="event-hud-register-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playUiBeep(1250, 0.05);
-                    onRegisterDirect(mission.id);
-                  }}
-                  title={`Register directly for ${mission.title}`}
-                >
-                  <span>Register</span>
-                  <ArrowRight style={{ width: '0.75rem', height: '0.75rem' }} />
-                </button>
-              </div>
-
+              <button
+                type="button"
+                className="event-hud-register-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playUiBeep(1250, 0.05);
+                  onRegisterDirect(mission.id);
+                }}
+                title={`Register directly for ${mission.title}`}
+                style={{ flex: 1, justifyContent: 'center' }}
+              >
+                <span>Register</span>
+                <ArrowRight style={{ width: '0.75rem', height: '0.75rem' }} />
+              </button>
             </div>
 
           </div>
@@ -313,30 +289,22 @@ function EventHudCard({
 
 export default function EventsSection({ onSelectEventForRegistration }) {
   const [activeCategory, setActiveCategory] = useState('all'); // 'all' | 'technical' | 'non-technical'
-  const [activeDay, setActiveDay] = useState('all'); // 'all' | 'Day 1' | 'Day 2'
   const [searchQuery, setSearchQuery] = useState('');
   const [activeModalEvent, setActiveModalEvent] = useState(null);
   const [visibleCount, setVisibleCount] = useState(6);
 
-  // Reset pagination count when category, day, or search query changes
+  // Reset pagination count when category or search query changes
   useEffect(() => {
     setVisibleCount(6);
-  }, [activeCategory, activeDay, searchQuery]);
+  }, [activeCategory, searchQuery]);
 
-  // Filter Missions by Category, Day, and Search
+  // Filter Missions by Category and Search
   const filteredMissions = useMemo(() => {
     return MISSIONS_LIST.filter((mission) => {
       // Category match
       const matchCategory =
         activeCategory === 'all' ||
         mission.category === activeCategory;
-
-      // Day match
-      const matchDay =
-        activeDay === 'all' ||
-        mission.day === activeDay ||
-        (activeDay === 'Day 1' && (mission.day?.includes('Day 1') || mission.dayNumber === 1)) ||
-        (activeDay === 'Day 2' && (mission.day?.includes('Day 2') || mission.dayNumber === 2));
 
       // Search match
       const query = searchQuery.toLowerCase().trim();
@@ -349,9 +317,9 @@ export default function EventsSection({ onSelectEventForRegistration }) {
         (mission.timings && mission.timings.toLowerCase().includes(query)) ||
         (mission.skillsTested && mission.skillsTested.some(s => s.toLowerCase().includes(query)));
 
-      return matchCategory && matchDay && matchSearch;
+      return matchCategory && matchSearch;
     });
-  }, [activeCategory, activeDay, searchQuery]);
+  }, [activeCategory, searchQuery]);
 
   // Slice displayed missions based on visibleCount to avoid overwhelming clumsy list
   const displayedMissions = useMemo(() => {
@@ -407,56 +375,10 @@ export default function EventsSection({ onSelectEventForRegistration }) {
           </p>
         </div>
 
-        {/* Right side navigation text and arrows */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', textAlign: 'right' }}>
-          <div style={{ fontFamily: 'var(--font-space)', fontSize: '0.75rem', color: 'var(--text-slate)', lineHeight: 1.4 }}>
+        {/* Right side navigation text */}
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontFamily: 'var(--font-space)', fontSize: '0.78rem', color: 'var(--text-slate)', lineHeight: 1.4 }}>
             Explore planetary missions.<br />Tap any card for complete briefing.
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <button
-              onClick={() => {
-                playUiBeep(900);
-                setActiveDay(prev => prev === 'all' ? 'Day 2' : prev === 'Day 2' ? 'Day 1' : 'all');
-              }}
-              style={{
-                width: '2.25rem',
-                height: '2.25rem',
-                borderRadius: '9999px',
-                background: '#0f172a',
-                border: '1px solid var(--border-cyan)',
-                color: '#e2e8f0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              aria-label="Previous day"
-            >
-              <ArrowLeft style={{ width: '1rem', height: '1rem' }} />
-            </button>
-            <button
-              onClick={() => {
-                playUiBeep(900);
-                setActiveDay(prev => prev === 'all' ? 'Day 1' : prev === 'Day 1' ? 'Day 2' : 'all');
-              }}
-              style={{
-                width: '2.25rem',
-                height: '2.25rem',
-                borderRadius: '9999px',
-                background: '#0f172a',
-                border: '1px solid var(--border-cyan)',
-                color: '#e2e8f0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              aria-label="Next day"
-            >
-              <ArrowRight style={{ width: '1rem', height: '1rem' }} />
-            </button>
           </div>
         </div>
       </div>
@@ -465,92 +387,13 @@ export default function EventsSection({ onSelectEventForRegistration }) {
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
           gap: '1rem',
           marginBottom: '2.25rem'
         }}
       >
-        {/* Row 1: Day Timeline Pills */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
-          <span style={{ fontFamily: 'var(--font-space)', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600 }}>
-            Timeline:
-          </span>
-          <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => {
-                playUiBeep(1000);
-                setActiveDay('all');
-              }}
-              className={activeDay === 'all' ? 'btn-pill-cyan' : 'btn-pill-ghost'}
-              style={{ fontSize: '0.78rem', padding: '0.3rem 0.85rem' }}
-            >
-              All Days (23 - 24 Oct)
-            </button>
-
-            <button
-              onClick={() => {
-                playUiBeep(1000);
-                setActiveDay('Day 1');
-              }}
-              style={{
-                fontSize: '0.78rem',
-                padding: '0.3rem 0.85rem',
-                borderRadius: '9999px',
-                border: activeDay === 'Day 1' ? '1.5px solid var(--cyan-primary)' : '1px solid rgba(56, 189, 248, 0.25)',
-                background: activeDay === 'Day 1' ? 'rgba(56, 189, 248, 0.2)' : 'rgba(15, 23, 42, 0.6)',
-                color: activeDay === 'Day 1' ? '#ffffff' : '#94a3b8',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontFamily: 'var(--font-space)',
-                boxShadow: activeDay === 'Day 1' ? '0 0 12px rgba(56, 189, 248, 0.25)' : 'none',
-                transition: 'all 0.2s ease',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem'
-              }}
-            >
-              <Calendar style={{ width: '0.75rem', height: '0.75rem', color: 'var(--cyan-primary)' }} />
-              <span>Day 1 - 23 Oct</span>
-            </button>
-
-            <button
-              onClick={() => {
-                playUiBeep(1000);
-                setActiveDay('Day 2');
-              }}
-              style={{
-                fontSize: '0.78rem',
-                padding: '0.3rem 0.85rem',
-                borderRadius: '9999px',
-                border: activeDay === 'Day 2' ? '1.5px solid #a855f7' : '1px solid rgba(168, 85, 247, 0.25)',
-                background: activeDay === 'Day 2' ? 'rgba(168, 85, 247, 0.2)' : 'rgba(15, 23, 42, 0.6)',
-                color: activeDay === 'Day 2' ? '#ffffff' : '#94a3b8',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontFamily: 'var(--font-space)',
-                boxShadow: activeDay === 'Day 2' ? '0 0 12px rgba(168, 85, 247, 0.25)' : 'none',
-                transition: 'all 0.2s ease',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem'
-              }}
-            >
-              <Calendar style={{ width: '0.75rem', height: '0.75rem', color: '#c084fc' }} />
-              <span>Day 2 - 24 Oct</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Row 2: Category Tabs + Clean Search */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '1rem'
-          }}
-        >
           {/* Category Tabs */}
           <div className="missions-filter-tabs" style={{ margin: 0 }}>
             <button
@@ -656,7 +499,6 @@ export default function EventsSection({ onSelectEventForRegistration }) {
             )}
           </div>
         </div>
-      </div>
 
       {/* NO MATCH STATE */}
       {filteredMissions.length === 0 && (
@@ -675,13 +517,12 @@ export default function EventsSection({ onSelectEventForRegistration }) {
             No Matching Missions Found
           </h3>
           <p style={{ fontFamily: 'var(--font-space)', fontSize: '0.85rem', color: 'var(--text-slate)', maxWidth: '420px', margin: '0 auto 1.25rem' }}>
-            Try resetting your search query or day filter to browse all technical competitions and games.
+            Try resetting your search query or arena category to browse all technical competitions and games.
           </p>
           <button
             onClick={() => {
               setSearchQuery('');
               setActiveCategory('all');
-              setActiveDay('all');
             }}
             className="btn-pill-cyan"
             style={{ fontSize: '0.8rem' }}

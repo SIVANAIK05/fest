@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function HeroSpaceshipCursor({ containerRef = null }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -132,15 +133,15 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
       container.addEventListener('mouseleave', handleMouseLeave);
       container.addEventListener('mousedown', handleMouseDown);
     } else {
-      window.addEventListener('mousemove', handleMouseMove, { passive: true });
-      window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('mousemove', handleMouseMove, { passive: true, capture: true });
+      window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
       document.documentElement.addEventListener('mouseenter', handleMouseEnter);
       document.documentElement.addEventListener('mouseleave', handleMouseLeave);
-      window.addEventListener('mousedown', handleMouseDown);
+      window.addEventListener('mousedown', handleMouseDown, { capture: true });
       window.addEventListener('blur', handleMouseLeave);
     }
 
-    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mouseup', handleMouseUp, { capture: true });
     window.addEventListener('resize', resizeCanvas);
 
     // Ultra-Fast & Silky-Smooth Kinematics Loop
@@ -307,7 +308,7 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
     };
   }, [containerRef, isBoosting, isHoveringClickable]);
 
-  return (
+  const cursorElements = (
     <>
       {/* BACKGROUND PARTICLE EXHAUST CANVAS */}
       <canvas
@@ -316,7 +317,7 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
           position: isGlobal ? 'fixed' : 'absolute',
           inset: 0,
           pointerEvents: 'none',
-          zIndex: isGlobal ? 9998 : 40,
+          zIndex: isGlobal ? 2147483646 : 40,
           opacity: isVisible ? 1 : 0,
           transition: 'opacity 0.25s ease'
         }}
@@ -330,7 +331,7 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
           top: 0,
           left: 0,
           pointerEvents: 'none',
-          zIndex: isGlobal ? 9999 : 50,
+          zIndex: isGlobal ? 2147483647 : 50,
           opacity: isVisible ? 1 : 0,
           transition: 'opacity 0.2s ease',
           filter: isBoosting
@@ -498,4 +499,10 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
       </div>
     </>
   );
+
+  if (isGlobal && typeof document !== 'undefined') {
+    return createPortal(cursorElements, document.body);
+  }
+
+  return cursorElements;
 }

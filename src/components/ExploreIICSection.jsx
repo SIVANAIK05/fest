@@ -392,7 +392,7 @@ export default function ExploreIICSection({ onOpenRegister }) {
                   color: '#94a3b8'
                 }}
               >
-                <span>₹1,00,000+ PRIZE POOL</span>
+                
                 <span>•</span>
                 <span>OCT 23-24, 2026</span>
                 <span>•</span>

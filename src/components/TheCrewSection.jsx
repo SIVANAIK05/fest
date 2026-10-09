@@ -14,58 +14,50 @@ export default function TheCrewSection() {
     {//1
       name: 'Jessy',
       role: 'President',
-      // callsign: 'CMD-01',
-      // badge: 'LEADERSHIP',
+     
       img: '/Crew/jessy2.png',
     },
     {//2
       name: 'Aparna',
       role: 'Vice - President',
-      // callsign: 'EVT-03',
-      // badge: 'EVENTS',
+      
       img: '/Crew/aparna.jpeg',
     },
     {//3
-      name: 'Bhearunadh',
+      name: 'Bhaeru Nadh',
       role: 'Secretary',
-      // callsign: 'OPS-09',
-      // badge: 'MISSION SQUAD',
+      
       img: '/Crew/image.png',
     },
     {//4
       name: 'Rohit',
       role: 'PR - Commander',
-      // callsign: 'CRD-02',
-      // badge: 'OPERATIONS',
+    
       img: '/Crew/Rohi2t.jpeg',
     },
     {//5
       name: 'Harini ',
       role: 'Web - Commander',
-      // callsign: 'STD-08',
-      // badge: 'COORDINATION',
+   
       img: '/Crew/image copy.png',
     },
 
     {//6
       name: 'Chaitanya',
       role: 'Events',
-      // callsign: 'TEC-04',
-      // badge: 'TECH CORE',
+     
       img: '/Crew/chaitanya.jpeg',
     },
     {//7
       name: 'Saran',
       role: 'Events - Commander  ',
-      // callsign: 'EXE-06',
-      // badge: 'EXECUTIVE',
+    
       img: '/Crew/saran.png',
     },
     {//8
       name: 'Sudheerkumar',
       role: 'R & V - Commander  ',
-      // callsign: 'EXE-06',
-      // badge: 'EXECUTIVE',
+    
       img: '/Crew/sudheer.png',
     },
 
@@ -73,23 +65,19 @@ export default function TheCrewSection() {
     {//9
       name: 'Mahesh',
       role: 'SMD- Commander ',
-      // callsign: 'LOG-07',
-      // badge: 'LOGISTICS',
+      
       img: '/Crew/Mahesh.png',
     },
     {//10
       name: 'Srujana',
       role: ' ',
-      // callsign: 'CLT-05',
-      // badge: 'CULTURAL',
+      
       img: '/Crew/Srujana.jpeg',
     },
 
     {//11
       name: 'Siva Naik',
-      // role: 'Mission Operations',
-
-      // badge: 'MISSION SQUAD',
+      
       img: '/Crew/naik.png',
     },
   ];

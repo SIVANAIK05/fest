@@ -920,7 +920,7 @@ export default function RegistrationSection({ preselectedEventId }) {
           style={{
             position: 'fixed',
             inset: 0,
-            zIndex: 99999,
+            zIndex: 10000,
             background: 'rgba(2, 4, 9, 0.94)',
             backdropFilter: 'blur(25px)',
             WebkitBackdropFilter: 'blur(25px)',
