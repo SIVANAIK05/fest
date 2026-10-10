@@ -1435,6 +1435,39 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
 
             </div>
 
+            {/* RETURN TO WEBSITE / CLOSE BUTTON */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', marginBottom: '0.5rem' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  playUiBeep(900, 0.04);
+                  setShowPassModal(false);
+                  onClose();
+                }}
+                className="btn-pill-cyan"
+                style={{
+                  background: 'rgba(15, 23, 42, 0.9)',
+                  border: '1px solid rgba(56, 189, 248, 0.6)',
+                  color: '#ffffff',
+                  padding: '0.85rem 2.5rem',
+                  borderRadius: '9999px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  fontFamily: 'var(--font-orbitron)',
+                  letterSpacing: '0.08em',
+                  boxShadow: '0 0 20px rgba(56, 189, 248, 0.25)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <X style={{ width: '1.2rem', height: '1.2rem' }} />
+                <span>RETURN TO WEBSITE</span>
+              </button>
+            </div>
+
           </div>
         </div>
       )}
