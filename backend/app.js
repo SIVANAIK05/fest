@@ -106,6 +106,26 @@ app.post("/api/register", async (req, res) => {
     }
 });
 
+app.post("/api/contact", async (req, res) => {
+    try {
+        const { name, contact, department, message } = req.body;
+
+        const { error } = await supabase
+            .from('contact_messages')
+            .insert([{ name, contact, department, message }]);
+
+        if (error) {
+            console.error('Contact Message Error:', error);
+            return res.status(500).json({ error: "Failed to save message." });
+        }
+
+        return res.status(201).json({ message: "Message received successfully!" });
+    } catch (error) {
+        console.error("Server Error:", error);
+        return res.status(500).json({ error: "Internal server error." });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.....`);
 });

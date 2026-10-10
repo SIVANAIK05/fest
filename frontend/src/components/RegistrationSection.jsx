@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { supabase } from '../lib/supabase';
 import {
   Check,
   Download,
@@ -186,63 +185,41 @@ export default function RegistrationSection({ preselectedEventId }) {
         formData.selectedEvents.includes(m.id)
       );
 
-      for (const mission of selectedMissions) {
-        const { error } = await supabase
-          .from('registrations')
-          .insert({
-            event_name: mission.title,
-            team_lead_roll_no: formData.pin,
-
-            flight_mode: formData.isSquad
-              ? 'Squadron / Team'
-              : 'Solo Flight',
-
-            team_lead_name: formData.fullName,
-            team_lead_email: formData.email,
-            team_lead_mobile: formData.mobile,
-
-            college:
-              formData.college === 'Other Institution / University'
-                ? formData.customCollege
-                : formData.college,
-
-            department: formData.department,
-            year_of_study: formData.year,
-
-            team_member_email_2:
-              formData.isSquad && formData.teammates[0]?.email
-                ? formData.teammates[0].email
-                : null,
-
-            team_member_email_3:
-              formData.isSquad && formData.teammates[1]?.email
-                ? formData.teammates[1].email
-                : null,
-
-            team_member_email_4:
-              formData.isSquad && formData.teammates[2]?.email
-                ? formData.teammates[2].email
-                : null,
-
-            team_member_email_5:
-              formData.isSquad && formData.teammates[3]?.email
-                ? formData.teammates[3].email
-                : null
-          });
-
-        if (error) {
-          console.error('Supabase registration error:', error);
-          alert('Registration failed: ' + error.message);
-          return;
-        }
-      }
-
-      // Generate flight pass after successful database insertion
       const randomId =
         'ASTR-26-' +
         Math.floor(1000 + Math.random() * 9000)
           .toString(16)
           .toUpperCase();
+
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+      const passFormData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        mobile: formData.mobile,
+        institution: formData.college === 'Other Institution / University' ? formData.customCollege : formData.college,
+        studentId: formData.pin,
+        department: formData.department,
+        yearOfStudy: formData.year,
+        teamName: formData.isSquad ? (formData.teamName || 'Squad Flight') : 'Solo Explorer',
+      };
+
+      const response = await fetch(`${baseUrl}/api/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          astrionId: randomId,
+          rawFormData: passFormData,
+          fullFormData: formData,
+          selectedMissions: selectedMissions
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Server rejected registration request.");
+      }
 
       setAstrionId(randomId);
 
