@@ -1228,17 +1228,17 @@ export default function RegistrationSection({ preselectedEventId }) {
                   onClick={() => setShowPassModal(false)}
                   style={{
                     background: 'rgba(15, 23, 42, 0.75)',
-                    border: '1px solid rgba(255, 255, 255, 0.25)',
-                    color: 'var(--text-slate)',
+                    border: '1px solid rgba(56, 189, 248, 0.6)',
+                    color: '#ffffff',
                     padding: '0.65rem 1.25rem',
                     borderRadius: '9999px',
                     fontSize: '11.5px',
-                    fontWeight: 600,
+                    fontWeight: 700,
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  Close
+                  Return to Website
                 </button>
 
                 <button
