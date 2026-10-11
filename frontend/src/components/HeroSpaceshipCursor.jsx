@@ -4,7 +4,6 @@ import { createPortal } from 'react-dom';
 export default function HeroSpaceshipCursor({ containerRef = null }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isBoosting, setIsBoosting] = useState(false);
-  const [isHoveringClickable, setIsHoveringClickable] = useState(false);
 
   // Position, rotation, velocity refs for 60/120fps physics loop
   const posRef = useRef({ x: -100, y: -100 });
@@ -18,6 +17,7 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
   const shipElRef = useRef(null);
   const flameElRef = useRef(null);
   const particlesRef = useRef([]);
+  const ripplesRef = useRef([]);
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
   const isInsideRef = useRef(false);
@@ -52,12 +52,6 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
         setIsVisible(true);
         posRef.current = { x: mouseX, y: mouseY };
       }
-
-      // Check if hovering clickable interactive element across the DOM
-      const isClickable = e.target?.closest?.(
-        'button, a, input, select, textarea, [role="button"], .clickable, .btn-pill-cyan, .event-hud-wrapper, .hero-title-letter, .filter-chip, [tabindex="0"], label'
-      );
-      setIsHoveringClickable(!!isClickable);
     };
 
     const handleMouseEnter = (e) => {
@@ -81,37 +75,42 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
       setIsVisible(false);
     };
 
-    const handleMouseDown = () => {
+    const handleMouseDown = (e) => {
       setIsBoosting(true);
-      // Spawn explosive burst of cyan plasma particles on click anywhere
-      for (let i = 0; i < 14; i++) {
-        const pAngle = Math.random() * Math.PI * 2;
-        const pSpeed = Math.random() * 4.5 + 2.5;
-        particlesRef.current.push({
-          x: posRef.current.x,
-          y: posRef.current.y,
-          vx: Math.cos(pAngle) * pSpeed,
-          vy: Math.sin(pAngle) * pSpeed,
-          alpha: 1,
-          size: Math.random() * 2.2 + 1.2,
-          color: Math.random() > 0.35 ? '#38bdf8' : '#ffffff'
-        });
+
+      let clickX = targetRef.current.x;
+      let clickY = targetRef.current.y;
+
+      if (e) {
+        if (container) {
+          const rect = container.getBoundingClientRect();
+          clickX = e.clientX - rect.left;
+          clickY = e.clientY - rect.top;
+        } else {
+          clickX = e.clientX;
+          clickY = e.clientY;
+        }
+      } else if (posRef.current.x > 0) {
+        clickX = posRef.current.x;
+        clickY = posRef.current.y;
       }
+
+      // Single expanding thin circle effect on click (replaces spark burst)
+      ripplesRef.current.push({
+        x: clickX,
+        y: clickY,
+        radius: 4,
+        maxRadius: 30,
+        alpha: 0.85,
+        initialAlpha: 0.85
+      });
     };
 
     const handleMouseUp = () => {
       setIsBoosting(false);
     };
 
-    const handleScroll = () => {
-      if (targetRef.current.x > 0 && targetRef.current.y > 0) {
-        const el = document.elementFromPoint(targetRef.current.x, targetRef.current.y);
-        const isClickable = el?.closest?.(
-          'button, a, input, select, textarea, [role="button"], .clickable, .btn-pill-cyan, .event-hud-wrapper, .hero-title-letter, .filter-chip, [tabindex="0"], label'
-        );
-        setIsHoveringClickable(!!isClickable);
-      }
-    };
+
 
     // Canvas resize
     const canvas = canvasRef.current;
@@ -134,7 +133,6 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
       container.addEventListener('mousedown', handleMouseDown);
     } else {
       window.addEventListener('mousemove', handleMouseMove, { passive: true, capture: true });
-      window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
       document.documentElement.addEventListener('mouseenter', handleMouseEnter);
       document.documentElement.addEventListener('mouseleave', handleMouseLeave);
       window.addEventListener('mousedown', handleMouseDown, { capture: true });
@@ -220,7 +218,7 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
         const rot = angleRef.current.toFixed(2);
         const roll = rollRef.current.toFixed(2);
         const pitch = pitchRef.current.toFixed(2);
-        const scale = (isBoosting ? 1.15 : isHoveringClickable ? 1.08 : 1.0).toFixed(2);
+        const scale = (isBoosting ? 1.15 : 1.0).toFixed(2);
 
         shipElRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -30%) rotate(${rot}deg) rotateY(${roll}deg) rotateX(${pitch}deg) scale(${scale})`;
       }
@@ -231,14 +229,39 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
         flameElRef.current.style.transform = `scaleY(${fScale})`;
       }
 
-      // REAL-TIME PARTICLES ENGINE TRAIL
-      if (canvas && (isInsideRef.current || particlesRef.current.length > 0)) {
+      // REAL-TIME PARTICLES ENGINE TRAIL & SINGLE CIRCLE CLICK RIPPLE
+      if (canvas && (isInsideRef.current || particlesRef.current.length > 0 || ripplesRef.current.length > 0)) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Spawn thruster particles
-        if (isInsideRef.current && (currentSpeed > 1.8 || isBoosting)) {
-          const spawnCount = isBoosting ? 3 : currentSpeed > 7 ? 2 : 1;
+        // Render single thin expanding circle ripple on click
+        for (let i = ripplesRef.current.length - 1; i >= 0; i--) {
+          const rip = ripplesRef.current[i];
+          const progress = (rip.radius - 4) / (rip.maxRadius - 4);
+          const expansionSpeed = Math.max(1.0, (1 - progress * 0.7) * 3.4);
+          rip.radius += expansionSpeed * dtFactor;
+          rip.alpha -= (0.045 * dtFactor);
+
+          if (rip.alpha <= 0 || rip.radius >= rip.maxRadius) {
+            ripplesRef.current.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          const currentAlpha = Math.max(0, rip.alpha);
+          ctx.globalAlpha = currentAlpha;
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+          ctx.lineWidth = 1; // Ultra-thin crisp 1px circle
+          ctx.shadowBlur = 0; // No thick blur/glow
+          ctx.beginPath();
+          ctx.arc(rip.x, rip.y, rip.radius, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Spawn thruster particles (only while spaceship is in flight)
+        if (isInsideRef.current && currentSpeed > 1.8) {
+          const spawnCount = isBoosting ? 2 : currentSpeed > 7 ? 2 : 1;
           const rad = (angleRef.current - 90) * (Math.PI / 180);
           const tailDist = 15;
           const tailX = posRef.current.x - Math.cos(rad) * tailDist;
@@ -296,7 +319,6 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
         container.removeEventListener('mousedown', handleMouseDown);
       } else {
         window.removeEventListener('mousemove', handleMouseMove);
-        window.removeEventListener('scroll', handleScroll);
         document.documentElement.removeEventListener('mouseenter', handleMouseEnter);
         document.documentElement.removeEventListener('mouseleave', handleMouseLeave);
         window.removeEventListener('mousedown', handleMouseDown);
@@ -306,7 +328,7 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
       window.removeEventListener('resize', resizeCanvas);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [containerRef, isBoosting, isHoveringClickable]);
+  }, [containerRef, isBoosting]);
 
   const cursorElements = (
     <>
@@ -336,48 +358,10 @@ export default function HeroSpaceshipCursor({ containerRef = null }) {
           transition: 'opacity 0.2s ease',
           filter: isBoosting
             ? 'drop-shadow(0 0 25px rgba(56, 189, 248, 0.95)) drop-shadow(0 0 10px #ffffff)'
-            : isHoveringClickable
-              ? 'drop-shadow(0 0 18px rgba(56, 189, 248, 0.8))'
-              : 'drop-shadow(0 4px 14px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.35))',
+            : 'drop-shadow(0 4px 14px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.35))',
           willChange: 'transform'
         }}
       >
-        {/* PRECISION TARGETING HUD WHEN HOVERING INTERACTIVE BUTTONS & CARDS */}
-        {isHoveringClickable && (
-          <>
-            {/* Outer Rotating Tactical Reticle Ring */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '30%',
-                left: '50%',
-                width: '46px',
-                height: '46px',
-                transform: 'translate(-50%, -50%)',
-                border: '1.5px dashed rgba(56, 189, 248, 0.85)',
-                borderRadius: '9999px',
-                boxShadow: '0 0 16px rgba(56, 189, 248, 0.5), inset 0 0 10px rgba(56, 189, 248, 0.2)',
-                animation: 'spinSlow 5s linear infinite',
-                pointerEvents: 'none'
-              }}
-            />
-            {/* Inner Precision Crosshair Laser Pulse */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '30%',
-                left: '50%',
-                width: '16px',
-                height: '16px',
-                transform: 'translate(-50%, -50%)',
-                border: '1px solid rgba(255, 255, 255, 0.7)',
-                borderRadius: '9999px',
-                pointerEvents: 'none'
-              }}
-            />
-          </>
-        )}
-
         {/* VECTOR HIGH-PRECISION DELTA SPACECRAFT */}
         <svg
           viewBox="0 0 120 180"

@@ -223,23 +223,21 @@ async function renderPassCanvas(canvas, { astrionId, formData, selectedMissions,
   ctx.arc(stubX, 524, 12, 0, Math.PI * 2);
   ctx.fill();
 
-  // 5. Official Logos Badge
+  // 5. Official Logos Badge (Matches Header Brand)
   const topY = 40;
   try {
-    const iicLogo = await loadImageSafely('/images/iic_logo.png');
     const vvitLogo = await loadImageSafely('/images/vvit_logo.png');
-    if (iicLogo && vvitLogo) {
+    if (vvitLogo) {
       ctx.fillStyle = '#ffffff';
-      roundRect(ctx, 42, topY, 160, 44, 8);
+      roundRect(ctx, 42, topY, 145, 46, 8);
       ctx.fill();
 
-      ctx.drawImage(iicLogo, 48, topY + 5, 68, 34);
-      ctx.strokeStyle = '#cbd5e1';
-      ctx.beginPath();
-      ctx.moveTo(122, topY + 6);
-      ctx.lineTo(122, topY + 38);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+      ctx.lineWidth = 1.5;
       ctx.stroke();
-      ctx.drawImage(vvitLogo, 128, topY + 5, 70, 34);
+
+      // vvit_logo.png contains both VVIT University and IIC in 2:1 aspect ratio
+      ctx.drawImage(vvitLogo, 47, topY + 4, 135, 38);
     }
   } catch (e) {}
 
@@ -326,7 +324,7 @@ async function renderPassCanvas(canvas, { astrionId, formData, selectedMissions,
   if (!selectedMissions || selectedMissions.length === 0) {
     ctx.fillStyle = '#94a3b8';
     ctx.font = 'italic 12px sans-serif';
-    ctx.fillText("General Entry Pass (Spot events available at venue)", badgeX, badgeY + 16);
+    ctx.fillText("General Entry Pass", badgeX, badgeY + 16);
   } else {
     selectedMissions.slice(0, 3).forEach((m) => {
       const label = `${m.title} [PRE-REG]`;

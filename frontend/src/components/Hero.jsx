@@ -55,15 +55,6 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
             <div className="year">2026</div>
           </div>
 
-          {/* RIGHT SIDE VERTICAL TRACKING KEYWORDS */}
-          <div className="hero-vertical-tags">
-            <span>IDEAS</span>
-            <span>PEOPLE</span>
-            <span>CULTURE</span>
-            <span>COMPETITION</span>
-            <span style={{ color: 'var(--cyan-primary)', fontWeight: 700 }}>BEYOND BOUNDARIES</span>
-          </div>
-
           {/* EMPTY TOP SPACER */}
           <div />
 

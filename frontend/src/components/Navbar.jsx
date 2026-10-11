@@ -13,11 +13,12 @@ import {
   Sparkles, 
   ChevronRight,
   ShieldCheck,
-  Disc
+  Disc,
+  FileText
 } from 'lucide-react';
 import { toggleAmbientAudio, subscribeAudioState, playUiBeep } from '../utils/audioEngine';
 
-export default function Navbar({ onOpenRegister }) {
+export default function Navbar({ onOpenRegister, onOpenReports }) {
   const [isAudioActive, setIsAudioActive] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -68,9 +69,44 @@ export default function Navbar({ onOpenRegister }) {
     { name: 'Contact', href: '#contact', id: 'contact', icon: Radio, num: '04' }
   ];
 
+  // Synchronize mobile drawer with browser back gesture
+  useEffect(() => {
+    const handlePopState = () => {
+      if (mobileMenuOpen && window.location.hash !== '#menu') {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [mobileMenuOpen]);
+
+  const handleToggleMobileMenu = () => {
+    playUiBeep(1200, 0.04);
+    if (!mobileMenuOpen) {
+      if (window.location.hash !== '#menu') {
+        window.history.pushState({ modal: 'menu' }, '', '#menu');
+      }
+      setMobileMenuOpen(true);
+    } else {
+      if (window.location.hash === '#menu') {
+        window.history.back();
+      } else {
+        setMobileMenuOpen(false);
+      }
+    }
+  };
+
+  const handleCloseMobileMenu = () => {
+    if (window.location.hash === '#menu') {
+      window.history.back();
+    } else {
+      setMobileMenuOpen(false);
+    }
+  };
+
   const handleMobileNavClick = (href) => {
     playUiBeep(1150, 0.04);
-    setMobileMenuOpen(false);
+    handleCloseMobileMenu();
     const targetEl = document.querySelector(href);
     if (targetEl) {
       targetEl.scrollIntoView({ behavior: 'smooth' });
@@ -80,7 +116,7 @@ export default function Navbar({ onOpenRegister }) {
   const handleJoinCrew = (e) => {
     if (e) e.preventDefault();
     playUiBeep(1300, 0.06);
-    if (mobileMenuOpen) setMobileMenuOpen(false);
+    if (mobileMenuOpen) handleCloseMobileMenu();
     if (onOpenRegister) {
       onOpenRegister();
     }
@@ -239,6 +275,44 @@ export default function Navbar({ onOpenRegister }) {
               {isAudioActive ? <Volume2 size={15} /> : <VolumeX size={15} />}
             </button>
 
+            {/* Desktop Reports Manifest Launcher */}
+            <button
+              type="button"
+              onClick={() => {
+                playUiBeep(1200, 0.04);
+                if (onOpenReports) onOpenReports();
+              }}
+              className="desktop-only-btn"
+              title="Open Mission Reports & Flight Manifest"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.5rem 0.95rem',
+                borderRadius: '9999px',
+                background: 'rgba(15, 23, 42, 0.75)',
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                color: 'var(--cyan-primary)',
+                fontFamily: 'var(--font-space)',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                letterSpacing: '0.04em'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--cyan-primary)';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(56, 189, 248, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.35)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <FileText size={13} />
+              <span>Reports</span>
+            </button>
+
             {/* Desktop-Only "Join the Crew" Button (Opens registration modal popup) */}
             <button
               type="button"
@@ -260,10 +334,7 @@ export default function Navbar({ onOpenRegister }) {
 
             {/* Unique Futuristic Mobile Command Toggle (Visible only on Mobile) */}
             <button
-              onClick={() => {
-                playUiBeep(1200, 0.04);
-                setMobileMenuOpen(!mobileMenuOpen);
-              }}
+              onClick={handleToggleMobileMenu}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -488,10 +559,7 @@ export default function Navbar({ onOpenRegister }) {
               </div>
 
               <button
-                onClick={() => {
-                  playUiBeep(1200, 0.03);
-                  setMobileMenuOpen(false);
-                }}
+                onClick={handleCloseMobileMenu}
                 style={{
                   padding: '0.5rem',
                   borderRadius: '999px',
@@ -500,6 +568,7 @@ export default function Navbar({ onOpenRegister }) {
                   color: '#ffffff',
                   cursor: 'pointer'
                 }}
+                aria-label="Close Navigation Drawer"
               >
                 <X size={18} />
               </button>
@@ -542,6 +611,42 @@ export default function Navbar({ onOpenRegister }) {
                   </a>
                 );
               })}
+
+              {/* Mission Reports in Mobile Drawer */}
+              <button
+                type="button"
+                onClick={() => {
+                  playUiBeep(1200, 0.04);
+                  handleCloseMobileMenu();
+                  if (onOpenReports) onOpenReports();
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.9rem 1.15rem',
+                  borderRadius: '12px',
+                  background: 'rgba(15, 23, 42, 0.75)',
+                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  width: '100%',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--cyan-primary)', fontWeight: 700 }}>
+                    05
+                  </span>
+                  <FileText size={16} style={{ color: 'var(--cyan-primary)' }} />
+                  <span style={{ fontFamily: 'var(--font-space)', fontSize: '0.9rem', fontWeight: 700 }}>
+                    Mission Reports & Manifest
+                  </span>
+                </div>
+
+                <ChevronRight size={15} style={{ color: '#64748b' }} />
+              </button>
             </div>
           </div>
 

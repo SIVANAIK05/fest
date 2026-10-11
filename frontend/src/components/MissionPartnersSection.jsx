@@ -2,10 +2,10 @@ import React from 'react';
 
 export default function MissionPartnersSection() {
   const partners = [
-    { name: 'Google', desc: 'Cloud & AI Sponsor' },
-    { name: 'Infosys', desc: 'Innovation Partner' },
-    { name: 'TATA', desc: 'Strategic Alliance' },
-    { name: 'Microsoft', desc: 'Quantum Track' }
+    { name: 'IIC', desc: ' Organizing partner' },
+    { name: 'Student Tribe', desc: 'Innovation Partner' },
+    { name: 'VVITU', desc: 'Strategic Alliance' },
+    { name: 'IDEAHUB', desc: '' }
   ];
 
   return (
@@ -30,10 +30,10 @@ export default function MissionPartnersSection() {
             key={idx}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'default' }}
           >
-            <span style={{ fontFamily: 'var(--font-space)', fontWeight: 800, fontSize: '1.75rem', letterSpacing: '0.05em', color: '#e2e8f0', transition: 'color 0.2s ease' }}>
+            <span style={{ fontFamily: 'var(--font-space)', fontWeight: 800, fontSize: '1.85rem', letterSpacing: '0.05em', color: '#ffffff', transition: 'color 0.2s ease' }}>
               {p.name}
             </span>
-            <span style={{ fontSize: '9px', fontFamily: 'var(--font-space)', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: '0.2rem' }}>
+            <span style={{ fontSize: '11px', fontFamily: 'var(--font-space)', color: 'var(--cyan-primary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: '0.25rem' }}>
               {p.desc}
             </span>
           </div>

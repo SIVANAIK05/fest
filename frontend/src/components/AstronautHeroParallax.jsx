@@ -143,9 +143,10 @@ export default function AstronautHeroParallax({ children }) {
       <div
         style={{
           position: 'absolute',
-          left: 'max(2vw, 24px)',
+          left: 'clamp(10px, 2.5vw, 24px)',
           bottom: '-15px',
-          width: 'clamp(300px, 34vw, 520px)',
+          width: 'clamp(170px, 30vw, 500px)',
+          maxWidth: 'min(500px, 85vw)',
           height: 'auto',
           zIndex: 5,
           pointerEvents: 'none',

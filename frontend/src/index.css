@@ -17,8 +17,9 @@
   --amber-glow: rgba(251, 191, 36, 0.35);
   --emerald-primary: #10b981;
   --text-white: #ffffff;
-  --text-slate: #94a3b8;
-  --text-muted: #64748b;
+  --text-slate: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
 
   /* THE AUTHENTIC INTERSTELLAR REFERENCE TYPOGRAPHY SYSTEM */
   --font-interstellar: 'Bodoni Moda', 'Cinzel', Didot, 'Playfair Display', serif;
@@ -117,12 +118,59 @@ button {
   z-index: 10;
 }
 
+@media (max-width: 480px) {
+  .ast-section {
+    padding: 3.75rem 1rem;
+  }
+}
+
 .desktop-only-btn {
   display: none !important;
 }
 
+/* ============================================================ */
+/* MODAL OPEN NAVIGATION DOCK & HEADER STATE COORDINATION      */
+/* When any popup/briefing modal is open, gracefully hide nav  */
+/* bars to prevent overlap, clipping, or z-index clashing.    */
+/* ============================================================ */
+body.modal-open header,
+html.modal-open header {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-20px) !important;
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+body.modal-open .mobile-only-dock,
+html.modal-open .mobile-only-dock {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(28px) !important;
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+body.modal-open .flight-telemetry-hud,
+html.modal-open .flight-telemetry-hud {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-50%) translateX(35px) !important;
+  transition: opacity 0.28s ease, transform 0.28s ease !important;
+}
+
+header {
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease;
+}
+
 .mobile-only-dock {
   display: flex !important;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+  padding-bottom: max(0.4rem, env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 1023px) {
+  .flight-telemetry-hud {
+    display: none !important;
+  }
 }
 
 @media (min-width: 768px) {
@@ -318,6 +366,7 @@ button {
    GLOBAL AEROSPACE SPACESHIP CURSOR (HIDE DEFAULT & FINGER CURSOR SITE-WIDE)
    ========================================================================== */
 @media (pointer: fine) {
+
   *,
   *::before,
   *::after,
@@ -407,27 +456,7 @@ button {
   color: var(--text-slate);
 }
 
-.hero-vertical-tags {
-  display: none;
-  position: absolute;
-  right: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  flex-direction: column;
-  gap: 1.5rem;
-  font-family: var(--font-space);
-  font-size: 10px;
-  letter-spacing: 0.25em;
-  color: rgba(148, 163, 184, 0.6);
-  text-transform: uppercase;
-  z-index: 20;
-}
 
-@media (min-width: 1100px) {
-  .hero-vertical-tags {
-    display: flex;
-  }
-}
 
 .hero-center-content {
   position: relative;
@@ -502,6 +531,46 @@ button {
   }
 }
 
+@media (max-width: 640px) {
+  .hero-wrapper {
+    padding: 6rem 1rem 2rem 1rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 11vw, 3.25rem);
+    letter-spacing: 0.2em;
+  }
+
+  .hero-title:hover {
+    letter-spacing: 0.24em;
+  }
+
+  .hero-date-widget {
+    top: 5rem;
+    right: 1.25rem;
+  }
+
+  .hero-date-widget .days {
+    font-size: 1.35rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+  }
+
+  .hero-billing-header {
+    letter-spacing: 0.18em;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-title {
+    font-size: clamp(1.7rem, 9.5vw, 2.1rem);
+    letter-spacing: 0.14em;
+  }
+}
+
 @media (min-width: 640px) {
   .hero-title {
     font-size: clamp(4.2rem, 7.5vw, 5.8rem);
@@ -542,18 +611,19 @@ button {
 
 .hero-fest-type {
   font-family: var(--font-space);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   letter-spacing: 0.25em;
-  color: var(--text-slate);
+  color: var(--cyan-primary);
+  font-weight: 600;
   text-transform: uppercase;
   margin-bottom: 0.5rem;
 }
 
 .hero-tagline {
   font-family: var(--font-inter);
-  font-size: 0.95rem;
-  color: #cbd5e1;
-  font-weight: 300;
+  font-size: 1.05rem;
+  color: #f1f5f9;
+  font-weight: 400;
   margin-bottom: 2rem;
 }
 
@@ -625,10 +695,10 @@ button {
 
 .mission-body-text {
   font-family: var(--font-inter);
-  font-size: 0.95rem;
-  color: var(--text-slate);
+  font-size: 1rem;
+  color: #e2e8f0;
   line-height: 1.8;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .mission-stats-row {
@@ -664,11 +734,12 @@ button {
 
 .stat-item .stat-label {
   font-family: var(--font-space);
-  font-size: 0.75rem;
-  color: var(--text-slate);
+  font-size: 0.8rem;
+  color: #cbd5e1;
   margin-top: 0.35rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  font-weight: 600;
 }
 
 .mission-visual-box {
@@ -686,6 +757,12 @@ button {
   object-fit: cover;
   display: block;
   transition: transform 0.6s ease;
+}
+
+@media (max-width: 640px) {
+  .mission-visual-box img {
+    height: 240px;
+  }
 }
 
 .mission-visual-box:hover img {
@@ -892,40 +969,39 @@ button {
 
 .event-hud-wrapper {
   position: relative;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.4s ease, 
+              opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
   cursor: pointer;
   height: 100%;
   opacity: 0;
-  transform: translateY(34px) scale(0.96);
-  filter: blur(4px);
+  transform: translate3d(0, 30px, 0) scale(0.975);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .event-hud-wrapper.is-in-view {
   opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-  animation: eventCardEntrance 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform: translate3d(0, 0, 0) scale(1);
+  animation: eventCardEntrance 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes eventCardEntrance {
   0% {
     opacity: 0;
-    transform: translateY(34px) scale(0.96);
-    filter: blur(4px);
+    transform: translate3d(0, 30px, 0) scale(0.975);
   }
-  65% {
-    filter: blur(0);
-  }
+
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
 .event-hud-wrapper.is-in-view:hover {
-  transform: translateY(-7px) scale(1.008);
+  transform: translate3d(0, -7px, 0) scale(1.012);
+  z-index: 10;
 }
 
 /* Holographic radar sweep beam on entrance / reveal */
@@ -934,17 +1010,15 @@ button {
   position: absolute;
   top: 0;
   left: -120%;
-  width: 55%;
+  width: 45%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(56, 189, 248, 0.28) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(56, 189, 248, 0.22) 50%,
+      transparent 100%);
   transform: skewX(-25deg);
   pointer-events: none;
-  animation: cardScanBeam 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: cardScanBeam 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: inherit;
   z-index: 5;
 }
@@ -954,9 +1028,11 @@ button {
     left: -120%;
     opacity: 0;
   }
+
   25% {
-    opacity: 0.9;
+    opacity: 0.8;
   }
+
   100% {
     left: 220%;
     opacity: 0;
@@ -968,33 +1044,27 @@ button {
   position: relative;
   height: 100%;
   padding: 1.5px;
-  clip-path: polygon(
-    0 0,
-    calc(100% - 24px) 0,
-    100% 24px,
-    100% 100%,
-    24px 100%,
-    0 calc(100% - 24px)
-  );
-  background: linear-gradient(
-    135deg,
-    rgba(56, 189, 248, 0.35) 0%,
-    rgba(14, 165, 233, 0.12) 40%,
-    rgba(56, 189, 248, 0.06) 70%,
-    rgba(251, 191, 36, 0.3) 100%
-  );
+  clip-path: polygon(0 0,
+      calc(100% - 24px) 0,
+      100% 24px,
+      100% 100%,
+      24px 100%,
+      0 calc(100% - 24px));
+  background: linear-gradient(135deg,
+      rgba(56, 189, 248, 0.35) 0%,
+      rgba(14, 165, 233, 0.12) 40%,
+      rgba(56, 189, 248, 0.06) 70%,
+      rgba(251, 191, 36, 0.3) 100%);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
 }
 
 .event-hud-wrapper:hover .event-hud-outer {
-  background: linear-gradient(
-    135deg,
-    rgba(56, 189, 248, 0.9) 0%,
-    rgba(14, 165, 233, 0.45) 45%,
-    rgba(56, 189, 248, 0.25) 70%,
-    rgba(251, 191, 36, 0.85) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(56, 189, 248, 0.9) 0%,
+      rgba(14, 165, 233, 0.45) 45%,
+      rgba(56, 189, 248, 0.25) 70%,
+      rgba(251, 191, 36, 0.85) 100%);
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85), 0 0 35px rgba(56, 189, 248, 0.35);
 }
 
@@ -1003,14 +1073,12 @@ button {
   background: linear-gradient(180deg, rgba(7, 14, 34, 0.96) 0%, rgba(2, 6, 21, 0.98) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  clip-path: polygon(
-    0 0,
-    calc(100% - 23px) 0,
-    100% 23px,
-    100% 100%,
-    23px 100%,
-    0 calc(100% - 23px)
-  );
+  clip-path: polygon(0 0,
+      calc(100% - 23px) 0,
+      100% 23px,
+      100% 100%,
+      23px 100%,
+      0 calc(100% - 23px));
   padding: 1.4rem;
   display: flex;
   flex-direction: column;
@@ -1074,40 +1142,80 @@ button {
 .event-poster-container {
   position: relative;
   width: 100%;
-  height: 185px;
+  height: 200px;
   border-radius: 0.85rem;
   overflow: hidden;
-  border: 1px solid rgba(56, 189, 248, 0.22);
+  border: 1px solid rgba(56, 189, 248, 0.25);
   background: #020617;
   margin-bottom: 0.95rem;
   box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.7);
 }
 
+.event-poster-backdrop {
+  position: absolute;
+  inset: -14px;
+  width: calc(100% + 28px);
+  height: calc(100% + 28px);
+  object-fit: cover;
+  object-position: center;
+  filter: blur(8px) brightness(0.35) saturate(1.2);
+  transform: translateZ(0);
+  will-change: opacity;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.event-poster-container.is-non-tech .event-poster-backdrop {
+  opacity: 1;
+}
+
 .event-poster-img {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
-  filter: brightness(0.92) contrast(1.08);
+  filter: brightness(1) contrast(1.06);
+}
+
+.event-poster-container.is-non-tech .event-poster-img {
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.7)) brightness(1.02) contrast(1.05);
 }
 
 .event-hud-wrapper:hover .event-poster-img {
-  transform: scale(1.06);
-  filter: brightness(1.04) contrast(1.12);
+  transform: scale(1.05);
+  filter: brightness(1.1) contrast(1.12);
+}
+
+.event-hud-wrapper:hover .event-poster-container.is-non-tech .event-poster-img {
+  transform: scale(1.035);
+  filter: drop-shadow(0 6px 20px rgba(56, 189, 248, 0.3)) brightness(1.08) contrast(1.1);
 }
 
 .event-poster-gradient {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(2, 6, 23, 0.15) 0%,
-    transparent 40%,
-    rgba(2, 6, 23, 0.85) 85%,
-    rgba(2, 6, 23, 0.96) 100%
-  );
+  z-index: 2;
+  background: linear-gradient(to bottom,
+      rgba(2, 6, 23, 0.05) 0%,
+      transparent 35%,
+      rgba(2, 6, 23, 0.5) 80%,
+      rgba(2, 6, 23, 0.9) 100%);
+}
+
+.event-poster-container.is-non-tech .event-poster-gradient {
+  background: linear-gradient(to bottom,
+      rgba(2, 6, 23, 0.1) 0%,
+      transparent 20%,
+      transparent 75%,
+      rgba(2, 6, 23, 0.6) 100%);
 }
 
 .event-poster-badges-bottom {
@@ -1292,9 +1400,9 @@ button {
 
 .event-hud-description {
   font-family: var(--font-space);
-  font-size: 0.83rem;
+  font-size: 0.85rem;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #cbd5e1;
   margin-bottom: 0.85rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1748,34 +1856,78 @@ button {
 .form-field-label {
   display: block;
   font-family: var(--font-space);
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #cbd5e1;
-  margin-bottom: 0.35rem;
+  color: var(--cyan-primary);
+  margin-bottom: 0.4rem;
 }
 
-.reference-input {
+.reference-input,
+input[type="text"].reference-input,
+input[type="email"].reference-input,
+input[type="tel"].reference-input,
+select.reference-input,
+textarea.reference-input {
   width: 100%;
-  padding: 0.65rem 0.85rem;
-  background: rgba(2, 6, 23, 0.75);
-  border: 1px solid var(--border-cyan);
-  border-radius: 0.6rem;
+  padding: 0.75rem 1rem;
+  background: rgba(3, 7, 20, 0.78);
+  border: 1px solid rgba(56, 189, 248, 0.24);
+  border-radius: 0.75rem;
   color: #ffffff;
   font-family: var(--font-space);
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-.reference-input:focus {
+.reference-input:hover,
+input[type="text"].reference-input:hover,
+input[type="email"].reference-input:hover,
+input[type="tel"].reference-input:hover,
+select.reference-input:hover,
+textarea.reference-input:hover {
+  border-color: rgba(56, 189, 248, 0.48);
+  background: rgba(5, 12, 30, 0.88);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 15px rgba(56, 189, 248, 0.12), inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.reference-input:focus,
+input[type="text"].reference-input:focus,
+input[type="email"].reference-input:focus,
+input[type="tel"].reference-input:focus,
+select.reference-input:focus,
+textarea.reference-input:focus {
   border-color: var(--cyan-primary);
-  box-shadow: 0 0 12px var(--cyan-glow);
-  background: rgba(2, 6, 23, 0.95);
+  background: rgba(3, 8, 24, 0.98);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25), 0 0 22px rgba(56, 189, 248, 0.22), inset 0 0 8px rgba(56, 189, 248, 0.06);
 }
 
 .reference-input::placeholder {
-  color: var(--text-muted);
+  color: #94a3b8;
+  font-size: 0.82rem;
+}
+
+/* Authentic Interstellar Select Dropdown Options */
+select.reference-input option {
+  background: #030715;
+  color: #f1f5f9;
+  padding: 0.6rem;
+}
+
+/* Dark Browser Autofill Override */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0px 1000px #04091a inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
 }
 
 /* Cockpit Boarding Pass Ticket */
@@ -1966,13 +2118,14 @@ button {
 
 .echo-crew-telemetry-tag {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--cyan-primary);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-top: 0.25rem;
   padding-top: 0.35rem;
-  border-top: 1px dashed rgba(56, 189, 248, 0.18);
+  border-top: 1px dashed rgba(56, 189, 248, 0.25);
 }
 
 .echo-card-corner {
@@ -2726,12 +2879,13 @@ button {
    Identical to downloaded high-res boarding pass ticket with perforation & notches
    ========================================================================== */
 
-.flight-pass-ticket-card {
+.flight-pass-ticket-card,
+.flight-pass-ticket-container {
   position: relative;
   width: 100%;
   max-width: 980px;
   background-color: #050914;
-  background-image: linear-gradient(135deg, rgba(4, 9, 24, 0.92) 0%, rgba(2, 6, 20, 0.88) 100%), url('/images/crew_shuttle_delivery.jpg');
+  background-image: linear-gradient(135deg, rgba(4, 9, 24, 0.94) 0%, rgba(2, 6, 20, 0.90) 100%), url('/images/crew_shuttle_delivery.jpg');
   background-size: cover;
   background-position: center 35%;
   border: 1.5px solid rgba(56, 189, 248, 0.45);
@@ -2743,10 +2897,12 @@ button {
   font-family: var(--font-space);
   color: #ffffff;
   transition: all 0.3s ease;
+  margin: 0 auto;
 }
 
 /* Subtle stardust particle overlay */
-.flight-pass-ticket-card::before {
+.flight-pass-ticket-card::before,
+.flight-pass-ticket-container::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -2771,9 +2927,9 @@ button {
 /* Main Ticket Body (Left) */
 .flight-pass-main-body {
   position: relative;
-  flex: 1 1 68%;
+  flex: 1 1 66%;
   min-width: 0;
-  padding: 2.25rem 2.25rem 2rem 2.5rem;
+  padding: 2rem 2.25rem 1.75rem 2.25rem;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -2819,24 +2975,26 @@ button {
 /* Right Tear-Off Stub */
 .flight-pass-stub-body {
   position: relative;
-  flex: 0 0 32%;
-  min-width: 280px;
-  padding: 2.25rem 1.75rem 2rem;
-  background: rgba(3, 7, 18, 0.55);
+  flex: 0 0 34%;
+  min-width: 270px;
+  padding: 2rem 1.5rem 1.75rem;
+  background: rgba(3, 7, 18, 0.60);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justifyContent: space-between;
-  gap: 1rem;
+  gap: 0.85rem;
   z-index: 2;
   text-align: center;
 }
 
 /* Responsive Stacking for Tablets & Mobile */
 @media (max-width: 820px) {
-  .flight-pass-ticket-card {
+
+  .flight-pass-ticket-card,
+  .flight-pass-ticket-container {
     flex-direction: column;
     border-radius: 16px;
   }
@@ -2926,4 +3084,4 @@ button {
   .md-hide-btn {
     display: flex !important;
   }
-}
+}

@@ -1,18 +1,27 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ShieldCheck, CheckCircle, X, Users, Sparkles } from 'lucide-react';
+import { ShieldCheck, CheckCircle, X, Users, Sparkles, ArrowLeft } from 'lucide-react';
 import { playUiBeep } from '../utils/audioEngine';
 
 export default function PassVerificationModal({ pass, onClose }) {
   useEffect(() => {
     if (pass) {
+      document.body.classList.add('modal-open');
+      document.documentElement.classList.add('modal-open');
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') onClose();
+      };
+      window.addEventListener('keydown', handleKeyDown);
       return () => {
+        document.body.classList.remove('modal-open');
+        document.documentElement.classList.remove('modal-open');
         document.body.style.overflow = originalOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [pass]);
+  }, [pass, onClose]);
 
   if (!pass) return null;
 
@@ -41,35 +50,60 @@ export default function PassVerificationModal({ pass, onClose }) {
           background: 'radial-gradient(ellipse at top, rgba(8, 51, 68, 0.5) 0%, rgba(3, 7, 21, 0.98) 70%)',
           border: '1.5px solid rgba(56, 189, 248, 0.5)',
           borderRadius: '1.5rem',
-          padding: '2rem',
+          padding: 'clamp(1.25rem, 3.5vw, 2rem)',
           boxShadow: '0 25px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(56, 189, 248, 0.25)',
           position: 'relative',
           fontFamily: 'var(--font-space)'
         }}
       >
-        {/* Close button */}
-        <button
-          onClick={() => {
-            playUiBeep(900, 0.03);
-            onClose();
-          }}
-          style={{
-            position: 'absolute',
-            top: '1.25rem',
-            right: '1.25rem',
-            color: 'var(--text-slate)',
-            cursor: 'pointer',
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid var(--border-cyan)',
-            borderRadius: '9999px',
-            padding: '0.35rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <X style={{ width: '1.1rem', height: '1.1rem' }} />
-        </button>
+        {/* Header Action Controls */}
+        <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            type="button"
+            onClick={() => {
+              playUiBeep(850, 0.04);
+              onClose();
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              color: 'var(--cyan-primary)',
+              background: 'rgba(56, 189, 248, 0.12)',
+              border: '1px solid rgba(56, 189, 248, 0.35)',
+              borderRadius: '9999px',
+              padding: '0.35rem 0.75rem',
+              fontSize: '11px',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+            title="Return to site"
+          >
+            <ArrowLeft style={{ width: '0.8rem', height: '0.8rem' }} />
+            <span>Back</span>
+          </button>
+
+          <button
+            onClick={() => {
+              playUiBeep(900, 0.03);
+              onClose();
+            }}
+            style={{
+              color: 'var(--text-slate)',
+              cursor: 'pointer',
+              background: 'rgba(15, 23, 42, 0.8)',
+              border: '1px solid var(--border-cyan)',
+              borderRadius: '9999px',
+              padding: '0.35rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            title="Close"
+          >
+            <X style={{ width: '1.1rem', height: '1.1rem' }} />
+          </button>
+        </div>
 
         {/* Verification Status Banner */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.5rem' }}>
@@ -96,39 +130,39 @@ export default function PassVerificationModal({ pass, onClose }) {
         <div style={{ background: 'rgba(15, 23, 42, 0.75)', border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: '1rem', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
           
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(56, 189, 248, 0.15)', paddingBottom: '0.65rem' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>PASS ID:</span>
-            <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '13px', color: 'var(--cyan-primary)', fontWeight: 700 }}>
+            <span style={{ fontSize: '11px', color: 'var(--cyan-primary)', fontWeight: 700, letterSpacing: '0.08em' }}>PASS ID:</span>
+            <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '13px', color: '#ffffff', fontWeight: 800 }}>
               {pass.id}
             </span>
           </div>
 
           <div>
-            <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>LEAD ASTRONAUT</div>
+            <div style={{ fontSize: '11px', color: 'var(--cyan-primary)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>LEAD ASTRONAUT</div>
             <div style={{ fontSize: '15px', color: '#ffffff', fontWeight: 700, marginTop: '0.15rem' }}>
               {pass.name}
             </div>
           </div>
 
           <div>
-            <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>INSTITUTION / UNIVERSITY</div>
-            <div style={{ fontSize: '13px', color: 'var(--cyan-primary)', fontWeight: 600, marginTop: '0.15rem' }}>
+            <div style={{ fontSize: '11px', color: 'var(--cyan-primary)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>INSTITUTION / UNIVERSITY</div>
+            <div style={{ fontSize: '13.5px', color: '#f1f5f9', fontWeight: 600, marginTop: '0.15rem' }}>
               {pass.college}
             </div>
           </div>
 
           <div style={{ background: 'rgba(2, 6, 23, 0.8)', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(251, 191, 36, 0.25)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--amber-primary)', fontSize: '11.5px', fontWeight: 700 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--amber-primary)', fontSize: '12px', fontWeight: 700 }}>
               <Users style={{ width: '0.9rem', height: '0.9rem' }} />
               <span>Squad: {pass.squad}</span>
             </div>
-            <div style={{ fontSize: '11px', color: '#cbd5e1', marginTop: '0.25rem' }}>
+            <div style={{ fontSize: '11.5px', color: '#e2e8f0', marginTop: '0.25rem' }}>
               Crew Members: {pass.crew}
             </div>
           </div>
 
           <div>
-            <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>AUTHORIZED MISSIONS</div>
-            <div style={{ fontSize: '12px', color: '#38bdf8', fontWeight: 600, marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <div style={{ fontSize: '11px', color: 'var(--cyan-primary)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>AUTHORIZED MISSIONS</div>
+            <div style={{ fontSize: '13px', color: '#ffffff', fontWeight: 600, marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <Sparkles style={{ width: '0.85rem', height: '0.85rem', color: 'var(--amber-primary)' }} />
               <span>{pass.events}</span>
             </div>
@@ -137,7 +171,7 @@ export default function PassVerificationModal({ pass, onClose }) {
         </div>
 
         {/* Footer Authority Stamp */}
-        <div style={{ marginTop: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)' }}>
+        <div style={{ marginTop: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', color: '#cbd5e1' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             <ShieldCheck style={{ width: '0.9rem', height: '0.9rem', color: '#34d399' }} />
             <span>Authenticated by IIC VVITU Gateway Security</span>

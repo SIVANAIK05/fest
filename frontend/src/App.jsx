@@ -12,14 +12,17 @@ import CosmicParticleField from './components/CosmicParticleField';
 import InterstellarGalaxyBackground from './components/InterstellarGalaxyBackground';
 import HeroSpaceshipCursor from './components/HeroSpaceshipCursor';
 import PassVerificationModal from './components/PassVerificationModal';
+import MissionReportsModal from './components/MissionReportsModal';
 import { startAmbientAudio } from './utils/audioEngine';
 
 export default function App() {
   const [preselectedEventId, setPreselectedEventId] = useState(null);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isReportsOpen, setIsReportsOpen] = useState(false);
   const [isWarping, setIsWarping] = useState(false);
   const [verifiedPass, setVerifiedPass] = useState(null);
 
+  // Baseline history state and URL hash synchronization for back/forward navigation
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
@@ -34,18 +37,120 @@ export default function App() {
           events: urlParams.get('events') || 'General Entry'
         });
       }
+
+      // Establish baseline history state so initial back gesture never exits site abruptly
+      if (!window.history.state) {
+        window.history.replaceState({ page: 'home', hash: window.location.hash || '#home' }, '', window.location.href);
+      }
     }
+
+    const syncAppFromHash = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#register')) {
+        const queryPart = hash.includes('?') ? hash.split('?')[1] : '';
+        const params = new URLSearchParams(queryPart);
+        const evId = params.get('event');
+        if (evId) {
+          setPreselectedEventId(evId);
+        }
+        setIsRegisterOpen(true);
+      } else {
+        setIsRegisterOpen(false);
+      }
+
+      if (!hash.startsWith('#verify')) {
+        setVerifiedPass(null);
+      }
+
+      if (hash.startsWith('#reports')) {
+        setIsReportsOpen(true);
+      } else {
+        setIsReportsOpen(false);
+      }
+
+      // Smooth section scrolling on hash navigation back/forward (e.g. #mission, #events, #crew, #contact, #home)
+      if (
+        hash &&
+        !hash.startsWith('#event/') &&
+        !hash.startsWith('#register') &&
+        !hash.startsWith('#pass') &&
+        !hash.startsWith('#menu') &&
+        !hash.startsWith('#verify') &&
+        !hash.startsWith('#reports')
+      ) {
+        const targetId = hash.replace('#', '');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    };
+
+    window.addEventListener('popstate', syncAppFromHash);
+    window.addEventListener('hashchange', syncAppFromHash);
+
+    // Initial check on page load
+    syncAppFromHash();
+
+    return () => {
+      window.removeEventListener('popstate', syncAppFromHash);
+      window.removeEventListener('hashchange', syncAppFromHash);
+    };
   }, []);
 
   const handleOpenRegister = (eventId = null) => {
     if (eventId) {
       setPreselectedEventId(eventId);
     }
+    const targetHash = eventId ? `#register?event=${eventId}` : '#register';
+    if (window.location.hash !== targetHash) {
+      window.history.pushState({ modal: 'register', eventId }, '', targetHash);
+    }
     setIsRegisterOpen(true);
+  };
+
+  const handleCloseRegister = () => {
+    if (window.location.hash.startsWith('#register')) {
+      window.history.back();
+    } else {
+      setIsRegisterOpen(false);
+    }
+  };
+
+  const handleOpenReports = () => {
+    if (window.location.hash !== '#reports') {
+      window.history.pushState({ modal: 'reports' }, '', '#reports');
+    }
+    setIsReportsOpen(true);
+  };
+
+  const handleCloseReports = () => {
+    if (window.location.hash === '#reports') {
+      window.history.back();
+    } else {
+      setIsReportsOpen(false);
+    }
+  };
+
+  const handleInspectPassFromReports = (passObj) => {
+    setVerifiedPass(passObj);
+    setIsReportsOpen(false);
+    const targetHash = `#verify?id=${encodeURIComponent(passObj.id || '')}&name=${encodeURIComponent(passObj.name || '')}`;
+    if (window.location.hash !== targetHash) {
+      window.history.pushState({ modal: 'verify', passObj }, '', targetHash);
+    }
   };
 
   const handleSelectEventForRegistration = (eventId) => {
     handleOpenRegister(eventId);
+  };
+
+  const handleCloseVerification = () => {
+    if (window.location.hash.startsWith('#verify')) {
+      window.history.back();
+    } else {
+      setVerifiedPass(null);
+    }
   };
 
   const handleLaunchStart = () => {
@@ -79,7 +184,10 @@ export default function App() {
       <HeroSpaceshipCursor />
 
       {/* NAVIGATION BAR WITH UNIQUE MOBILE DOCK & HOLOGRAPHIC FLIGHT DECK */}
-      <Navbar onOpenRegister={() => handleOpenRegister()} />
+      <Navbar 
+        onOpenRegister={() => handleOpenRegister()} 
+        onOpenReports={handleOpenReports}
+      />
 
       {/* MAIN SECTIONS ACCORDING TO REFERENCE IMAGE */}
       <main>
@@ -106,19 +214,26 @@ export default function App() {
       </main>
 
       {/* 05 — CONTACT MISSION CONTROL & BASE TELEMETRY */}
-      <Footer />
+      <Footer onOpenReports={handleOpenReports} />
 
       {/* POPUP REGISTRATION MODAL (Triggered by Join Crew & Event cards) */}
       <RegistrationModal
         isOpen={isRegisterOpen}
-        onClose={() => setIsRegisterOpen(false)}
+        onClose={handleCloseRegister}
         preselectedEventId={preselectedEventId}
+      />
+
+      {/* MISSION REPORTS & FLIGHT MANIFEST MODAL (Real-time telemetry & CSV export) */}
+      <MissionReportsModal
+        isOpen={isReportsOpen}
+        onClose={handleCloseReports}
+        onInspectPass={handleInspectPassFromReports}
       />
 
       {/* LIVE SCAN VERIFICATION MODAL (Triggered when mobile camera scans QR code) */}
       <PassVerificationModal
         pass={verifiedPass}
-        onClose={() => setVerifiedPass(null)}
+        onClose={handleCloseVerification}
       />
 
     </div>

@@ -3,7 +3,7 @@ import { ArrowUp, MapPin, Mail, Phone, Send, Radio, ShieldCheck, CheckCircle2, B
 import { playUiBeep } from '../utils/audioEngine';
 import { supabase } from '../lib/supabase';
 
-export default function Footer() {
+export default function Footer({ onOpenReports }) {
   const [formState, setFormState] = useState({
     name: '',
     contact: '',
@@ -80,7 +80,7 @@ export default function Footer() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))',
             gap: '2rem',
             alignItems: 'stretch'
           }}
@@ -91,7 +91,7 @@ export default function Footer() {
           {/* ============================================================ */}
           <div
             style={{
-              padding: '2.25rem',
+              padding: 'clamp(1.25rem, 3.5vw, 2.25rem)',
               borderRadius: '1.5rem',
               background: 'linear-gradient(180deg, rgba(8, 14, 30, 0.9) 0%, rgba(2, 6, 23, 0.95) 100%)',
               border: '1.5px solid rgba(56, 189, 248, 0.35)',
@@ -237,7 +237,7 @@ export default function Footer() {
           {/* ============================================================ */}
           <div
             style={{
-              padding: '2.25rem',
+              padding: 'clamp(1.25rem, 3.5vw, 2.25rem)',
               borderRadius: '1.5rem',
               background: 'linear-gradient(180deg, rgba(8, 14, 30, 0.9) 0%, rgba(2, 6, 23, 0.95) 100%)',
               border: '1.5px solid rgba(56, 189, 248, 0.35)',
@@ -249,74 +249,72 @@ export default function Footer() {
             }}
           >
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(56, 189, 248, 0.15)', paddingBottom: '0.85rem', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(56, 189, 248, 0.15)', paddingBottom: '0.85rem', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <MapPin style={{ width: '1rem', height: '1rem', color: 'var(--amber-primary)' }} />
                   <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.95rem', color: '#ffffff', fontWeight: 700, letterSpacing: '0.05em' }}>
                     MISSION CONTROL BASE
                   </span>
                 </div>
-                <div style={{ background: '#ffffff', padding: '0.15rem 0.5rem', borderRadius: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <img src="/images/iic_logo.png" alt="IIC" style={{ height: '1.1rem', width: 'auto' }} />
-                  <span style={{ color: '#cbd5e1', fontSize: '9px' }}>|</span>
-                  <img src="/images/vvit_logo.png" alt="VVIT" style={{ height: '1.1rem', width: 'auto' }} />
+                <div style={{ background: '#ffffff', padding: '0.2rem 0.55rem', borderRadius: '0.45rem', display: 'flex', alignItems: 'center', border: '1px solid rgba(56, 189, 248, 0.5)', boxShadow: '0 0 14px rgba(56, 189, 248, 0.25)' }}>
+                  <img src="/images/vvit_logo.png" alt="VVIT & IIC" style={{ height: '1.35rem', width: 'auto', objectFit: 'contain' }} />
                 </div>
               </div>
 
               {/* Host Institution */}
               <div style={{ marginBottom: '1.25rem' }}>
-                <div style={{ fontSize: '9.5px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                <div style={{ fontSize: '11px', color: 'var(--cyan-primary)', fontFamily: 'var(--font-space)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em' }}>
                   HOST INSTITUTION & VENUE
                 </div>
-                <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '1.05rem', color: '#ffffff', fontWeight: 800, marginTop: '0.2rem' }}>
+                <div style={{ fontFamily: 'var(--font-space)', fontSize: '1.2rem', color: '#ffffff', fontWeight: 800, marginTop: '0.35rem', lineHeight: 1.35, letterSpacing: '0.01em' }}>
                   Vasireddy Venkatadri International Technological University (VVITU)
                 </div>
-                <div style={{ fontSize: '11.5px', color: '#94a3b8', fontFamily: 'var(--font-space)', marginTop: '0.25rem' }}>
+                <div style={{ fontSize: '13px', color: '#e2e8f0', fontFamily: 'var(--font-space)', marginTop: '0.35rem', lineHeight: 1.5, fontWeight: 400 }}>
                   Nambur (V), Pedakakani (M), Guntur - 522508, Andhra Pradesh, India
                 </div>
               </div>
 
               {/* Contact Lines */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', borderTop: '1px solid rgba(56, 189, 248, 0.12)', paddingTop: '1rem', marginBottom: '1.25rem', fontFamily: 'var(--font-space)', fontSize: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                  <Mail style={{ width: '1rem', height: '1rem', color: 'var(--cyan-primary)', flexShrink: 0 }} />
-                  <div>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '10px', display: 'block' }}>OFFICIAL INBOX:</span>
-                    <a href="mailto:control@astrion.org" style={{ color: '#ffffff', textDecoration: 'none', fontWeight: 600 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', borderTop: '1px solid rgba(56, 189, 248, 0.18)', paddingTop: '1rem', marginBottom: '1.25rem', fontFamily: 'var(--font-space)', fontSize: '13.5px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                  <Mail style={{ width: '1.1rem', height: '1.1rem', color: 'var(--cyan-primary)', flexShrink: 0, marginTop: '2px' }} />
+                  <div style={{ minWidth: 0, wordBreak: 'break-word' }}>
+                    <span style={{ color: 'var(--cyan-primary)', fontSize: '11px', fontFamily: 'var(--font-space)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', marginBottom: '0.2rem' }}>OFFICIAL INBOX:</span>
+                    <a href="mailto:control@astrion.org" style={{ color: '#ffffff', textDecoration: 'none', fontWeight: 600, wordBreak: 'break-all', fontSize: '13.5px' }}>
                       iic.vvituniversity@gmail.com / iicvvitu@vvitu.net
                     </a>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                  <Phone style={{ width: '1rem', height: '1rem', color: 'var(--cyan-primary)', flexShrink: 0 }} />
-                  <div>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '10px', display: 'block' }}>  COORDINATOR HOTLINES:</span>
-                    <span style={{ color: '#ffffff', fontWeight: 600 }}>
-                      +91  8885811784 / 9154775499 / 8639342286
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                  <Phone style={{ width: '1.1rem', height: '1.1rem', color: 'var(--cyan-primary)', flexShrink: 0, marginTop: '2px' }} />
+                  <div style={{ minWidth: 0, wordBreak: 'break-word' }}>
+                    <span style={{ color: 'var(--cyan-primary)', fontSize: '11px', fontFamily: 'var(--font-space)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', marginBottom: '0.2rem' }}>COORDINATOR HOTLINES:</span>
+                    <span style={{ color: '#ffffff', fontWeight: 600, fontSize: '13.5px' }}>
+                      +91 8885811784 / 9154775499 / 8639342286
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Transportation & Free Shuttle */}
-              <div style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(56, 189, 248, 0.25)', borderRadius: '0.75rem', padding: '0.85rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--amber-primary)', fontSize: '11px', fontWeight: 700 }}>
-                  <Bus style={{ width: '0.9rem', height: '0.9rem' }} />
+              <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: '0.85rem', padding: '0.95rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: 'var(--amber-primary)', fontSize: '12.5px', fontWeight: 700 }}>
+                  <Bus style={{ width: '1rem', height: '1rem' }} />
                   <span>Free Transit Shuttles for Outstation Teams</span>
                 </div>
-                <div style={{ fontSize: '11px', color: '#cbd5e1', marginTop: '0.25rem', lineHeight: '1.4' }}>
-                  Complimentary campus  buses operate  from Guntur  & Vijayawada Bus Terminal throughout 23 - 24 Oct 2026.
+                <div style={{ fontSize: '12px', color: '#f1f5f9', marginTop: '0.35rem', lineHeight: '1.5', fontFamily: 'var(--font-space)' }}>
+                  Complimentary campus buses operate from Guntur & Vijayawada Bus Terminal throughout 23 - 24 Oct 2026.
                 </div>
               </div>
             </div>
 
-            <div style={{ marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(56, 189, 248, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10.5px', color: '#34d399', fontFamily: 'var(--font-space)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <ShieldCheck style={{ width: '0.9rem', height: '0.9rem' }} />
+            <div style={{ marginTop: '1.25rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(56, 189, 248, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11.5px', color: '#34d399', fontFamily: 'var(--font-space)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+                <ShieldCheck style={{ width: '1rem', height: '1rem' }} />
                 <span>Ministry of Education (MoE) Initiative • IIC VVITU</span>
               </div>
-              <span style={{ color: 'var(--amber-primary)', fontWeight: 600 }}>Free Entry with College ID</span>
+              <span style={{ color: 'var(--amber-primary)', fontWeight: 700 }}>Free Entry with College ID</span>
             </div>
 
           </div>
@@ -331,42 +329,61 @@ export default function Footer() {
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem',
                 background: '#ffffff',
-                padding: '0.2rem 0.5rem',
-                borderRadius: '0.4rem',
-                border: '1px solid rgba(56, 189, 248, 0.4)'
+                padding: '0.2rem 0.55rem',
+                borderRadius: '0.45rem',
+                border: '1px solid rgba(56, 189, 248, 0.5)',
+                boxShadow: '0 0 16px rgba(56, 189, 248, 0.35)'
               }}>
                 <img
-                  src="/images/iic_logo.png"
-                  alt="IIC Logo"
-                  style={{ height: '1.6rem', width: 'auto' }}
-                />
-                <span style={{ color: '#cbd5e1', fontSize: '10px' }}>|</span>
-                <img
                   src="/images/vvit_logo.png"
-                  alt="VVIT Logo"
-                  style={{ height: '1.6rem', width: 'auto' }}
+                  alt="VVIT University & IIC"
+                  style={{ height: '1.6rem', width: 'auto', objectFit: 'contain' }}
                 />
               </div>
               <span className="font-orbitron" style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '0.2em', color: '#ffffff', textTransform: 'uppercase' }}>
                 ASTRION<span style={{ color: 'var(--cyan-primary)' }}>-2k26</span >
               </span>
             </div>
-            <span style={{ color: 'var(--text-muted)' }}>|</span>
-            <span className="font-space" style={{ fontSize: '0.75rem', letterSpacing: '0.08em', color: 'var(--text-slate)', textTransform: 'uppercase' }}>
-              ORGANIZED BY INSTITUTION'S INNOVATION COUNCIL —  IIC VVITU
+            <span style={{ color: 'rgba(56, 189, 248, 0.4)' }}>|</span>
+            <span className="font-space" style={{ fontSize: '0.8rem', letterSpacing: '0.08em', color: '#cbd5e1', fontWeight: 600, textTransform: 'uppercase' }}>
+              ORGANIZED BY INSTITUTION'S INNOVATION COUNCIL — IIC VVITU
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', fontFamily: 'var(--font-space)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap', fontFamily: 'var(--font-space)', fontSize: '0.8rem', color: '#cbd5e1' }}>
             <span>© 2026 ASTRION Fest. All rights reserved.</span>
             <button
+              type="button"
               onClick={scrollToTop}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-slate)', cursor: 'pointer', background: 'none', border: 'none' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '2.4rem',
+                height: '2.4rem',
+                borderRadius: '50%',
+                background: 'rgba(15, 23, 42, 0.85)',
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                color: 'var(--cyan-primary)',
+                cursor: 'pointer',
+                boxShadow: '0 0 15px rgba(56, 189, 248, 0.2)',
+                transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--cyan-primary)';
+                e.currentTarget.style.boxShadow = '0 0 20px rgba(56, 189, 248, 0.5)';
+                e.currentTarget.style.transform = 'translateY(-3px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.35)';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(56, 189, 248, 0.2)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+              aria-label="Scroll back to top"
+              title="Back to Top"
             >
-              <span>Back to Top</span>
-              <ArrowUp style={{ width: '0.9rem', height: '0.9rem' }} />
+              <ArrowUp style={{ width: '1.1rem', height: '1.1rem' }} />
             </button>
           </div>
 

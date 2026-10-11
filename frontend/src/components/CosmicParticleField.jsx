@@ -36,7 +36,7 @@ export default function CosmicParticleField({ isWarping }) {
     const handleScroll = () => {
       const currentY = window.scrollY;
       const deltaY = currentY - scrollRef.current.lastY;
-      
+
       scrollRef.current.direction = deltaY >= 0 ? 1 : -1;
       const speed = Math.abs(deltaY);
       scrollRef.current.targetVelocity = Math.min(speed * 0.45, 35);
@@ -66,8 +66,8 @@ export default function CosmicParticleField({ isWarping }) {
         alpha: depth > 0.7 ? Math.random() * 0.8 + 0.3 : Math.random() * 0.4 + 0.15,
         twinkleSpeed: Math.random() * 0.02 + 0.005,
         twinkleDir: Math.random() > 0.5 ? 1 : -1,
-        color: depth > 0.7 
-          ? (Math.random() > 0.4 ? '#38bdf8' : (Math.random() > 0.5 ? '#f59e0b' : '#ffffff')) 
+        color: depth > 0.7
+          ? (Math.random() > 0.4 ? '#38bdf8' : (Math.random() > 0.5 ? '#f59e0b' : '#ffffff'))
           : '#93c5fd'
       });
     }
@@ -146,7 +146,7 @@ export default function CosmicParticleField({ isWarping }) {
 
         // Relativistic movement based on depth & scroll velocity
         const effectiveSpeed = p.baseSpeed * (1 + currentScrollVel * p.depth * 1.4);
-        
+
         if (isWarping) {
           p.y += (p.vy + 18) * p.depth;
         } else {
@@ -173,8 +173,8 @@ export default function CosmicParticleField({ isWarping }) {
 
         // Draw particle: either circular star or relativistic warp streak
         const isStreaking = currentScrollVel > 1.2 || isWarping;
-        const streakLength = isWarping 
-          ? p.depth * 65 + 20 
+        const streakLength = isWarping
+          ? p.depth * 65 + 20
           : (currentScrollVel * p.depth * 4.5);
 
         if (isStreaking && streakLength > 3) {
@@ -252,14 +252,14 @@ export default function CosmicParticleField({ isWarping }) {
   }, [isWarping]);
 
   return (
-    <canvas 
-      ref={canvasRef} 
-      style={{ 
-        position: 'fixed', 
-        inset: 0, 
-        pointerEvents: 'none', 
-        zIndex: 0, 
-        opacity: 0.55 
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 0,
+        opacity: 0.55
       }}
     />
   );

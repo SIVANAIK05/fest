@@ -158,7 +158,7 @@ export default function FlightTelemetryHUD() {
                   <span style={{ width: '6px', height: '6px', borderRadius: '9999px', background: scrollVelocity > 20 ? '#fbbf24' : '#34d399', boxShadow: '0 0 6px currentColor' }} />
                   IIC VVITU LIVE
                 </span>
-                <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: '9px', color: '#cbd5e1', fontWeight: 600 }}>
                   {Math.round(scrollProgress)}%
                 </span>
               </div>
@@ -171,7 +171,7 @@ export default function FlightTelemetryHUD() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
               {/* WARP VELOCITY */}
               <div style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(56, 189, 248, 0.15)', borderRadius: '0.5rem', padding: '0.4rem 0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '8px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '8.5px', color: 'var(--cyan-primary)', fontWeight: 700, textTransform: 'uppercase' }}>
                   <Gauge style={{ width: '0.65rem', height: '0.65rem', color: 'var(--cyan-primary)' }} />
                   WARP
                 </div>
@@ -182,7 +182,7 @@ export default function FlightTelemetryHUD() {
 
               {/* TIME DILATION */}
               <div style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(56, 189, 248, 0.15)', borderRadius: '0.5rem', padding: '0.4rem 0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '8px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '8.5px', color: 'var(--amber-primary)', fontWeight: 700, textTransform: 'uppercase' }}>
                   <Clock style={{ width: '0.65rem', height: '0.65rem', color: 'var(--amber-primary)' }} />
                   DILATION
                 </div>
@@ -194,13 +194,13 @@ export default function FlightTelemetryHUD() {
 
             {/* DISTANCE TRAVERSED */}
             <div style={{ background: 'rgba(15, 23, 42, 0.4)', borderRadius: '0.5rem', padding: '0.35rem 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '9px' }}>
-              <span style={{ color: 'var(--text-muted)' }}>DISTANCE:</span>
+              <span style={{ color: 'var(--cyan-primary)', fontWeight: 700 }}>DISTANCE:</span>
               <span style={{ fontFamily: 'var(--font-orbitron)', color: '#38bdf8', fontWeight: 600 }}>{auTraversed} AU</span>
             </div>
 
             {/* SECTORS WAYPOINT NAVIGATION */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderTop: '1px solid rgba(56, 189, 248, 0.12)', paddingTop: '0.5rem' }}>
-              <span style={{ fontSize: '8px', letterSpacing: '0.15em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: '8.5px', letterSpacing: '0.15em', color: 'var(--cyan-primary)', fontWeight: 700, textTransform: 'uppercase' }}>
                 SECTOR WAYPOINTS
               </span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
@@ -218,7 +218,7 @@ export default function FlightTelemetryHUD() {
                         borderRadius: '0.35rem',
                         background: isActive ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
                         border: isActive ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
-                        color: isActive ? '#ffffff' : 'var(--text-slate)',
+                        color: isActive ? '#ffffff' : '#cbd5e1',
                         fontSize: '9px',
                         cursor: 'pointer',
                         textAlign: 'left',
@@ -246,7 +246,7 @@ export default function FlightTelemetryHUD() {
             </div>
 
             {/* FOOTER MISSION DIRECTIVE */}
-            <div style={{ fontSize: '8px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.3rem', borderTop: '1px solid rgba(56, 189, 248, 0.1)', paddingTop: '0.4rem' }}>
+            <div style={{ fontSize: '8.5px', color: '#cbd5e1', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem', borderTop: '1px solid rgba(56, 189, 248, 0.1)', paddingTop: '0.4rem' }}>
               <Shield style={{ width: '0.65rem', height: '0.65rem', color: '#38bdf8' }} />
               <span>DIRECTIVE: IIC VVITU</span>
             </div>

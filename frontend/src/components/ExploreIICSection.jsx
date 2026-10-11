@@ -61,7 +61,7 @@ export default function ExploreIICSection({ onOpenRegister }) {
             background: 'linear-gradient(180deg, rgba(8, 14, 32, 0.94) 0%, rgba(2, 6, 23, 0.97) 100%)',
             border: '1.5px solid rgba(56, 189, 248, 0.35)',
             borderRadius: '2rem',
-            padding: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+            padding: 'clamp(1.2rem, 3.5vw, 2.75rem)',
             backdropFilter: 'blur(24px)',
             WebkitBackdropFilter: 'blur(24px)',
             boxShadow: '0 12px 45px rgba(0, 0, 0, 0.8), 0 0 35px rgba(56, 189, 248, 0.12)',
@@ -92,26 +92,20 @@ export default function ExploreIICSection({ onOpenRegister }) {
                   padding: '0.65rem 1.25rem',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '1rem',
-                  boxShadow: '0 6px 25px rgba(0, 0, 0, 0.35)',
+                  boxShadow: '0 0 20px rgba(56, 189, 248, 0.35)',
+                  border: '1.5px solid rgba(56, 189, 248, 0.5)',
                   flexShrink: 0
                 }}
               >
                 <img 
-                  src="/images/iic_logo.png" 
-                  alt="Ministry of Education Institution's Innovation Council"
-                  style={{ height: '46px', width: 'auto', objectFit: 'contain' }}
-                />
-                <div style={{ width: '1px', height: '38px', background: '#e2e8f0' }} />
-                <img 
                   src="/images/vvit_logo.png" 
-                  alt="VVIT University"
-                  style={{ height: '46px', width: 'auto', objectFit: 'contain' }}
+                  alt="VVIT University & IIC"
+                  style={{ height: '42px', width: 'auto', objectFit: 'contain' }}
                 />
               </div>
 
               {/* Title & Affiliation Details */}
-              <div style={{ flex: 1, minWidth: '260px' }}>
+              <div style={{ flex: 1, minWidth: 'min(260px, 100%)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
                   <span 
                     style={{

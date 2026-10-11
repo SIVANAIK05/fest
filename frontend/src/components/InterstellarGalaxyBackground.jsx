@@ -59,19 +59,8 @@ export default function InterstellarGalaxyBackground() {
       mouseRef.current.y = -1000;
     };
 
-    // Gravitational Shockwave Ripple on Click/Tap
-    const handlePointerDown = (e) => {
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      shockwavesRef.current.push({
-        x: clientX,
-        y: clientY,
-        radius: 10,
-        maxRadius: Math.min(width, height) * 0.45,
-        alpha: 0.65,
-        speed: 8
-      });
-    };
+    // Gravitational Shockwave Ripple on Click/Tap (Disabled in favor of cursor thin circle)
+    const handlePointerDown = () => {};
 
     window.addEventListener('mousemove', handlePointerMove, { passive: true });
     window.addEventListener('touchmove', handlePointerMove, { passive: true });

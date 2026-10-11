@@ -25,6 +25,8 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
 
   useEffect(() => {
     if (event) {
+      document.body.classList.add('modal-open');
+      document.documentElement.classList.add('modal-open');
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       const handleKeyDown = (e) => {
@@ -32,6 +34,8 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
       };
       window.addEventListener('keydown', handleKeyDown);
       return () => {
+        document.body.classList.remove('modal-open');
+        document.documentElement.classList.remove('modal-open');
         document.body.style.overflow = originalOverflow;
         window.removeEventListener('keydown', handleKeyDown);
       };
@@ -88,7 +92,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
         <div
           style={{
             position: 'relative',
-            padding: '1.75rem 2rem 1.25rem',
+            padding: 'clamp(1rem, 2.5vw, 1.75rem) clamp(1rem, 3vw, 2rem) 1.25rem',
             borderBottom: '1px solid rgba(56, 189, 248, 0.15)',
             background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, transparent 100%)'
           }}
@@ -282,7 +286,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.75rem 2rem',
+            padding: '0.75rem clamp(1rem, 3vw, 2rem)',
             background: 'rgba(2, 6, 23, 0.6)',
             borderBottom: '1px solid rgba(56, 189, 248, 0.12)',
             overflowX: 'auto'
@@ -302,7 +306,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
               cursor: 'pointer',
               border: 'none',
               background: activeTab === 'overview' ? 'var(--cyan-primary)' : 'transparent',
-              color: activeTab === 'overview' ? '#020617' : '#94a3b8',
+              color: activeTab === 'overview' ? '#020617' : '#cbd5e1',
               transition: 'all 0.2s ease',
               display: 'flex',
               alignItems: 'center',
@@ -327,7 +331,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
               cursor: 'pointer',
               border: 'none',
               background: activeTab === 'steps' ? 'var(--cyan-primary)' : 'transparent',
-              color: activeTab === 'steps' ? '#020617' : '#94a3b8',
+              color: activeTab === 'steps' ? '#020617' : '#cbd5e1',
               transition: 'all 0.2s ease',
               display: 'flex',
               alignItems: 'center',
@@ -352,7 +356,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
               cursor: 'pointer',
               border: 'none',
               background: activeTab === 'rules' ? 'var(--cyan-primary)' : 'transparent',
-              color: activeTab === 'rules' ? '#020617' : '#94a3b8',
+              color: activeTab === 'rules' ? '#020617' : '#cbd5e1',
               transition: 'all 0.2s ease',
               display: 'flex',
               alignItems: 'center',
@@ -382,6 +386,71 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
           {/* TAB 1: OVERVIEW & CONCEPT */}
           {activeTab === 'overview' && (
             <div className="animate-fadeIn" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+              {/* Event Official Banner Poster */}
+              {(event.bannerImage || event.planetImage || event.image) && (
+                <div
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '240px',
+                    borderRadius: '1rem',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(56, 189, 248, 0.25)',
+                    background: '#040915',
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)'
+                  }}
+                >
+                  {/* Ambient Backdrop */}
+                  <img
+                    src={event.bannerImage || event.planetImage || event.image}
+                    alt=""
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      inset: '-14px',
+                      width: 'calc(100% + 28px)',
+                      height: 'calc(100% + 28px)',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                      filter: 'blur(18px) brightness(0.35) saturate(1.3)',
+                      transform: 'scale(1.12)',
+                      pointerEvents: 'none',
+                      opacity: event.category === 'non-technical' ? 1 : 0
+                    }}
+                  />
+                  <img
+                    src={event.bannerImage || event.planetImage || event.image}
+                    alt={event.title}
+                    style={{
+                      position: 'relative',
+                      zIndex: 2,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: event.category === 'non-technical' ? 'contain' : 'cover',
+                      objectPosition: 'center',
+                      filter: event.category === 'non-technical' ? 'drop-shadow(0 6px 18px rgba(0, 0, 0, 0.7))' : 'none',
+                      display: 'block'
+                    }}
+                    onError={(e) => {
+                      if (e.currentTarget.parentElement) {
+                        e.currentTarget.parentElement.style.display = 'none';
+                      }
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      zIndex: 3,
+                      background: event.category === 'non-technical'
+                        ? 'linear-gradient(to top, rgba(8, 14, 30, 0.45) 0%, transparent 60%)'
+                        : 'linear-gradient(to top, rgba(8, 14, 30, 0.65) 0%, transparent 60%)',
+                      pointerEvents: 'none'
+                    }}
+                  />
+                </div>
+              )}
 
               {/* Concept Box */}
               <div
@@ -655,7 +724,7 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
         {/* MODAL FOOTER (STICKY ACTION BAR) */}
         <div
           style={{
-            padding: '1.25rem 2rem',
+            padding: '1.25rem clamp(1rem, 3vw, 2rem)',
             borderTop: '1px solid rgba(56, 189, 248, 0.18)',
             background: 'rgba(3, 7, 18, 0.95)',
             display: 'flex',
@@ -697,7 +766,6 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
               onClick={() => {
                 playUiBeep(1300, 0.08);
                 onRegisterEvent(event.id);
-                onClose();
               }}
               className="btn-pill-cyan"
               style={{ padding: '0.65rem 1.6rem', fontSize: '0.85rem' }}

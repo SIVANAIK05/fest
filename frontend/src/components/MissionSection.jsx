@@ -3,15 +3,6 @@ import TiltCard from './TiltCard';
 import { playUiBeep } from '../utils/audioEngine';
 
 export default function MissionSection() {
-  const verticalTags = [
-    'TECHNOLOGY',
-    'CREATIVITY',
-    'CULTURE',
-    'INNOVATION',
-    'COMPETITION',
-    'EXPLORATION'
-  ];
-
   return (
     <section id="mission" className="ast-section">
 
@@ -60,15 +51,6 @@ export default function MissionSection() {
               />
             </div>
           </TiltCard>
-
-          {/* Vertical Tags on the Far Right Edge (from reference image) */}
-          <div className="hero-vertical-tags" style={{ right: '-3rem', fontSize: '9px' }}>
-            {verticalTags.map((tag, i) => (
-              <span key={i} style={{ cursor: 'default' }}>
-                {tag}
-              </span>
-            ))}
-          </div>
 
         </div>
 

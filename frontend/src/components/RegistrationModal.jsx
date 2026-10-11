@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
+  ArrowLeft,
   Check,
   Download,
   Users,
@@ -12,7 +13,8 @@ import {
   Cpu,
   CheckCircle2,
   Plus,
-  Trash2
+  Trash2,
+  Sparkles
 } from 'lucide-react';
 import { INSTITUTIONS_LIST } from '../data/eventsData';
 import { MISSIONS_LIST } from './EventsSection';
@@ -23,6 +25,28 @@ import {
   downloadAstrionPassImage
 } from '../utils/passGenerator';
 import SpaceBreachOverlay from './SpaceBreachOverlay';
+
+// Helpers to classify Solo vs Squad/Team missions
+export const isTeamMission = (mission) => {
+  const str = (mission?.teamSize || '').toLowerCase();
+  return (
+    str.includes('2') ||
+    str.includes('3') ||
+    str.includes('4') ||
+    str.includes('5') ||
+    str.includes('team') ||
+    str.includes('squad') ||
+    str.includes('pair') ||
+    str.includes('members') ||
+    str.includes('players')
+  );
+};
+
+export const isSoloMission = (mission) => {
+  const str = (mission?.teamSize || '').toLowerCase();
+  if (str.includes('solo')) return true;
+  return !isTeamMission(mission);
+};
 
 export default function RegistrationModal({ isOpen, onClose, preselectedEventId }) {
   const backdropCanvasRef = useRef(null);
@@ -176,26 +200,35 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
     };
   }, [isOpen]);
 
-  // Prevent background scrolling while Modal is open
+  // Prevent background scrolling and notify navbars while Modal is open
   useEffect(() => {
     if (isOpen) {
+      document.body.classList.add('modal-open');
+      document.documentElement.classList.add('modal-open');
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return () => {
+        document.body.classList.remove('modal-open');
+        document.documentElement.classList.remove('modal-open');
         document.body.style.overflow = originalOverflow;
       };
     }
   }, [isOpen]);
 
-  // Handle preselected event from event card / briefing modal
+  // Handle preselected event from event card / briefing modal (Technical only)
   useEffect(() => {
     if (preselectedEventId) {
-      setFormData(prev => ({
-        ...prev,
-        selectedEvents: prev.selectedEvents.includes(preselectedEventId)
-          ? prev.selectedEvents
-          : [...prev.selectedEvents, preselectedEventId]
-      }));
+      const targetMission = MISSIONS_LIST.find(m => m.id === preselectedEventId);
+      if (targetMission && targetMission.category === 'technical') {
+        const isTeam = isTeamMission(targetMission) && !isSoloMission(targetMission);
+        setFormData(prev => ({
+          ...prev,
+          isSquad: isTeam ? true : prev.isSquad,
+          selectedEvents: prev.selectedEvents.includes(preselectedEventId)
+            ? prev.selectedEvents
+            : [...prev.selectedEvents, preselectedEventId]
+        }));
+      }
     }
   }, [preselectedEventId]);
 
@@ -271,17 +304,24 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
 
   const handleModeChange = (isSquadMode) => {
     playUiBeep(1200, 0.04);
-    setFormData(prev => ({
-      ...prev,
-      isSquad: isSquadMode,
-      teamName: isSquadMode && !prev.teamName ? 'Endurance Squadron' : prev.teamName,
-      teammates: isSquadMode && (!prev.teammates || prev.teammates.length === 0)
-        ? [
-          { name: 'Murphy Cooper', email: 'murphy.cooper@vvit.net', mobile: '9876543211' },
-          { name: 'Donald Brand', email: 'donald.brand@vvit.net', mobile: '9876543212' }
-        ]
-        : prev.teammates
-    }));
+    setFormData(prev => {
+      const allowedEvents = MISSIONS_LIST.filter(m => m.category === 'technical')
+        .filter(m => isSquadMode ? isTeamMission(m) : isSoloMission(m))
+        .map(m => m.id);
+      const filteredSelected = prev.selectedEvents.filter(id => allowedEvents.includes(id));
+
+      return {
+        ...prev,
+        isSquad: isSquadMode,
+        selectedEvents: filteredSelected,
+        teamName: isSquadMode && !prev.teamName ? 'Endurance Squadron' : prev.teamName,
+        teammates: isSquadMode && (!prev.teammates || prev.teammates.length === 0)
+          ? [
+            { name: '', email: '', mobile: '' }
+          ]
+          : prev.teammates
+      };
+    });
   };
 
   const handleEventToggle = (id) => {
@@ -300,6 +340,11 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
   // SUBMIT HANDLER: Generate Pass, Pre-compile QR Code & Trigger Hyperspace Transition
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.selectedEvents || formData.selectedEvents.length === 0) {
+      alert("Please select at least one mission / event to participate in.");
+      return;
+    }
 
     // Generate new unique Pass ID
     const randomId = 'ASTR-26-' + Math.floor(1000 + Math.random() * 9000).toString(16).toUpperCase();
@@ -343,8 +388,11 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
         activeQrRef.current = freshQr;
       }
 
-      // Determine API URL (Render/Production vs Localhost)
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+      // Determine API URL (Render/Production vs Localhost fallback)
+      const rawBackendUrl = (import.meta.env.VITE_BACKEND_URL || '').trim().replace(/\/+$/, '');
+      const baseUrl = (rawBackendUrl && !rawBackendUrl.includes('your-render-app-name'))
+        ? rawBackendUrl
+        : 'http://localhost:3000';
 
       // Send the data to the backend Supabase API
       const response = await fetch(`${baseUrl}/api/register`, {
@@ -361,7 +409,8 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
       });
 
       if (!response.ok) {
-        throw new Error("Server rejected registration request.");
+        const errPayload = await response.json().catch(() => ({}));
+        throw new Error(errPayload.error || errPayload.details || `Server returned error (${response.status})`);
       }
     } catch (err) {
       console.error('Registration/QR error:', err);
@@ -376,8 +425,41 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
     setIsBreaching(true);
   };
 
+  const handleClosePassModal = () => {
+    if (window.location.hash === '#pass') {
+      window.history.back();
+    } else {
+      setShowPassModal(false);
+    }
+  };
+
+  const handleReturnToMissions = () => {
+    playUiBeep(1100, 0.05);
+    setShowPassModal(false);
+    onClose();
+    setTimeout(() => {
+      const targetEl = document.getElementById('events') || document.getElementById('home');
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  useEffect(() => {
+    const handlePassPopState = () => {
+      if (showPassModal && window.location.hash !== '#pass') {
+        setShowPassModal(false);
+      }
+    };
+    window.addEventListener('popstate', handlePassPopState);
+    return () => window.removeEventListener('popstate', handlePassPopState);
+  }, [showPassModal]);
+
   const handleBreachComplete = async () => {
     setIsBreaching(false);
+    if (window.location.hash !== '#pass') {
+      window.history.pushState({ modal: 'pass' }, '', '#pass');
+    }
     setShowPassModal(true);
 
     const passData = activePassDataRef.current || {
@@ -476,7 +558,27 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
   };
 
   const selectedMissionsList = MISSIONS_LIST.filter(m => formData.selectedEvents.includes(m.id));
-  const technicalMissions = MISSIONS_LIST.filter(m => m.category === 'technical');
+
+  // Strictly Technical Missions for Pre-Registration (Excluding Spot Non-Tech)
+  const technicalMissionsList = MISSIONS_LIST.filter(m => m.category === 'technical');
+
+  const availableMissions = formData.isSquad
+    ? technicalMissionsList.filter(isTeamMission)
+    : technicalMissionsList.filter(isSoloMission);
+
+  const allAvailableSelected = availableMissions.length > 0 && availableMissions.every(m => formData.selectedEvents.includes(m.id));
+
+  const handleSelectAllAvailable = () => {
+    playUiBeep(1200, 0.04);
+    setFormData(prev => {
+      const allIds = availableMissions.map(m => m.id);
+      const isAllSelected = allIds.every(id => prev.selectedEvents.includes(id));
+      return {
+        ...prev,
+        selectedEvents: isAllSelected ? [] : allIds
+      };
+    });
+  };
 
   const institutionDisplayName = formData.college === 'Other Institution / University'
     ? (formData.customCollege || 'Other College')
@@ -591,14 +693,46 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
             flexShrink: 0
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ width: '9px', height: '9px', borderRadius: '9999px', background: '#34d399', boxShadow: '0 0 10px #34d399' }} />
-            <div>
-              <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '13px', color: '#ffffff', fontWeight: 800, letterSpacing: '0.08em' }}>
-                CREW REGISTRATION TERMINAL // POPUP CONSOLE
-              </div>
-              <div style={{ fontFamily: 'var(--font-space)', fontSize: '11px', color: 'var(--cyan-primary)' }}>
-                ASTRION 2026 • IIC VVITU OFFICIAL ENTRY CLEARANCE
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            {/* BACK TO PREVIOUS PAGE BUTTON (Mobile & Desktop) */}
+            <button
+              type="button"
+              onClick={() => {
+                playUiBeep(850, 0.04);
+                onClose();
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                fontFamily: 'var(--font-space)',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: 'var(--cyan-primary)',
+                background: 'rgba(56, 189, 248, 0.12)',
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                padding: '0.4rem 0.85rem',
+                borderRadius: '9999px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                flexShrink: 0
+              }}
+              aria-label="Back to previous page"
+              title="Return to previous page / close terminal"
+            >
+              <ArrowLeft style={{ width: '0.85rem', height: '0.85rem' }} />
+              <span>Back to Previous Page</span>
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <div style={{ width: '9px', height: '9px', borderRadius: '9999px', background: '#34d399', boxShadow: '0 0 10px #34d399' }} />
+              <div>
+                <div style={{ fontFamily: 'var(--font-orbitron)', fontSize: '13px', color: '#ffffff', fontWeight: 800, letterSpacing: '0.08em' }}>
+                  CREW REGISTRATION TERMINAL
+                </div>
+                <div style={{ fontFamily: 'var(--font-space)', fontSize: '11px', color: 'var(--cyan-primary)' }}>
+                  ASTRION 2026 • IIC VVITU OFFICIAL ENTRY CLEARANCE
+                </div>
               </div>
             </div>
           </div>
@@ -663,7 +797,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
             {/* STEP 1: PARTICIPATION MODE (SOLO vs SQUAD)                   */}
             {/* ============================================================ */}
             <div>
-              <label style={{ display: 'block', fontFamily: 'var(--font-space)', fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', marginBottom: '0.75rem', fontWeight: 600 }}>
+              <label style={{ display: 'block', fontFamily: 'var(--font-space)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--cyan-primary)', marginBottom: '0.75rem', fontWeight: 700 }}>
                 1. Choose Expedition Flight Mode
               </label>
 
@@ -748,7 +882,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
             {/* STEP 2: TEAM LEAD / ASTRONAUT CREDENTIALS                    */}
             {/* ============================================================ */}
             <div>
-              <label style={{ display: 'block', fontFamily: 'var(--font-space)', fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', marginBottom: '0.75rem', fontWeight: 600 }}>
+              <label style={{ display: 'block', fontFamily: 'var(--font-space)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--cyan-primary)', marginBottom: '0.75rem', fontWeight: 700 }}>
                 2. Team Lead / Lead Astronaut Details
               </label>
 
@@ -1053,73 +1187,101 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
             )}
 
             {/* ============================================================ */}
-            {/* STEP 4: EVENTS SELECTION (CATEGORIZED, SPACIOUS CHIPS)       */}
+            {/* STEP 4: TECHNICAL EVENTS SELECTION (SOLO VS SQUAD)           */}
             {/* ============================================================ */}
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                <label style={{ fontFamily: 'var(--font-space)', fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', fontWeight: 600 }}>
-                  3. Select Events / Missions ({formData.selectedEvents.length} Selected)
-                </label>
-
-                <span style={{ fontFamily: 'var(--font-space)', fontSize: '11px', color: 'var(--cyan-primary)', background: 'rgba(56, 189, 248, 0.12)', padding: '0.2rem 0.65rem', borderRadius: '9999px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
-                  {formData.selectedEvents.length} Authorized
-                </span>
-              </div>
-
-              {/* TECHNICAL MISSIONS */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.65rem', color: '#93c5fd', fontSize: '12px', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
-                  <Cpu style={{ width: '0.9rem', height: '0.9rem', color: 'var(--cyan-primary)' }} />
-                  <span>Technical Missions</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div>
+                  <label style={{ fontFamily: 'var(--font-space)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--cyan-primary)', fontWeight: 700 }}>
+                    3. Select {formData.isSquad ? 'Squadron' : 'Solo Astronaut'} Technical Missions ({formData.selectedEvents.length} Selected)
+                  </label>
+                  <div style={{ fontFamily: 'var(--font-space)', fontSize: '11px', color: 'var(--text-slate)', marginTop: '0.15rem' }}>
+                    {formData.isSquad
+                      ? 'Choose technical challenges for your squadron'
+                      : 'Choose individual technical challenges or select all events at once.'}
+                  </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
-                  {technicalMissions.map((m) => {
-                    const isSelected = formData.selectedEvents.includes(m.id);
-                    return (
-                      <button
-                        type="button"
-                        key={m.id}
-                        onClick={() => handleEventToggle(m.id)}
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                          padding: '0.85rem 1rem',
-                          borderRadius: '0.85rem',
-                          background: isSelected
-                            ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(15, 23, 42, 0.9) 100%)'
-                            : 'rgba(15, 23, 42, 0.65)',
-                          border: isSelected
-                            ? '1.5px solid var(--cyan-primary)'
-                            : '1px solid rgba(51, 65, 85, 0.5)',
-                          boxShadow: isSelected ? '0 0 15px rgba(56, 189, 248, 0.25)' : 'none',
-                          cursor: 'pointer',
-                          textAlign: 'left',
-                          transition: 'all 0.15s ease'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '0.35rem' }}>
-                          <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.85rem', fontWeight: 700, color: isSelected ? '#ffffff' : '#cbd5e1' }}>
-                            {m.title}
-                          </span>
-                          {isSelected && <Check style={{ width: '1rem', height: '1rem', color: 'var(--cyan-primary)' }} />}
-                        </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  {/* Select All / Choose All shortcut for Solo participants */}
+                  <button
+                    type="button"
+                    onClick={handleSelectAllAvailable}
+                    style={{
+                      fontFamily: 'var(--font-space)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: allAvailableSelected ? '#ffffff' : 'var(--cyan-primary)',
+                      background: allAvailableSelected
+                        ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(14, 165, 233, 0.25) 100%)'
+                        : 'rgba(56, 189, 248, 0.1)',
+                      border: '1px solid rgba(56, 189, 248, 0.45)',
+                      borderRadius: '9999px',
+                      padding: '0.35rem 0.95rem',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      transition: 'all 0.2s ease',
+                      boxShadow: allAvailableSelected ? '0 0 12px rgba(56, 189, 248, 0.3)' : 'none'
+                    }}
+                  >
+                    <Sparkles style={{ width: '0.85rem', height: '0.85rem' }} />
+                    <span>{allAvailableSelected ? 'Deselect All' : (formData.isSquad ? 'Choose All Squad Events' : 'Choose All Solo Events')}</span>
+                  </button>
 
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '0.25rem' }}>
-                          <span style={{ fontSize: '9px', color: 'var(--cyan-primary)', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
-                            {m.day || 'Day 1 - 23'} • Team: {m.teamSize}
-                          </span>
-                          <span style={{ fontSize: '9px', padding: '0.15rem 0.45rem', borderRadius: '4px', background: m.regType === 'pre-registration' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(52, 211, 153, 0.2)', color: m.regType === 'pre-registration' ? '#fbbf24' : '#34d399', fontWeight: 600 }}>
-                            {m.regType === 'pre-registration' ? 'PRE-REG' : 'SPOT'}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
+                  <span style={{ fontFamily: 'var(--font-space)', fontSize: '11px', color: 'var(--cyan-primary)', background: 'rgba(56, 189, 248, 0.12)', padding: '0.35rem 0.75rem', borderRadius: '9999px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
+                    {formData.selectedEvents.length} Authorized
+                  </span>
                 </div>
               </div>
 
+              {/* TECHNICAL MISSIONS GRID */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+                {availableMissions.map((m) => {
+                  const isSelected = formData.selectedEvents.includes(m.id);
+                  return (
+                    <button
+                      type="button"
+                      key={m.id}
+                      onClick={() => handleEventToggle(m.id)}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        padding: '0.85rem 1rem',
+                        borderRadius: '0.85rem',
+                        background: isSelected
+                          ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.22) 0%, rgba(15, 23, 42, 0.95) 100%)'
+                          : 'rgba(15, 23, 42, 0.65)',
+                        border: isSelected
+                          ? '1.5px solid var(--cyan-primary)'
+                          : '1px solid rgba(51, 65, 85, 0.5)',
+                        boxShadow: isSelected ? '0 0 15px rgba(56, 189, 248, 0.25)' : 'none',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '0.35rem' }}>
+                        <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.85rem', fontWeight: 700, color: isSelected ? '#ffffff' : '#cbd5e1' }}>
+                          {m.title}
+                        </span>
+                        {isSelected && <Check style={{ width: '1rem', height: '1rem', color: 'var(--cyan-primary)' }} />}
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '0.25rem' }}>
+                        <span style={{ fontSize: '9px', color: 'var(--cyan-primary)', fontFamily: 'var(--font-space)', fontWeight: 600 }}>
+                          {m.day || 'Day 1 - 23'} • {m.teamSize}
+                        </span>
+                        <span style={{ fontSize: '9px', padding: '0.15rem 0.45rem', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.2)', color: '#fbbf24', fontWeight: 600 }}>
+                          PRE-REG
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* ============================================================ */}
@@ -1135,7 +1297,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
                 type="submit"
                 className="btn-pill-cyan"
                 style={{
-                  padding: '0.85rem 2rem',
+                  padding: '0.85rem 2.25rem',
                   fontSize: '0.9rem',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -1145,8 +1307,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
                 }}
               >
                 <Rocket style={{ width: '1.1rem', height: '1.1rem', transform: 'rotate(45deg)' }} />
-                <span>CONFIRM & GENERATE FLIGHT PASS</span>
-                <span>→</span>
+                <span>GENERATE FLIGHT PASS</span>
               </button>
             </div>
 
@@ -1187,7 +1348,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
           <div
             style={{
               width: '100%',
-              maxWidth: '860px',
+              maxWidth: '960px',
               position: 'relative'
             }}
             className="animate-fadeIn"
@@ -1201,38 +1362,78 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
                 </span>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  playUiBeep(900, 0.04);
-                  setShowPassModal(false);
-                  onClose();
-                }}
-                style={{
-                  background: 'rgba(15, 23, 42, 0.8)',
-                  border: '1px solid rgba(56, 189, 248, 0.3)',
-                  color: '#cbd5e1',
-                  borderRadius: '9999px',
-                  padding: '0.35rem 0.85rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  fontSize: '11px',
-                  fontFamily: 'var(--font-space)'
-                }}
-              >
-                <X style={{ width: '0.85rem', height: '0.85rem' }} />
-                <span>Close Terminal</span>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <button
+                  type="button"
+                  onClick={handleReturnToMissions}
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(2, 132, 199, 0.35) 100%)',
+                    border: '1px solid rgba(56, 189, 248, 0.6)',
+                    color: '#ffffff',
+                    borderRadius: '9999px',
+                    padding: '0.4rem 1rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    fontSize: '11.5px',
+                    fontFamily: 'var(--font-space)',
+                    fontWeight: 700,
+                    boxShadow: '0 0 15px rgba(56, 189, 248, 0.35)'
+                  }}
+                  title="Complete registration and return to missions"
+                >
+                  <Sparkles style={{ width: '0.85rem', height: '0.85rem', color: 'var(--cyan-primary)' }} />
+                  <span>Done • Return to Missions</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleClosePassModal}
+                  style={{
+                    background: 'rgba(56, 189, 248, 0.12)',
+                    border: '1px solid rgba(56, 189, 248, 0.35)',
+                    color: 'var(--cyan-primary)',
+                    borderRadius: '9999px',
+                    padding: '0.4rem 0.9rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    fontSize: '11.5px',
+                    fontFamily: 'var(--font-space)',
+                    fontWeight: 600
+                  }}
+                  title="Return to terminal"
+                >
+                  <ArrowLeft style={{ width: '0.85rem', height: '0.85rem' }} />
+                  <span>Back to Terminal</span>
+                </button>
+              </div>
             </div>
 
             {/* HIGH-PRECISION SCI-FI BOARDING PASS TICKET */}
-            <div className="flight-pass-ticket-container">
+            <div className="flight-pass-ticket-card">
 
               {/* LEFT: MAIN PASS BODY */}
               <div className="flight-pass-main-body">
                 <div>
+                  {/* Top-Left Official Logos Badge */}
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      background: '#ffffff',
+                      padding: '0.25rem 0.75rem',
+                      borderRadius: '0.45rem',
+                      border: '1px solid rgba(56, 189, 248, 0.5)',
+                      boxShadow: '0 0 16px rgba(56, 189, 248, 0.35)',
+                      marginBottom: '1rem'
+                    }}
+                  >
+                    <img src="/images/vvit_logo.png" alt="VVIT & IIC" style={{ height: '1.65rem', width: 'auto', objectFit: 'contain' }} />
+                  </div>
+
                   {/* Pass Header */}
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
                     <div>
@@ -1321,7 +1522,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', marginTop: '0.35rem' }}>
                       {selectedMissionsList.length === 0 ? (
                         <span style={{ fontStyle: 'italic', fontSize: '11px', color: '#94a3b8' }}>
-                          General Entry Pass (Spot events available at venue)
+                          General Entry Pass
                         </span>
                       ) : (
                         <>
@@ -1394,7 +1595,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    margin: '0.4rem 0'
+                    margin: '0.2rem auto'
                   }}
                 >
                   {(qrDataUrl) ? (
@@ -1411,28 +1612,95 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
                   )}
                 </div>
 
-                {/* Download Button */}
+                {/* Gateway Clearance Pill */}
+                <div
+                  style={{
+                    background: 'rgba(52, 211, 153, 0.15)',
+                    border: '1px solid #34d399',
+                    borderRadius: '8px',
+                    padding: '0.35rem 0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                    width: '100%',
+                    maxWidth: '220px'
+                  }}
+                >
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 6px #34d399' }} />
+                  <span style={{ color: '#34d399', fontWeight: 800, fontSize: '10px', letterSpacing: '0.08em', fontFamily: 'var(--font-space)' }}>
+                    STATUS: AUTHORIZED // IIC VVITU
+                  </span>
+                </div>
+
+                {/* Barcode Graphic Decoration */}
+                <div style={{ width: '100%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px', height: '24px', margin: '0.2rem 0' }}>
+                    {[2, 1, 3, 1, 2, 4, 1, 3, 2, 1, 3, 1, 4, 2, 1, 3, 1, 2, 3, 1, 2, 4, 1, 2, 3, 1, 2, 1, 3, 2, 1, 4].map((w, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          width: `${w}px`,
+                          height: '100%',
+                          background: 'rgba(255, 255, 255, 0.38)',
+                          borderRadius: '1px'
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <div style={{ fontSize: '9px', color: '#94a3b8', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                    ISSUED BY IIC VVITU
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* MODAL ACTION FOOTER OUTSIDE TICKET */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', padding: '0.85rem 0.5rem 0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '11.5px', color: '#94a3b8', fontFamily: 'var(--font-space)' }}>
+                <ShieldCheck style={{ width: '1rem', height: '1rem', color: '#34d399' }} />
+                <span>Instant camera scan verified • Official IIC VVITU clearance pass</span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  onClick={handleReturnToMissions}
+                  style={{
+                    background: 'rgba(15, 23, 42, 0.75)',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    color: '#cbd5e1',
+                    padding: '0.65rem 1.25rem',
+                    borderRadius: '9999px',
+                    fontSize: '11.5px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font-space)'
+                  }}
+                >
+                  Return to Missions
+                </button>
+
                 <button
                   type="button"
                   onClick={handleDownload}
                   disabled={isDownloading}
                   className="btn-pill-cyan"
                   style={{
-                    width: '100%',
-                    padding: '0.65rem 0.75rem',
-                    fontSize: '11px',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.4rem',
-                    fontWeight: 700
+                    gap: '0.5rem',
+                    fontSize: '11.5px',
+                    padding: '0.65rem 1.75rem',
+                    fontWeight: 800,
+                    cursor: isDownloading ? 'wait' : 'pointer'
                   }}
                 >
                   <Download style={{ width: '0.9rem', height: '0.9rem' }} />
                   <span>{isDownloading ? 'SAVING PASS...' : isDownloaded ? 'SAVED ✓' : 'DOWNLOAD PASS (PNG)'}</span>
                 </button>
               </div>
-
             </div>
 
           </div>

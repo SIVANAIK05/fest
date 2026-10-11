@@ -22,6 +22,27 @@ import { MISSIONS_LIST, TECHNICAL_EVENTS, NON_TECHNICAL_EVENTS } from '../data/e
 
 export { MISSIONS_LIST };
 
+const EVENT_BANNER_MAP = {
+  // Technical Events
+  'space-speak': '/eventbanner/Astrion Presents_ Space Speak.png',
+  'astro-pitch': '/eventbanner/Astrio Pitch_ Neon Space Frontier.png',
+  'tars-wars': '/eventbanner/Astrion Presents_ Tars Wars.png',
+  'tars-wars-day2': '/eventbanner/Astrion Presents_ Tars Wars.png',
+  'prompt-orbit': '/eventbanner/Prompt Orbit_ ASTRION’s Cosmic Showcase.png',
+  'idea-nova': '/eventbanner/Astrion Presents_ Idea Nova Cosmos.png',
+  // Non-Technical & Cosmic Game Events
+  'cosmic-match': '/eventbanner/cosmic_match.png',
+  'astral-touch': '/eventbanner/astral_touch.png',
+  'rocket-flip': '/eventbanner/rocket_flip.png',
+  'meteor-mission': '/eventbanner/meteor_mission.png',
+  'universe-shuffle': '/eventbanner/universe_shuffle.png',
+  'space-walk': '/eventbanner/space_walk.png',
+  'stellar-clash': '/eventbanner/stellar_clash.png',
+  'deadly-spectrum': '/eventbanner/deadly_spectrum.png',
+  'cosmic-vision': '/eventbanner/cosmic_vision.png',
+  'orbital-control': '/eventbanner/orbital_control.png',
+};
+
 const formatVenue = (v) => {
   if (!v || v.toLowerCase() === 'venue') return 'Tesseract Computing Complex • 3rd Floor';
   return v;
@@ -97,7 +118,13 @@ function EventHudCard({
   const isLaptopReq = mission.laptops === 'Needed';
   const teamBadge = getTeamBadgeInfo(mission.teamSize);
   const numericId = String(idx + 1).padStart(2, '0');
-  const posterImg = mission.planetImage || mission.image || '/images/mission_station.jpg';
+  const posterImg =
+    EVENT_BANNER_MAP[mission.id] ||
+    mission.bannerImage ||
+    mission.titleBanner ||
+    mission.planetImage ||
+    mission.image ||
+    '/images/mission_station.jpg';
 
   // Stagger calculation based on index (cycles every 6 items for fast, smooth cadence)
   const staggerDelay = `${(idx % 6) * 75}ms`;
@@ -178,7 +205,15 @@ function EventHudCard({
               </div>
 
               {/* EVENT POSTER BANNER */}
-              <div className="event-poster-container">
+              <div className={`event-poster-container ${mission.category === 'non-technical' ? 'is-non-tech' : 'is-tech'}`}>
+                {/* Ambient Blurred Backdrop for seamless aspect-ratio blending */}
+                <img
+                  src={posterImg}
+                  alt=""
+                  className="event-poster-backdrop"
+                  aria-hidden="true"
+                />
+
                 <img
                   src={posterImg}
                   alt={mission.title}
@@ -352,8 +387,48 @@ export default function EventsSection({ onSelectEventForRegistration }) {
 
   const handleOpenDetail = (mission) => {
     playUiBeep(1100, 0.04);
+    const targetHash = `#event/${mission.id}`;
+    if (window.location.hash !== targetHash) {
+      window.history.pushState({ modal: 'event', eventId: mission.id }, '', targetHash);
+    }
     setActiveModalEvent(mission);
   };
+
+  const handleCloseDetail = () => {
+    if (window.location.hash.startsWith('#event/')) {
+      window.history.back();
+    } else {
+      setActiveModalEvent(null);
+    }
+  };
+
+  // Sync event modal state with browser back/forward history & direct URL hashes
+  useEffect(() => {
+    const syncEventModalFromHash = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#event/')) {
+        const eventId = hash.replace('#event/', '').split('?')[0];
+        const target = MISSIONS_LIST.find((m) => m.id === eventId);
+        if (target) {
+          setActiveModalEvent(target);
+          return;
+        }
+      }
+      // If history popped out of #event/, close modal
+      setActiveModalEvent(null);
+    };
+
+    window.addEventListener('popstate', syncEventModalFromHash);
+    window.addEventListener('hashchange', syncEventModalFromHash);
+
+    // Initial check on mount (supports direct links like /#event/space-speak)
+    syncEventModalFromHash();
+
+    return () => {
+      window.removeEventListener('popstate', syncEventModalFromHash);
+      window.removeEventListener('hashchange', syncEventModalFromHash);
+    };
+  }, []);
 
   const handleRegisterDirect = (eventId) => {
     if (onSelectEventForRegistration) {
@@ -616,8 +691,11 @@ export default function EventsSection({ onSelectEventForRegistration }) {
       {/* DETAILED MODAL VIEW */}
       <EventModal
         event={activeModalEvent}
-        onClose={() => setActiveModalEvent(null)}
-        onRegisterEvent={handleRegisterDirect}
+        onClose={handleCloseDetail}
+        onRegisterEvent={(missionId) => {
+          setActiveModalEvent(null);
+          handleRegisterDirect(missionId);
+        }}
       />
 
     </section>
