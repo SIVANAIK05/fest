@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { supabase } from '../lib/supabase';
 import {
   ArrowLeft,
   Check,
@@ -201,31 +200,41 @@ export default function RegistrationSection({ preselectedEventId }) {
         formData.selectedEvents.includes(m.id)
       );
 
-      const rawBackendUrl = (import.meta.env.VITE_BACKEND_URL || '').trim().replace(/\/+$/, '');
-      const baseUrl = (rawBackendUrl && !rawBackendUrl.includes('your-render-app-name'))
-        ? rawBackendUrl
-        : 'http://localhost:3000';
+      const randomId =
+        'ASTR-26-' +
+        Math.floor(1000 + Math.random() * 9000)
+          .toString(16)
+          .toUpperCase();
+
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+      const passFormData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        mobile: formData.mobile,
+        institution: formData.college === 'Other Institution / University' ? formData.customCollege : formData.college,
+        studentId: formData.pin,
+        department: formData.department,
+        yearOfStudy: formData.year,
+        teamName: formData.isSquad ? (formData.teamName || 'Squad Flight') : 'Solo Explorer',
+      };
 
       const response = await fetch(`${baseUrl}/api/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
+          astrionId: randomId,
+          rawFormData: passFormData,
           fullFormData: formData,
           selectedMissions: selectedMissions
         })
       });
 
       if (!response.ok) {
-        const errPayload = await response.json().catch(() => ({}));
-        throw new Error(errPayload.error || errPayload.details || `Server returned error (${response.status})`);
+        throw new Error("Server rejected registration request.");
       }
-
-      // Generate flight pass after successful database insertion
-      const randomId =
-        'ASTR-26-' +
-        Math.floor(1000 + Math.random() * 9000)
-          .toString(16)
-          .toUpperCase();
 
       setAstrionId(randomId);
 
@@ -1328,17 +1337,17 @@ export default function RegistrationSection({ preselectedEventId }) {
                   onClick={() => setShowPassModal(false)}
                   style={{
                     background: 'rgba(15, 23, 42, 0.75)',
-                    border: '1px solid rgba(255, 255, 255, 0.25)',
-                    color: 'var(--text-slate)',
+                    border: '1px solid rgba(56, 189, 248, 0.6)',
+                    color: '#ffffff',
                     padding: '0.65rem 1.25rem',
                     borderRadius: '9999px',
                     fontSize: '11.5px',
-                    fontWeight: 600,
+                    fontWeight: 700,
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  Close
+                  Return to Website
                 </button>
 
                 <button
