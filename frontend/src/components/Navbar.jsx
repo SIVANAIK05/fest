@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Volume2, 
-  VolumeX, 
-  Menu, 
-  X, 
-  Rocket, 
-  Compass, 
-  Radio, 
-  Calendar, 
-  Users, 
-  Orbit, 
-  Sparkles, 
+import {
+  Volume2,
+  VolumeX,
+  Menu,
+  X,
+  Rocket,
+  Compass,
+  Radio,
+  Calendar,
+  Users,
+  Orbit,
+  Sparkles,
   ChevronRight,
   ShieldCheck,
-  Disc,
-  FileText
+  Disc
 } from 'lucide-react';
 import { toggleAmbientAudio, subscribeAudioState, playUiBeep } from '../utils/audioEngine';
 
-export default function Navbar({ onOpenRegister, onOpenReports }) {
+export default function Navbar({ onOpenRegister }) {
   const [isAudioActive, setIsAudioActive] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -254,7 +253,7 @@ export default function Navbar({ onOpenRegister, onOpenReports }) {
 
           {/* RIGHT ACTIONS */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexShrink: 0 }}>
-            
+
             {/* Ambient Sound Audio Toggle */}
             <button
               onClick={handleAudioToggle}
@@ -273,44 +272,6 @@ export default function Navbar({ onOpenRegister, onOpenReports }) {
               }}
             >
               {isAudioActive ? <Volume2 size={15} /> : <VolumeX size={15} />}
-            </button>
-
-            {/* Desktop Reports Manifest Launcher */}
-            <button
-              type="button"
-              onClick={() => {
-                playUiBeep(1200, 0.04);
-                if (onOpenReports) onOpenReports();
-              }}
-              className="desktop-only-btn"
-              title="Open Mission Reports & Flight Manifest"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                padding: '0.5rem 0.95rem',
-                borderRadius: '9999px',
-                background: 'rgba(15, 23, 42, 0.75)',
-                border: '1px solid rgba(56, 189, 248, 0.35)',
-                color: 'var(--cyan-primary)',
-                fontFamily: 'var(--font-space)',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                letterSpacing: '0.04em'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--cyan-primary)';
-                e.currentTarget.style.boxShadow = '0 0 15px rgba(56, 189, 248, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.35)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <FileText size={13} />
-              <span>Reports</span>
             </button>
 
             {/* Desktop-Only "Join the Crew" Button (Opens registration modal popup) */}
@@ -612,47 +573,12 @@ export default function Navbar({ onOpenRegister, onOpenReports }) {
                 );
               })}
 
-              {/* Mission Reports in Mobile Drawer */}
-              <button
-                type="button"
-                onClick={() => {
-                  playUiBeep(1200, 0.04);
-                  handleCloseMobileMenu();
-                  if (onOpenReports) onOpenReports();
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.9rem 1.15rem',
-                  borderRadius: '12px',
-                  background: 'rgba(15, 23, 42, 0.75)',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
-                  color: '#ffffff',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  width: '100%',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--cyan-primary)', fontWeight: 700 }}>
-                    05
-                  </span>
-                  <FileText size={16} style={{ color: 'var(--cyan-primary)' }} />
-                  <span style={{ fontFamily: 'var(--font-space)', fontSize: '0.9rem', fontWeight: 700 }}>
-                    Mission Reports & Manifest
-                  </span>
-                </div>
-
-                <ChevronRight size={15} style={{ color: '#64748b' }} />
-              </button>
             </div>
           </div>
 
           {/* Bottom Call-To-Action: 100% Responsive "Join the Crew" Card */}
           <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(56, 189, 248, 0.2)' }}>
-            
+
             <button
               type="button"
               onClick={handleJoinCrew}

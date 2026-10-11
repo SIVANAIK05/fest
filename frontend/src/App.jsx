@@ -12,13 +12,11 @@ import CosmicParticleField from './components/CosmicParticleField';
 import InterstellarGalaxyBackground from './components/InterstellarGalaxyBackground';
 import HeroSpaceshipCursor from './components/HeroSpaceshipCursor';
 import PassVerificationModal from './components/PassVerificationModal';
-import MissionReportsModal from './components/MissionReportsModal';
 import { startAmbientAudio } from './utils/audioEngine';
 
 export default function App() {
   const [preselectedEventId, setPreselectedEventId] = useState(null);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [isReportsOpen, setIsReportsOpen] = useState(false);
   const [isWarping, setIsWarping] = useState(false);
   const [verifiedPass, setVerifiedPass] = useState(null);
 
@@ -62,12 +60,6 @@ export default function App() {
         setVerifiedPass(null);
       }
 
-      if (hash.startsWith('#reports')) {
-        setIsReportsOpen(true);
-      } else {
-        setIsReportsOpen(false);
-      }
-
       // Smooth section scrolling on hash navigation back/forward (e.g. #mission, #events, #crew, #contact, #home)
       if (
         hash &&
@@ -75,8 +67,7 @@ export default function App() {
         !hash.startsWith('#register') &&
         !hash.startsWith('#pass') &&
         !hash.startsWith('#menu') &&
-        !hash.startsWith('#verify') &&
-        !hash.startsWith('#reports')
+        !hash.startsWith('#verify')
       ) {
         const targetId = hash.replace('#', '');
         const targetEl = document.getElementById(targetId);
@@ -117,29 +108,6 @@ export default function App() {
     }
   };
 
-  const handleOpenReports = () => {
-    if (window.location.hash !== '#reports') {
-      window.history.pushState({ modal: 'reports' }, '', '#reports');
-    }
-    setIsReportsOpen(true);
-  };
-
-  const handleCloseReports = () => {
-    if (window.location.hash === '#reports') {
-      window.history.back();
-    } else {
-      setIsReportsOpen(false);
-    }
-  };
-
-  const handleInspectPassFromReports = (passObj) => {
-    setVerifiedPass(passObj);
-    setIsReportsOpen(false);
-    const targetHash = `#verify?id=${encodeURIComponent(passObj.id || '')}&name=${encodeURIComponent(passObj.name || '')}`;
-    if (window.location.hash !== targetHash) {
-      window.history.pushState({ modal: 'verify', passObj }, '', targetHash);
-    }
-  };
 
   const handleSelectEventForRegistration = (eventId) => {
     handleOpenRegister(eventId);
@@ -184,9 +152,8 @@ export default function App() {
       <HeroSpaceshipCursor />
 
       {/* NAVIGATION BAR WITH UNIQUE MOBILE DOCK & HOLOGRAPHIC FLIGHT DECK */}
-      <Navbar 
-        onOpenRegister={() => handleOpenRegister()} 
-        onOpenReports={handleOpenReports}
+      <Navbar
+        onOpenRegister={() => handleOpenRegister()}
       />
 
       {/* MAIN SECTIONS ACCORDING TO REFERENCE IMAGE */}
@@ -214,20 +181,13 @@ export default function App() {
       </main>
 
       {/* 05 — CONTACT MISSION CONTROL & BASE TELEMETRY */}
-      <Footer onOpenReports={handleOpenReports} />
+      <Footer />
 
       {/* POPUP REGISTRATION MODAL (Triggered by Join Crew & Event cards) */}
       <RegistrationModal
         isOpen={isRegisterOpen}
         onClose={handleCloseRegister}
         preselectedEventId={preselectedEventId}
-      />
-
-      {/* MISSION REPORTS & FLIGHT MANIFEST MODAL (Real-time telemetry & CSV export) */}
-      <MissionReportsModal
-        isOpen={isReportsOpen}
-        onClose={handleCloseReports}
-        onInspectPass={handleInspectPassFromReports}
       />
 
       {/* LIVE SCAN VERIFICATION MODAL (Triggered when mobile camera scans QR code) */}

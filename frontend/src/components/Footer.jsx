@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ArrowUp, MapPin, Mail, Phone, Send, Radio, ShieldCheck, CheckCircle2, Bus, Clock } from 'lucide-react';
 import { playUiBeep } from '../utils/audioEngine';
 
-export default function Footer({ onOpenReports }) {
+export default function Footer() {
   const [formState, setFormState] = useState({
     name: '',
     contact: '',
