@@ -7,16 +7,23 @@ import QRCode from 'qrcode';
  * When format is 'text', it contains clean plain-text intel.
  */
 export function buildQrPayload({ astrionId, formData, selectedMissions, format = 'url' }) {
-  const missionTitles = selectedMissions.map(m => m.title).join(', ');
+  const missionTitles = (selectedMissions || []).map(m => m.title || m).join(', ');
   const institutionName = formData.institution === 'Other Institution / University'
     ? (formData.customInstitution || 'National University')
-    : formData.institution;
+    : (formData.institution || formData.college || 'National University');
+
+  const rollNumber = formData.studentId || formData.pin || formData.rollNo || '';
+  const departmentName = formData.department || '';
+  const yearName = formData.yearOfStudy || formData.year || '';
 
   if (format === 'url') {
     const origin = typeof window !== 'undefined' ? window.location.origin : 'https://astrion2026.vvitu.ac.in';
     const params = new URLSearchParams({
       verify: astrionId,
       name: formData.fullName || 'Commander',
+      roll: rollNumber,
+      dept: departmentName,
+      year: yearName,
       college: institutionName,
       squad: formData.teamName || 'Solo Flight',
       crew: formData.coAstronauts || 'Solo Explorer',
@@ -29,7 +36,9 @@ export function buildQrPayload({ astrionId, formData, selectedMissions, format =
   return `ASTRION 2026 FLIGHT PASS
 PASS ID: ${astrionId}
 COMMANDER: ${formData.fullName}
+ROLL NO: ${rollNumber || 'N/A'}
 COLLEGE: ${institutionName}
+DEPARTMENT: ${departmentName} (${yearName})
 SQUAD: ${formData.teamName || 'Solo Flight'}
 CREW: ${formData.coAstronauts || 'None'}
 MISSIONS: ${missionTitles || 'General Entry'}

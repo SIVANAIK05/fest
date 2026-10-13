@@ -20,22 +20,61 @@ export default function App() {
   const [isWarping, setIsWarping] = useState(false);
   const [verifiedPass, setVerifiedPass] = useState(null);
 
-  // Baseline history state and URL hash synchronization for back/forward navigation
+  // Baseline history state and URL query/hash synchronization for verification and navigation
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const verifyId = urlParams.get('verify');
-      if (verifyId) {
-        setVerifiedPass({
-          id: verifyId,
-          name: urlParams.get('name') || 'Lead Astronaut',
-          college: urlParams.get('college') || 'Registered Institution',
-          squad: urlParams.get('squad') || 'Endurance Squadron',
-          crew: urlParams.get('crew') || 'Solo Explorer',
-          events: urlParams.get('events') || 'General Entry'
-        });
+    if (typeof window === 'undefined') return;
+
+    // Helper to extract verified pass payload from any URLSearchParams instance
+    const extractPassFromParams = (params) => {
+      const verifyId = params.get('verify') || params.get('id');
+      if (!verifyId) return null;
+
+      return {
+        id: verifyId,
+        name: params.get('name') || 'Lead Astronaut',
+        roll: params.get('roll') || params.get('pin') || params.get('rollNo') || '',
+        dept: params.get('dept') || params.get('department') || '',
+        year: params.get('year') || params.get('yearOfStudy') || '',
+        college: params.get('college') || params.get('institution') || 'Registered Institution',
+        squad: params.get('squad') || params.get('team') || 'Solo Flight',
+        crew: params.get('crew') || params.get('members') || 'Solo Explorer',
+        events: params.get('events') || params.get('missions') || 'General Entry',
+        email: params.get('email') || '',
+        mobile: params.get('mobile') || ''
+      };
+    };
+
+    // Helper to parse pass from either window.location.search or window.location.hash
+    const parseVerificationFromUrl = () => {
+      // 1. First priority: search query parameters (from phone QR scan)
+      const searchParams = new URLSearchParams(window.location.search);
+      const passFromSearch = extractPassFromParams(searchParams);
+      if (passFromSearch) return passFromSearch;
+
+      // 2. Second priority: hash query parameters (from internal modal navigation or links)
+      const hash = window.location.hash;
+      if (hash.includes('?')) {
+        const hashQuery = hash.split('?')[1];
+        const hashParams = new URLSearchParams(hashQuery);
+        const passFromHash = extractPassFromParams(hashParams);
+        if (passFromHash) return passFromHash;
       }
 
+      return null;
+    };
+
+    // On initial page load: check if a pass was scanned via QR
+    const initialPass = parseVerificationFromUrl();
+    if (initialPass) {
+      setVerifiedPass(initialPass);
+      // Synchronize hash to #verify without losing back navigation
+      if (!window.location.hash.startsWith('#verify')) {
+        const queryStr = window.location.search
+          ? window.location.search.replace(/^\?/, '')
+          : `verify=${encodeURIComponent(initialPass.id)}`;
+        window.history.replaceState({ modal: 'verify', pass: initialPass }, '', `${window.location.pathname}#verify?${queryStr}`);
+      }
+    } else {
       // Establish baseline history state so initial back gesture never exits site abruptly
       if (!window.history.state) {
         window.history.replaceState({ page: 'home', hash: window.location.hash || '#home' }, '', window.location.href);
@@ -56,7 +95,13 @@ export default function App() {
         setIsRegisterOpen(false);
       }
 
-      if (!hash.startsWith('#verify')) {
+      // Check if verify is active in hash OR search
+      const currentPass = parseVerificationFromUrl();
+      if (hash.startsWith('#verify') || currentPass) {
+        if (currentPass) {
+          setVerifiedPass(currentPass);
+        }
+      } else {
         setVerifiedPass(null);
       }
 
@@ -108,16 +153,29 @@ export default function App() {
     }
   };
 
-
   const handleSelectEventForRegistration = (eventId) => {
     handleOpenRegister(eventId);
   };
 
   const handleCloseVerification = () => {
+    setVerifiedPass(null);
     if (window.location.hash.startsWith('#verify')) {
       window.history.back();
     } else {
-      setVerifiedPass(null);
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('verify') || url.searchParams.has('id')) {
+        url.searchParams.delete('verify');
+        url.searchParams.delete('id');
+        url.searchParams.delete('name');
+        url.searchParams.delete('college');
+        url.searchParams.delete('squad');
+        url.searchParams.delete('crew');
+        url.searchParams.delete('events');
+        url.searchParams.delete('roll');
+        url.searchParams.delete('dept');
+        url.searchParams.delete('year');
+        window.history.replaceState({ page: 'home' }, '', url.pathname + (url.hash && !url.hash.startsWith('#verify') ? url.hash : '#home'));
+      }
     }
   };
 
