@@ -2,10 +2,9 @@ import React from 'react';
 
 export default function MissionPartnersSection() {
   const partners = [
-    { name: 'IIC', desc: ' Organizing partner' },
+    { name: 'SCALEZ ', dedsc:'Food Stall Partner ' },
+    { name: 'IIC', dedsc:'Organizing Partner ' },
     { name: 'Student Tribe', desc: 'Innovation Partner' },
-    { name: 'VVITU', desc: 'Strategic Alliance' },
-    { name: 'IDEAHUB', desc: '' }
   ];
 
   return (
@@ -19,7 +18,8 @@ export default function MissionPartnersSection() {
           STRATEGIC ALLIANCES
         </h3>
         <p className="ast-subheading">
-          Co-sponsored and supported by leading technology institutions.
+          Co-sponsored and supported by:
+          
         </p>
       </div>
 
