@@ -2,8 +2,8 @@ import React from 'react';
 
 export default function MissionPartnersSection() {
   const partners = [
-    { name: 'SCALEZ ', dedsc:'Food Stall Partner ' },
-    { name: 'IIC', dedsc:'Organizing Partner ' },
+    { name: 'SCALEZ ', desc:'Food Stall Partner ' },
+    { name: 'IIC', desc:'Organizing Partner ' },
     { name: 'Student Tribe', desc: 'Innovation Partner' },
   ];
 
