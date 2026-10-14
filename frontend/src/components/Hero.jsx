@@ -93,7 +93,7 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
             </p>
 
             {/* ENTER ASTRION CTA BUTTON */}
-            <div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem' }}>
               <button
                 onClick={handleEnter}
                 className="btn-pill-cyan"
@@ -122,6 +122,33 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
                 <span>{isLaunching ? 'ORBITAL ASCENT ACTIVE...' : 'ENTER ASTRION'}</span>
                 <span>→</span>
               </button>
+              <a
+                href="https://astrion-workshop.vercel.app/"
+                className="btn-pill-cyan"
+                style={{
+                  padding: '0.85rem 2.2rem',
+                  fontSize: '0.85rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  cursor: 'pointer'
+                }}
+              >
+                <span style={{
+                  width: '1.4rem',
+                  height: '1.4rem',
+                  borderRadius: '9999px',
+                  background: '#020617',
+                  color: '#fbbf24',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Play style={{ width: '0.65rem', height: '0.65rem', fill: 'currentColor', marginLeft: '1px' }} />
+                </span>
+                <span>ENTER LAUNCHPAD</span>
+                <span>→</span>
+              </a>
             </div>
 
           </div>
