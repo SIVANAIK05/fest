@@ -44,7 +44,7 @@ export default function TheCrewSection() {
 
     {//6
       name: 'Chaitanya',
-      role: 'Events',
+      role: 'Executive - Commander',
      
       img: '/Crew/chaitanya.jpeg',
     },
@@ -70,13 +70,14 @@ export default function TheCrewSection() {
     },
     {//10
       name: 'Srujana',
-      role: ' ',
+      role: 'Executive - Commander ',
       
       img: '/Crew/Srujana.jpeg',
     },
 
     {//11
       name: 'Siva Naik',
+      role: 'Web - Crew',
       
       img: '/Crew/naik.png',
     },
