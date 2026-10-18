@@ -1558,7 +1558,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
 
                 {/* Bottom Verification Guarantee */}
                 <div style={{ color: '#34d399', fontWeight: 700, fontSize: '11px', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '0.4rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                  <span>✓ VERIFIED FOR VENUE ENTRY • DATES: 23 - 24 OCT 2026 • VENUE: VVIT CAMPUS</span>
+                  <span>✓ REGISTRATION VERIFIED • DATES: 23 - 24 OCT 2026</span>
                 </div>
               </div>
 
@@ -1578,7 +1578,7 @@ export default function RegistrationModal({ isOpen, onClose, preselectedEventId 
                     {astrionId}
                   </div>
                   <div style={{ fontSize: '9.5px', color: '#94a3b8', letterSpacing: '0.05em' }}>
-                    SCAN AT VENUE GATEWAY
+                    SCAN TO VERIFY
                   </div>
                 </div>
 

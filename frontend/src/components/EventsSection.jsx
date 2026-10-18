@@ -10,7 +10,6 @@ import {
   User,
   Laptop,
   Zap,
-  MapPin,
   Compass,
   ChevronDown,
   ChevronUp,
@@ -41,11 +40,6 @@ const EVENT_BANNER_MAP = {
   'deadly-spectrum': '/eventbanner/deadly_spectrum.png',
   'cosmic-vision': '/eventbanner/cosmic_vision.png',
   'orbital-control': '/eventbanner/orbital_control.png',
-};
-
-const formatVenue = (v) => {
-  if (!v || v.toLowerCase() === 'venue') return 'Tesseract Computing Complex • 3rd Floor';
-  return v;
 };
 
 const getTeamBadgeInfo = (teamSize) => {
@@ -265,22 +259,6 @@ function EventHudCard({
                 {mission.description}
               </p>
 
-              {/* VENUE BOX (Styled like the present venue card layout) */}
-              <div className="event-hud-venue-box">
-                <div className="event-venue-header">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <MapPin className="event-venue-icon" />
-                    <span className="event-venue-label">FACILITY / VENUE</span>
-                  </div>
-                  <span className="event-venue-status-chip">
-                    <span className="event-venue-pulse-dot" />
-                    <span>{(mission.timings || mission.time || 'ACTIVE ARENA').replace(/\s*&&\s*/g, ' & ')}</span>
-                  </span>
-                </div>
-                <div className="event-venue-name" title={formatVenue(mission.venue)}>
-                  {formatVenue(mission.venue)}
-                </div>
-              </div>
             </div>
 
             {/* CARD BOTTOM ACTION FOOTER: Explore and Register Buttons */}

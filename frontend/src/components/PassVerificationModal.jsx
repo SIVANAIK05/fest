@@ -10,7 +10,6 @@ import {
   ArrowLeft,
   Building,
   Calendar,
-  MapPin,
   Rocket,
   Check,
   Copy,
@@ -546,7 +545,7 @@ export default function PassVerificationModal({ pass, onClose }) {
 
         </div>
 
-        {/* Venue & Security Footer */}
+        {/* Security Footer */}
         <div
           style={{
             marginTop: '1.25rem',
@@ -567,9 +566,6 @@ export default function PassVerificationModal({ pass, onClose }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.2rem' }}>
               <Calendar style={{ width: '0.8rem', height: '0.8rem', color: '#38bdf8' }} />
               <span>23 - 24 OCT 2026</span>
-              <span>•</span>
-              <MapPin style={{ width: '0.8rem', height: '0.8rem', color: '#38bdf8' }} />
-              <span>VVIT CAMPUS, GUNTUR</span>
             </div>
           </div>
 

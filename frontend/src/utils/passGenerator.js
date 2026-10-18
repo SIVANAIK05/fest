@@ -364,7 +364,7 @@ async function renderPassCanvas(canvas, { astrionId, formData, selectedMissions,
   // Bottom Guarantee Stamp
   ctx.fillStyle = '#34d399';
   ctx.font = 'bold 11px sans-serif';
-  ctx.fillText("✓ VERIFIED FOR VENUE ENTRY • DATES: 23 - 24 OCT 2026 • VENUE: VVIT CAMPUS", 42, 490);
+  ctx.fillText("✓ REGISTRATION VERIFIED • DATES: 23 - 24 OCT 2026", 42, 490);
 
   // --- STUB AREA (Right side: 750 to 1080) ---
   const stubCenterX = 750 + (1080 - 750) / 2;
@@ -381,7 +381,7 @@ async function renderPassCanvas(canvas, { astrionId, formData, selectedMissions,
 
   ctx.fillStyle = '#94a3b8';
   ctx.font = '10px sans-serif';
-  ctx.fillText("SCAN AT VENUE GATEWAY", stubCenterX, 105);
+  ctx.fillText("SCAN TO VERIFY", stubCenterX, 105);
 
   // Scannable QR Code
   if (qrDataUrl) {

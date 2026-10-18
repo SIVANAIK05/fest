@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   Calendar,
   Clock,
-  MapPin,
   Users,
   CalendarDays,
   X,
@@ -268,15 +267,6 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
               </div>
             )}
 
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '11px', fontFamily: 'var(--font-space)', color: 'var(--text-slate)' }}>
-                <MapPin style={{ width: '0.8rem', height: '0.8rem', color: 'var(--cyan-primary)' }} />
-                <span>Venue</span>
-              </div>
-              <div style={{ fontFamily: 'var(--font-space)', fontSize: '0.82rem', fontWeight: 600, color: '#ffffff', marginTop: '0.15rem' }}>
-                {event.venue || 'Main Campus'}
-              </div>
-            </div>
           </div>
         </div>
 
