@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUp, MapPin, Mail, Phone, Send, Radio, ShieldCheck, CheckCircle2, Bus, Clock } from 'lucide-react';
+import { ArrowUp, Mail, Phone, Send, Radio, ShieldCheck, CheckCircle2, Bus, Clock } from 'lucide-react';
 import { playUiBeep } from '../utils/audioEngine';
 
 export default function Footer() {
@@ -235,7 +235,7 @@ export default function Footer() {
           </div>
 
           {/* ============================================================ */}
-          {/* RIGHT: MISSION CONTROL COMMAND DECK & LOCATION TELEMETRY    */}
+          {/* RIGHT: MISSION CONTROL COMMAND DECK                         */}
           {/* ============================================================ */}
           <div
             style={{
@@ -252,21 +252,17 @@ export default function Footer() {
           >
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(56, 189, 248, 0.15)', paddingBottom: '0.85rem', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <MapPin style={{ width: '1rem', height: '1rem', color: 'var(--amber-primary)' }} />
-                  <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.95rem', color: '#ffffff', fontWeight: 700, letterSpacing: '0.05em' }}>
-                    MISSION CONTROL BASE
-                  </span>
-                </div>
+                <span style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.95rem', color: '#ffffff', fontWeight: 700, letterSpacing: '0.05em' }}>
+                  MISSION CONTROL
+                </span>
                 <div style={{ background: '#ffffff', padding: '0.2rem 0.55rem', borderRadius: '0.45rem', display: 'flex', alignItems: 'center', border: '1px solid rgba(56, 189, 248, 0.5)', boxShadow: '0 0 14px rgba(56, 189, 248, 0.25)' }}>
                   <img src="/images/vvit_logo.png" alt="VVIT & IIC" style={{ height: '1.35rem', width: 'auto', objectFit: 'contain' }} />
                 </div>
               </div>
 
-              {/* Host Institution */}
               <div style={{ marginBottom: '1.25rem' }}>
                 <div style={{ fontSize: '11px', color: 'var(--cyan-primary)', fontFamily: 'var(--font-space)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em' }}>
-                  HOST INSTITUTION & VENUE
+                  HOST INSTITUTION
                 </div>
                 <div style={{ fontFamily: 'var(--font-space)', fontSize: '1.2rem', color: '#ffffff', fontWeight: 800, marginTop: '0.35rem', lineHeight: 1.35, letterSpacing: '0.01em' }}>
                   Vasireddy Venkatadri International Technological University (VVITU)
