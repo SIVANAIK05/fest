@@ -39,7 +39,7 @@ export default function TheCrewSection() {
     },
     {//5
       name: 'Harini ',
-      role: 'Web Head',
+      role: 'Web Commander',
       img: '/Crew/image copy.png',
     },
     {//6
