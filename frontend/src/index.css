@@ -2372,6 +2372,31 @@ select:-webkit-autofill {
   margin-top: 2rem;
 }
 
+.sponsors-logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.sponsor-logo-card {
+  width: min(100%, 280px);
+  height: 180px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.sponsor-logo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .crew-avatars-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
