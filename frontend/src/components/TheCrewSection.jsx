@@ -19,45 +19,42 @@ export default function TheCrewSection() {
     },
     {//2
       name: 'Aparna',
-      role: 'Vice - President',
-      
+      role: 'Vice President',
       img: '/Crew/aparna.jpeg',
     },
     {//3
       name: 'Bhaeru Nadh',
       role: 'Secretary',
-      
       img: '/Crew/image.png',
     },
     {//4
-      name: 'Rohit',
-      role: 'PR - Commander',
-    
-      img: '/Crew/Rohi2t.jpeg',
+      name: 'Chaitanya',
+      role: 'Executive Commander',
+      img: '/Crew/chaitanya.jpeg',
+    },
+    {
+      name: 'Srujana',
+      role: 'Executive - Commander ',
+      img: '/Crew/Srujana.jpeg',
     },
     {//5
       name: 'Harini ',
-      role: 'Web - Commander',
-   
+      role: 'Web Head',
       img: '/Crew/image copy.png',
     },
-
     {//6
-      name: 'Chaitanya',
-      role: 'Executive - Commander',
-     
-      img: '/Crew/chaitanya.jpeg',
+      name: 'Rohit',
+      role: 'PR - Commander',
+      img: '/Crew/Rohi2t.jpeg',
     },
     {//7
       name: 'Saran',
       role: 'Events - Commander  ',
-    
       img: '/Crew/saran.png',
     },
     {//8
       name: 'Sudheerkumar',
       role: 'R & V - Commander  ',
-    
       img: '/Crew/sudheer.png',
     },
 
@@ -65,21 +62,12 @@ export default function TheCrewSection() {
     {//9
       name: 'Mahesh',
       role: 'SMD- Commander ',
-      
       img: '/Crew/Mahesh.png',
     },
     {//10
       name: 'Srujana',
       role: 'Executive - Commander ',
-      
       img: '/Crew/Srujana.jpeg',
-    },
-
-    {//11
-      name: 'Siva Naik',
-      role: 'Web - Crew',
-      
-      img: '/Crew/naik.png',
     },
   ];
 

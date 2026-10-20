@@ -75,8 +75,8 @@ export const TECHNICAL_EVENTS = [
     subtitle: "Think it • Build it • Pitch it",
     category: "technical",
     regType: "pre-registration",
-    tagline: "Turn real-world problem statements into viable, scalable startups.",
-    description: "Participants will be given a real-world problem statement and must turn it into an innovative startup idea. They have to identify the problem, design a solution, decide who their target users are, and explain how their idea can become a sustainable business.",
+    tagline: "Solve a problem you have observed on campus and prototype your idea.",
+    description: "Students identify a problem they have observed in college, develop a practical technology-based solution, and build a prototype to demonstrate how it works. Teams will present their problem, solution, target users, and the prototype to the jury.",
     bannerImage: "/eventbanner/Astrio Pitch_ Neon Space Frontier.png",
     planetImage: "/eventbanner/Astrio Pitch_ Neon Space Frontier.png",
     image: "/eventbanner/Astrio Pitch_ Neon Space Frontier.png",
@@ -88,12 +88,12 @@ export const TECHNICAL_EVENTS = [
     teamSize: "2 - 4 Members",
     laptops: "Needed",
     prototype: "Compulsory",
-    concept: "Participants will be given a real-world problem statement and must turn it into an innovative startup idea. They have to identify the problem, design a solution, decide who their target users are, and explain how their idea can become a sustainable business.",
+    concept: "Choose a problem you have personally observed in college, design a practical technology-based solution, and build a prototype that demonstrates your idea. Present the problem, your solution, its intended users, and your prototype to the jury.",
     howItWorks: [
-      "Identify the problem statement and define target user segments.",
-      "Design the solution and engineer a mandatory functional prototype / working demo.",
-      "Formulate a scalable business model and path to sustainability.",
-      "Deliver a 5-minute investor pitch followed by defense and jury Q&A."
+      "Identify a real problem you have observed in college and explain who is affected by it.",
+      "Design a practical technology-based solution and build a prototype or working demo.",
+      "Explain how your solution addresses the campus problem and who will use it.",
+      "Present your problem, solution, and prototype to the jury, followed by questions."
     ],
     judgingCriteria: [
       { label: "Working Prototype Execution", percent: "30%" },
@@ -163,6 +163,7 @@ export const TECHNICAL_EVENTS = [
     timings: "08:15 AM - 12:00 PM && 01:00 PM - 03:00 PM",
     closes: "22 Oct 2026",
     teamSize: "1 (Solo)",
+    laptops: "Needed",
     prototype: "Not required",
     concept: "Prompt Orbit is an AI-based challenge where participants compete to see who can write the most effective and creative prompts. Teams will use AI tools to recreate a hidden target or generate the best response based only on their written instructions.",
     howItWorks: [
@@ -200,6 +201,40 @@ export const TECHNICAL_EVENTS = [
     teamSize: "2 - 4 Members",
     prototype: "Poster / Paper Presentation",
     concept: "Participants will be given a real-world problem statement and have to develop an innovative, practical, and technology-based solution. They will present their idea through a poster/paper presentation and clearly explain how their solution addresses the given problem.",
+    themes: [
+      {
+        title: "Sustainable Technology & Green Innovation",
+        description: "Solutions for pollution, climate change, resource conservation, and sustainable living."
+      },
+      {
+        title: "Water & Resource Management",
+        description: "Smart solutions for water conservation, groundwater management, leakage detection, and efficient resource usage."
+      },
+      {
+        title: "Smart Agriculture & Food Technology",
+        description: "Technology-driven solutions for farmers, irrigation, crop monitoring, food waste, and supply chains."
+      },
+      {
+        title: "Healthcare & Assistive Technology",
+        description: "Affordable and accessible solutions for healthcare, disease prevention, elderly care, and people with disabilities."
+      },
+      {
+        title: "Smart Mobility & Transportation",
+        description: "Solutions for traffic management, road safety, public transportation, parking, and sustainable mobility."
+      },
+      {
+        title: "Energy & Power Innovation",
+        description: "Renewable energy, energy conservation, smart grids, electricity management, and efficient devices."
+      },
+      {
+        title: "Smart Cities & Intelligent Infrastructure",
+        description: "Technology for waste management, public safety, infrastructure, housing, and better urban services."
+      },
+      {
+        title: "AI, IoT & Intelligent Systems",
+        description: "Innovative applications of AI, IoT, machine learning, automation, and smart systems to solve real-world problems."
+      }
+    ],
     howItWorks: [
       "Receive real-world technology challenges and identify the core problem domain.",
       "Engineer an innovative, practical, and technology-backed architectural solution.",
