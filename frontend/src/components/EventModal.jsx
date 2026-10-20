@@ -462,6 +462,42 @@ export default function EventModal({ event, onClose, onRegisterEvent }) {
                 </p>
               </div>
 
+              {event.themes && (
+                <div>
+                  <h4 style={{ fontFamily: 'var(--font-orbitron)', fontSize: '0.92rem', color: '#ffffff', margin: '0 0 0.75rem', fontWeight: 700 }}>
+                    IDEA NOVA THEMES
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
+                    {event.themes.map((theme, idx) => (
+                      <div
+                        key={theme.title}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '0.75rem',
+                          background: 'rgba(15, 23, 42, 0.55)',
+                          border: '1px solid rgba(56, 189, 248, 0.15)',
+                          borderRadius: '0.75rem',
+                          padding: '0.85rem 1rem'
+                        }}
+                      >
+                        <span style={{ color: 'var(--cyan-primary)', fontFamily: 'var(--font-orbitron)', fontSize: '0.8rem', fontWeight: 700, flexShrink: 0 }}>
+                          {idx + 1}.
+                        </span>
+                        <div>
+                          <div style={{ color: '#f8fafc', fontSize: '0.86rem', fontWeight: 600, marginBottom: '0.3rem' }}>
+                            {theme.title}
+                          </div>
+                          <p style={{ color: '#cbd5e1', fontSize: '0.82rem', lineHeight: 1.5, margin: 0 }}>
+                            {theme.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Objective (if provided) */}
               {event.objective && (
                 <div
