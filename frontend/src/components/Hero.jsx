@@ -146,7 +146,7 @@ export default function Hero({ onEnterAstrion, onLaunchStart }) {
                 }}>
                   <Play style={{ width: '0.65rem', height: '0.65rem', fill: 'currentColor', marginLeft: '1px' }} />
                 </span>
-                <span>ENTER LAUNCHPAD</span>
+                <span>Workshop Registration</span>
                 <span>→</span>
               </a>
             </div>
